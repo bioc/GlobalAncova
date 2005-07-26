@@ -1,0 +1,595 @@
+% \VignetteIndexEntry{GlobalAncova}
+% \VignetteDepends{GlobalAncova, multtest}
+% \VignetteKeywords{Expression Analysis}
+% \VignettePackage{GlobalAncova}
+
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+\documentclass[a4paper]{article}
+
+\title{Global testing of differential gene expression}
+
+\author{Ulrich Mansmann \and Reinhard Meister \and Manuela Hummel}
+
+
+\begin{document}
+
+\maketitle \tableofcontents \newpage
+
+\section{Abstract}
+
+In studies about differential gene expression between different clinical diagnoses
+the main interest may often not be
+in single genes but rather in groups of genes that are associated with a pathway
+or have a common location in the genome.
+In such cases it may be better to perform a global test because the problems of multiple testing
+can be avoided. 
+The approach presented here is an ANCOVA global test on phenotype main effect
+and gene--phenotype interaction.
+
+Testing many pathways simultaneously is also possible. This, of course, causes again need for correction
+for multiple testing. Besides the standard approaches for correction we introduce a closed
+testing procedure in which the experiment--wise error rate equals the required level of 
+confidence of the overall test.  
+
+<<echo=F, results=hide>>=
+library(Biobase)
+@
+
+This document was created using R version \Sexpr{paste(R.version$major,".",R.version$minor,sep="")}
+and versions \Sexpr{package.version("GlobalAncova")} 
+and \Sexpr{package.version("globaltest")} of the packages \Rpackage{GlobalAncova} and \Rpackage{globaltest} respectively.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+The ANCOVA global test is a simultaneous test on phenotype main effect and gene--phenotype
+interaction in a two--way layout linear model. If the mean expression level for at least one
+gene differs between groups the global null hypothesis, which is the intersection of all
+null hypotheses for the single genes, is violated.
+As our test is based on the sum of gene-wise reduction in sum of squares due to phenotype, all systematic differences in gene expression between phenotypes equally contribute to the power of the test.
+
+Single genes are not, in general, the primary focus of gene expression experiments. The 
+researcher might be more interested in relevant pathways, functional sets or genomic regions
+consisting of several genes.  
+Most of the current methods for studying pathways analyse differential
+expression of single genes. In these methods pathways where many genes show minor changes in their expression
+values may not be identified.
+Goeman's global test and the ANCOVA global test were 
+designed to address this issue.
+
+Applying global tests for differential expression in pathways substantially reduces the number of tests compared to gene-wise multiple testing. The amount of correction for multiple testing decreases.
+As grouping criteria, function (KEGG, GO) or 
+location (chromosome, cytoband) are two examples that can be used.
+
+We want to compare our method with the global test of Goeman et al., 2004 \cite{Goe:04}.
+Therefore text and examples in this document follow to a certain extent the vignette presented in the R-package 
+\Rpackage{globaltest}.
+Our function \Rfunction{GlobalAncova} tests whether the mean expression levels of a given group of genes differ
+between two biological entities.
+This vignette has its focus on the practical use of the test. 
+For more details about the mathematical background and the interpretation of results,
+we refer to the paper by Mansmann and Meister, 2005 \cite{MaMei:05}.
+
+This document shows the functionality of the R-package
+\Rpackage{GlobalAncova}. 
+The datasets, all necessary R--packages and our package \Rpackage{GlobalAncova}
+are available from the Bioconductor website ({\it www.bioconductor.org}) and 
+from CRAN ({\it www.r-project.org}), respectively.
+
+First we load the packages and data we will use.
+
+<<initialize, results=hide>>=
+library(GlobalAncova)
+library(globaltest)
+library(golubEsets)
+library(hu6800)
+library(vsn)
+library(multtest)
+require(Rgraphviz)
+
+data(golubMerge)
+golubM <- update2MIAME(golubMerge)
+golubX <- vsn(golubM)
+@
+
+This creates a dataset \Robject{golubX}, which is of the format
+\Rclass{exprSet}, the standard format for gene expression data in
+BioConductor. It consists of \Sexpr{length(geneNames(golubX))} genes and \Sexpr{length(sampleNames(golubX))}
+samples. We used \Rpackage{vsn}
+to normalize the data. Any other normalization
+method may be used instead. 
+From several phenotype variables we use ``ALL.AML'' as the clinical diagnoses of interest.
+ALL and AML are two types of acute leukemia. 
+There are \Sexpr{sum(golubX$ALL.AML=="ALL")} patients
+with ALL and \Sexpr{sum(golubX$ALL.AML=="AML")} with AML.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Global Testing of a Single Pathway}
+
+\subsection{Cell Cycle Pathway}
+
+Suppose we are interested in testing whether AML and ALL have
+different gene expression patterns for certain pathways, for example from the
+KEGG database.
+
+\vspace{0.2cm}
+\noindent {\bf All Genes}\\
+We start by applying our test to all genes in the Golub dataset so that differences in the overall gene-expression pattern can be demonstrated. 
+
+<<all>>=
+gr <- as.numeric(golubX$ALL.AML=="ALL")
+ga.all <- GlobalAncova(xx=exprs(golubX), group=gr, covars=NULL, perm=100, test.genes=NULL)
+@ 
+
+The first input \Rfunarg{xx} is a \Sexpr{dim(exprs(golubX))[[1]]} $\times$ 
+\Sexpr{dim(exprs(golubX))[[2]]} matrix that contains the expression values of all genes and samples. 
+The second input \Rfunarg{group} is a vector that
+defines the clinical diagnosis for the \Sexpr{dim(exprs(golubX))[[2]]} patients. It must be coded as 0--1. 
+More than two clinical groups or even continuous phenotype coding might be considered in
+future versions of the package. 
+
+To avoid alpha--inflation due to correlated data and effects of non--normality of the data tests for significance of the resulting F--ratios are performed using a permutation test approach.
+The argument \Rfunarg{perm} defines the number of permutations.  
+The number of permutations is 10,000 for default but in the current version the test for many genes can take quite
+a long time with 10,000 permutations. Here we set \Rfunarg{perm} to just 100 or 1000 so that creating this vignette will not last too long. For getting more reliable results one should recompute the examples with more permutations. To compass this problem we are currently trying for the development of an asymptotic test.
+
+The result is a typical ANOVA table with information only for the interaction
+term of interest. Besides the classical F--test p--values,
+there are also p--values from the permutation test. 
+
+<<all.display>>= 
+ga.all 
+@ 
+
+From this result we conclude that 
+the overall gene expression profile for all \Sexpr{length(geneNames(golubX))} genes is associated 
+with the clinical outcome. 
+This means that samples with different AML/ALL status tend to have different expression profiles.
+expect most pathways (especially the ones containing many genes) also to be associated with the phenotype groups.
+
+If we apply Goeman's global test we get
+
+<<gt.all, results=hide>>=
+gt.all <- globaltest(golubX, "ALL.AML")
+gt.all
+@
+<<echo=F>>=
+gt.all
+@
+
+Both tests show that the data contain overwhelming evidence for differential gene expression
+between AML and ALL.
+
+\vspace{0.2cm}
+\noindent {\bf Cell Cycle Pathway}\\
+Now we ask the more specific question of whether there is evidence for differential gene expression
+between both diagnoses restricted to genes belonging to the cell cycle pathway.
+First we load all KEGG pathways. 
+
+<<loadKEGG>>=
+kegg <- as.list(hu6800PATH2PROBE)
+@
+
+<<echo=F>>=
+cellcycle <- kegg[["04110"]]
+@
+
+The list \Robject{kegg} consists of \Sexpr{length(kegg)} pathways. Each pathway is represented
+by a
+vector of gene names. We are mainly interested in the cell cycle pathway 
+which has the identifier ``04110'' 
+in the KEGG database. It corresponds to \Sexpr{length(cellcycle)} probe sets on the 
+hu6800 chip. 
+
+<<cc, eval=F>>=
+cellcycle <- kegg[["04110"]]
+@
+
+We apply the global test to this pathway using the option \Rfunarg{test.genes}.
+
+<<cellcycle>>=
+ga.cc <- GlobalAncova(exprs(golubX), gr, test.genes=cellcycle, perm=1000) 
+ga.cc
+@
+
+Also with \Rpackage{globaltest} we get a very small p--value
+
+<<gt.cellcycle, results=hide>>=
+gt.cc <- globaltest(golubX, "ALL.AML", cellcycle)
+gt.cc
+@
+<<echo=F>>=
+gt.cc
+@
+
+The test results clearly indicate that the expression pattern of the cell cycle pathway 
+is different between the two clinical groups. 
+
+\vspace{0.2cm}
+\noindent {\bf Adjusting for Covariates}\\
+Covariate information is incorporated by specifying the \Rfunarg{covars} option.
+For example if we want to adjust for \Robject{Source}, the institution that provided the samples,
+we can do this by
+
+<<adjust>>=
+ga.cc.source <- GlobalAncova(exprs(golubX), gr, covars=golubX$Source, test.genes=cellcycle, perm=1000) 
+ga.cc.source
+@
+
+The source  of the samples apparently has some explanatory effect on the outcome resulting in
+a smaller F--ratio than in the model without adjusting. But the influence of the genes
+is still highly significant.
+
+With the \Rpackage{globaltest} we get a higher p--value. 
+
+<<gt.adjust, results=hide>>=
+gt.cc.source <- globaltest(golubX, ALL.AML ~ Source, cellcycle)
+gt.cc.source
+@
+<<echo=F>>=
+gt.cc.source
+@
+
+Permutation based p--values can also be obtained with Goeman's test, however only when covariates are absent. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{p53--Signalling Pathway}
+
+<<>>=
+data(p53.signalling)
+data(group.info)	
+data(cov.info)	
+@
+
+We present another example from a study on different stages of colon cancer.
+The data is available with the \Rpackage{GlobalAncova} package.
+This example illustrates the role of covariates in the context of global testing in more detail.
+The tumour suppressor protein p53 contributes as a transcription factor to cell cycle arrest and apoptosis induction.
+%Oncogene. 2004 Apr 22;23(19):3376-84. 	
+%Identification of Tcf-4 as a transcriptional target of p53 signalling.
+%Rother K, Johne C, Spiesbach K, Haugwitz U, Tschop K, Wasner M, 
+%Klein-Hitpass L, Moroy T, Mossner J, Engeland K.
+Therefore, the p53-signalling pathway was selected as a candidate, where differential expression
+between two relevant prognostic groups defined by UICC II and UICC III stage of colon
+carcinoma probes was expected. 
+The dataset \Robject{p53.signalling} contains 
+\Sexpr{dim(p53.signalling)[[1]]} genes
+of the pathway that are present on the Affymetrix chip HU133a 
+for \Sexpr{dim(p53.signalling)[[2]]} samples, \Sexpr{sum(group.info==0)}
+for each stage of cancer. The group information for each sample is stored in
+\Robject{group.info}.
+In \Robject{cov.info} there is also information about the 
+gender of the patients and the location of the tumors.
+
+<<p53, eval=F>>=
+data(p53.signalling)
+data(group.info)	
+data(cov.info)		
+@
+
+\noindent {\bf With and without Adjusting for Covariates}\\
+First we compute the Global Ancova without adjusting for covariates and get a 
+significant result. 
+ 
+
+<<p53test>>=	
+set.seed(123)
+ga.table.1 <- GlobalAncova(xx=p53.signalling, group=group.info, perm=1000)
+ga.table.1
+@
+
+Including the covariates improves the separation of expression values
+by UICC stage.
+
+<<p53test.cov>>=	
+ga.table.2 <- GlobalAncova(p53.signalling, group.info, covars=cov.info, perm=1000)
+ga.table.2
+@
+
+The test results illustrate that the theoretical p--values are probably over--optimistic.
+
+The \Rpackage{globaltest} also reveals better separation by including 
+covariate information. Regarding the p--values this test
+is more optimistic here.
+
+<<gt.p53test>>=
+colnames(p53.signalling) <- seq(1:dim(p53.signalling)[2])
+names(group.info) <- colnames(p53.signalling)
+gt.table.1 <- globaltest(p53.signalling, group.info)   
+gt.table.1
+@
+
+<<gt.p53test.cov>>=
+gt.table.2 <- globaltest(p53.signalling, group.info, 
+adjust=as.data.frame(cov.info))  
+gt.table.2
+@
+
+\noindent {\bf Sex or Location of the tumor as Phenotype}\\
+In contrast to the results above using stage as the clinical outcome if we had used sex or location as phenotype there would be no evidence of differential gene expression between the respective groups.
+For Goeman's test we get again similar results with slightly smaller p--values.
+
+<<sexloc, results=hide>>=
+ga.table.sex <- GlobalAncova(p53.signalling, group=cov.info[ ,"sex"], perm=1000)
+ga.table.loc <- GlobalAncova(p53.signalling, group=cov.info[ ,"loc"], perm=1000)
+gt.table.sex <- globaltest(p53.signalling, cov.info[ ,"sex"])
+gt.table.loc <- globaltest(p53.signalling, cov.info[ ,"loc"])
+@
+<<>>=
+ga.table.sex
+ga.table.loc
+gt.table.sex
+gt.table.loc
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Testing Several Pathways Simultaneously}
+
+Systems biology involves the study of mechanisms underlying complex biological processes as integrated systems of many diverse interacting components, often referred to as pathways. 
+
+We regard the possibility to investigate differential gene expression simultaneously for several of those pathways as a contribution towards understanding biological relevant relations. 
+
+The user can apply \Rfunction{GlobalAncova} to compute p--values for a couple of pathways with one call by specifying the \Rfunarg{test.genes} option.  The members of each pathway to be tested must belong to genes in the expression--matrix.
+Afterwards a suitable correction for multiple testing has to be applied. An alternative based on the closed testing approach is described later.
+
+Suppose for example that we want to test the first five KEGG pathways. We proceed as follows.
+
+<<kegg>>=
+ga.kegg <- GlobalAncova(exprs(golubX), gr, test.genes=kegg[1:5], perm=1000) 
+ga.kegg
+@
+
+The result is a matrix 
+whose rows correspond to the KEGG pathways. 
+Note that if a pathway consists of a single gene a squared t--statistic which is equivalent to a F--statistic is computed.
+Also in this case a permutation test is performed.
+
+With the \Rfunction{globaltest} we get a similar matrix.
+
+<<gt.kegg, results=hide>>=
+gt.kegg <- globaltest(golubX, "ALL.AML", kegg[1:5])
+gt.kegg
+@
+
+This test also works for a single gene.
+
+
+\subsection{Simultaneous Adjustment of p--values}
+
+Next we show how to extract p--values for correction for multiple testing.
+Note however that due to the extremely high correlations between
+these tests, many procedures that correct for multiple testing
+here are inappropriate. 
+An appropriate way of adjusting would be for example the method of Holm, 1979 \cite{Holm:79}.
+An alternative to such adjustments that is not affected by correlations between tests is a closed
+testing procedure. 
+For this approach you need a family of null hypotheses that is closed
+under intersection. Then a single hypothesis can be rejected at level $\alpha$ if it
+is rejected along with all hypotheses included in it (Marcus et al. 1976).
+We choose only the four pathways that have p--values $< 0.05$ for demonstrating the 
+adjustment because the other one is not significant anyway.
+
+For the adjustment according to Bonferroni and Holm we build a vector of
+the raw p--values. The function \Rfunction{mt.rawp2adjp} provides several adjusting
+methods. We here display only the raw and ``Holm'' adjusted p--values. 
+To obtain the original order of the pathways we order the result of \Rfunction{mt.rawp2adjp} according to \Robject{index}.
+
+<<>>=
+ga.kegg.raw <- ga.kegg[c(1,2,3,5), 3]
+ga.kegg.adj <- mt.rawp2adjp(ga.kegg.raw)
+ga.kegg.adj$adjp[order(ga.kegg.adj$index) ,c("rawp", "Holm")]
+@
+
+The adjusted p--values are in general larger than the raw p--values
+but still all four pathways are significant.
+
+
+\subsection{Closed Testing Procedure}
+
+Closed testing procedures (Marcus et al., 1976 \cite{Mar:76}) 
+offer a versatile and powerful approach to the multiple testing problem. Implementation is non--trivial, therefore, the program given in this version should be regarded as a prototype.  
+
+In order to apply the closed testing procedure we first have to create the required family of
+hypotheses by building all intersections between the four ``natural'' hypotheses
+tested above and all intersections of those new hypotheses and so on. 
+
+The resulting family of hypotheses can be illustrated in a directed graph. 
+The node ``1-2-3-4'' for example stands for the global hypothesis that the genes
+of all four selected pathways are not differentially expressed.
+Now the interesting hypothesis ``1'' for example can be rejected if also the hypotheses
+``1-2-3-4'',``1-2-3'',``1-2-4'',``1-3-4'',``1-2'',``1-3'' and ``1-4'' are rejected.
+These relationships are represented by the edges of the graph.
+Note that the required package \Rpackage{Rgraphviz} for plotting the graph
+currently only is available for Unix/Linux.
+
+
+<<eval=F>>=
+plot(graph, nodeAttrs=att)
+@
+
+<<hypoth, echo=F, fig=T>>=
+if(require(Rgraphviz))
+{
+  res <- Hnull.family(kegg[c(1,2,3,5)])
+  graph <- new("graphNEL", nodes=names(res), edgemode="directed")
+  graph <- addEdge(from=c(rep(names(res)[15],4),rep(names(res)[10],3),rep(names(res)[11],3),
+  rep(names(res)[13],3),rep(names(res)[14],3),rep(names(res)[5],2),rep(names(res)[6],2),
+  rep(names(res)[7],2),rep(names(res)[8],2),rep(names(res)[9],2),rep(names(res)[12],2)), 
+  to=c(names(res)[10],names(res)[11],names(res)[13],names(res)[14],names(res)[5],names(res)[6],
+  names(res)[8],names(res)[5],names(res)[7],names(res)[9],names(res)[6],names(res)[7],names(res)[12],
+  names(res)[8],names(res)[9],names(res)[12],names(res)[1],names(res)[2],names(res)[1],names(res)[3],
+  names(res)[1],names(res)[4],names(res)[2],names(res)[3],names(res)[2],names(res)[4],names(res)[3],
+  names(res)[4]), graph, weights=rep(1, 28))
+
+  att <- list()
+  lab <- c("1","2","3","4","1-2","1-3","1-4","2-3","2-4","1-2-3","1-2-4","3-4","1-3-4","2-3-4","1-2-3-4")
+  names(lab) <- names(res)
+  att$label <- lab
+
+  plot(graph, nodeAttrs=att)
+}
+@
+
+We can compute the closed testing procedure using the function
+
+<<closed.test>>=
+ga.closed <- GlobalAncova.closed(xx=exprs(golubX), group=gr, test.genes=kegg[c(1,2,3,5)], previous.test=ga.kegg, level=0.05, perm=1000)
+@
+
+where \Rfunarg{test.genes} is again a list of pathways. In order to shorten computing time we can provide
+the results of the previous application of \Rfunction{GlobalAncova} for the pathways of interest.
+The option \Rfunarg{level} allows to manipulate the level of significance. \Rfunarg{perm} again gives the desired number of permutations used in the permutation test. 
+
+The function \Rfunction{GlobalAncova.closed} provides the formed null hypotheses (this means lists of genes to be tested simultaneously), the test results for each pathway of interest and the names of significant and not significant pathways.
+
+<<names.closed.test>>=
+names(ga.closed)
+ga.closed$test.results
+@
+
+Here also all four pathways turn out to be significant.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Diagnostic Plots}
+
+There are two types of diagnostic plots available to help interpret the 
+results of the global ANCOVA.
+The \Rfunction{Plot.genes} visualizes the 
+influence of individual genes on the test result while the
+\Rfunction{Plot.subjects} visualizes the influence of individual 
+samples. Both plots are based on the decomposition of sums of squares.
+
+
+\subsection{Gene Plot}
+
+The diagnostic plot \Rfunction{Plot.genes} 
+can be used to assess the influence of each gene on the outcome of the test.
+It corresponds to the function \Rfunction{geneplot} in the \Rpackage{globaltest} package.
+The function \Rfunction{Plot.genes} gives a graphical display of single gene-wise analysis for all genes. Bars are always positive as a reduction of sum of squares is always achieved in this case.
+The bar height indicates the influence of the respective gene on the test 
+statistic. 
+The added reference line is the residual mean square error per gene and corresponds to the 
+expected height of the 
+bars under the null hypothesis which says that the gene is not associated 
+with the clinical outcome. 
+Covariate information can be included in the same way as in the 
+\Rfunction{GlobalAncova} function with the \Rfunarg{covars} option.
+The bars are coloured in order to show in which of the phenotype groups
+the gene has higher expression values.
+
+The commands for creating gene plots in the \Rpackage{GlobalAncova} and
+the \Rpackage{globaltest} are as follows. For facility of
+inspection it is useful not to plot the bars for all genes at one time
+but only for a few, for example 40. 
+
+The two approaches show almost the same results. We prefer plotting horizontal
+bars rather than vertical because we think it is easier to read off the bar heights this way.
+In the group variable \Rfunarg{gr} 0 represents AML and 1 the ALL patients.
+
+<<geneplot>>=
+Plot.genes(exprs(golubX)[cellcycle[1:40], ], gr)
+gp.cc <- geneplot(gt.cc)
+plot(gp.cc[1:40])
+@
+
+\begin{figure}[htb!]
+\begin{center}
+<<genes, fig=TRUE, echo=F>>=
+Plot.genes(exprs(golubX)[cellcycle[1:40], ], gr)
+@
+\vspace{-0.4cm}
+\caption{Gene Plot with \Rpackage{GlobalAncova}. The bar height indicates the influence of the respective gene on the test 
+statistic. The colour shows in which of the phenotype groups
+the gene has higher expression values. The reference line is the residual mean square error per gene.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb!]
+\begin{center}
+<<gt_genes, fig=TRUE, echo=F>>=
+plot(gp.cc[1:40])
+@
+\vspace{-0.4cm}
+\caption{Gene Plot with \Rpackage{globaltest}. The bar height indicates the influence of the respective gene on the test 
+statistic. The colour shows in which of the phenotype groups
+the gene has higher expression values. The reference line gives the expected height of the bar under the null hypothesis. Marks indicate with how many standard deviations the bar exceeds the reference line.}
+\end{center}
+\end{figure}
+
+
+\subsection{Subjects Plot}
+
+The function \Rfunction{Plot.subjects}
+visualizes the influence of the individual samples on the test result
+and corresponds to the \Rfunction{sampleplot} of Goeman.
+The function \Rfunction{Plot.subjects} gives information on the reduction of sum of squares per subject. Here we sum over genes. Large reduction demonstrates a good approximation of a subject's gene expressions by the corresponding group means. If an individual does not fit into the pattern of its phenotype, negative values can occur.   
+A small p--value will 
+therefore generally coincide with many positive bars. If there 
+are still tall negative bars, these indicate deviating samples: 
+removing a sample with a negative bar would result in a lower 
+p-value.
+Again we can use \Rfunarg{covars} for covariate adjustment.
+The bars are again coloured to distinguish the samples 
+of the two different clinical diagnoses. With the option \Rfunarg{sort} 
+it is also possible to sort the bars with respect to the phenotype groups.
+Before plotting we add the sample names to the expression matrix. 
+Otherwise with \Rfunction{Plot.subjects} samples would just
+be enumerated from 1 to \Sexpr{length(pData(golubX))}.
+
+We compare again the different approaches:
+
+<<subjectsplot>>=
+colnames(exprs(golubX)) <- pData(golubX)[ ,1]
+Plot.subjects(exprs(golubX), gr)
+sampleplot(gt.cc)
+@
+
+\begin{figure}[htb!]
+\begin{center}
+<<subjects, fig=TRUE, echo=F>>=
+Plot.subjects(exprs(golubX), gr)
+@
+\vspace{-0.4cm}
+\caption{Subjects Plot with \Rpackage{GlobalAncova}. The bar height indicates the influence of the respective sample on the test result. If an individual does not fit into the pattern of its phenotype, negative values can occur. Bars are coloured corresponding to groups.}
+\end{center}
+\end{figure}
+
+\begin{figure}[htb!]
+\begin{center}
+<<gt_subjects, fig=TRUE, echo=F>>=
+sampleplot(gt.cc)
+@
+\vspace{-0.4cm}
+\caption{Subjects Plot with \Rpackage{globaltest}. The bar height indicates the influence of the respective sample on the test result. If an individual does not fit into the pattern of its phenotype, negative values can occur. Bars are coloured corresponding to groups. The reference line shows the expected influence of the samples under the null hypothesis. Marks on the bars indicate the standard deviation of the influence of the sample under the null hypothesis.}
+\end{center}   
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\clearpage
+
+
+\section{Acknowledgements}
+
+This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
+

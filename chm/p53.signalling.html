@@ -1,0 +1,51 @@
+<html><head><title>Gene expression Data</title>
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>p53.signalling(GlobalAncova)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   p53.signalling">
+<param name="keyword" value=" Gene expression Data">
+</object>
+
+
+<h2>Gene expression Data</h2>
+
+
+<h3>Description</h3>
+
+<p>
+RMA normalized gene expression data of 45 probesets on the HGU133A GeneChip which belong to the p53 signalling pathway.
+For details see Mansmann, U. and Meister, R., 2005, Testing differential gene expression
+in functional groups, <EM>Methods Inf Med</EM> 44 (3).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(p53.signalling)</pre>
+
+
+<h3>Format</h3>
+
+<p>
+The format is:
+num [1:45, 1:36] 8.14 7.38 9.46 8.18 7.15 ...
+- attr(*, "dimnames")=List of 2
+..$ : chr [1:45] "204859\_s\_at" "211553\_x\_at" "211554\_s\_at" "212672\_at" ...
+..$ : chr [1:36] "UICC.2" "UICC.3" "UICC.3" "UICC.2" ...
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data(p53.signalling)
+#boxplot(p53.signalling[group.info==0,1],p53.signalling[group.info==1,1])
+</pre>
+
+
+
+<hr><div align="center">[Package <em>GlobalAncova</em> version 1.2 <a href="00Index.html">Index]</a></div>
+
+</body></html>

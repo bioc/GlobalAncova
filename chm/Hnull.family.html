@@ -1,0 +1,79 @@
+<html><head><title>Family of null hypotheses closed under intersection</title>
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>Hnull.family(GlobalAncova)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   Hnull.family">
+<param name="keyword" value=" Family of null hypotheses closed under intersection">
+</object>
+
+
+<h2>Family of null hypotheses closed under intersection</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Creates new groups of genes by building unions of the given pathways.
+Each group of genes corresponds to the null hypothesis that those genes are
+not differentially expressed. All groups together build a family
+of null hypotheses that is closed under intersection.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Hnull.family(test.genes)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>test.genes</code></td>
+<td>
+A list of pathways that shall be tested, each containing gene names.</td></tr>
+</table>
+
+<h3>Value</h3>
+
+<p>
+A list of groups of genes each corresponding to one hypothesis.</p>
+
+<h3>Note</h3>
+
+<p>
+For internal use.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>
+Reinhard Meister <a href="mailto:meister@tfh-berlin.de">meister@tfh-berlin.de</a><br>
+Ulrich Mansmann <a href="mailto:mansmann@ibe.med.uni-muenchen.de">mansmann@ibe.med.uni-muenchen.de</a><br>
+Manuela Hummel <a href="mailto:hummel@ibe.med.uni-muenchen.de">hummel@ibe.med.uni-muenchen.de</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Marcus, R., Peritz, E. and Gabriel, K. R., 1976, On closed testing procedures
+with special reference to ordered analysis of variance, <EM>Biometrika</EM> 63 (3): 655&ndash;660.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="GlobalAncova.html">GlobalAncova</a></code>, <code><a href="GlobalAncova.closed.html">GlobalAncova.closed</a></code>, <code><a href="Plot.genes.html">Plot.genes</a></code>, <code><a href="Plot.subjects.html">Plot.subjects</a></code>
+</p>
+
+
+
+<hr><div align="center">[Package <em>GlobalAncova</em> version 1.2 <a href="00Index.html">Index]</a></div>
+
+</body></html>
