@@ -79,8 +79,7 @@ we refer to the paper by Mansmann and Meister, 2005 \cite{MaMei:05}.
 This document shows the functionality of the R-package
 \Rpackage{GlobalAncova}. 
 The datasets, all necessary R--packages and our package \Rpackage{GlobalAncova}
-are available from the Bioconductor website ({\it www.bioconductor.org}) and 
-from CRAN ({\it www.r-project.org}), respectively.
+are available from the Bioconductor website ({\it www.bioconductor.org}).
 
 First we load the packages and data we will use.
 
