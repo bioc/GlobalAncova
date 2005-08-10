@@ -42,29 +42,14 @@ function(xx,group,covars=NULL,test.genes,previous.test=NULL,level=0.05,perm=1000
       	    result.i[j, 1]   <- length(new.data[[related[j]]])
 	    result.i[j, 2:4] <- round(ga, 4)
 	    just.tested      <- c(just.tested, name.j)
-
-            # stop if one of the hypotheses can not be rejected
-    	    if(ga[2] > level)
-	    {
-		sig          <- sig[sig != i]
-		nsig         <- c(nsig, i)
-		break
-	    }
 	  }
+	  
 	  else
 	  {
 	    ga               <- GlobalAncova(xx[new.data[[related[j]]], ],group=group,covars=covars,perm=perm)
 	    result.i[j, 1]   <- length(new.data[[related[j]]])
 	    result.i[j, 2:4] <- round(ga[[2]][1:3], 4)
 	    just.tested      <- c(just.tested, name.j)
-
-            # stop if one of the hypotheses can not be rejected
-	    if(ga[[2]][2] > level)
-	    {
-		sig          <- sig[sig != i]
-		nsig         <- c(nsig, i)
-		break
-	    }
 	  }
 	}
 	
@@ -80,6 +65,14 @@ function(xx,group,covars=NULL,test.genes,previous.test=NULL,level=0.05,perm=1000
         # nodes that have been tested before with GlobalAncova (with specified 'test.genes')
         else
           result.i[j, ]      <- previous.test[name.j, ]
+
+        # stop if one of the hypotheses can not be rejected
+	if(result.i[j, 3] > level)
+	{
+	  sig          <- sig[sig != i]
+	  nsig         <- c(nsig, i)
+	  break
+	}
       }
     result            <- c(result, list(result.i))
   }

@@ -376,8 +376,8 @@ testing procedure.
 For this approach you need a family of null hypotheses that is closed
 under intersection. Then a single hypothesis can be rejected at level $\alpha$ if it
 is rejected along with all hypotheses included in it (Marcus et al. 1976).
-We choose only the four pathways that have p--values $< 0.05$ for demonstrating the 
-adjustment because the other one is not significant anyway.
+To keep things simple we choose only the four pathways that have p--values $< 0.05$ for demonstrating the 
+adjustment.
 
 For the adjustment according to Bonferroni and Holm we build a vector of
 the raw p--values. The function \Rfunction{mt.rawp2adjp} provides several adjusting
