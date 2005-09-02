@@ -18,6 +18,8 @@
 
 \begin{document}
 
+\setkeys{Gin}{width=0.63\textwidth}
+
 \maketitle \tableofcontents \newpage
 
 \section{Abstract}
@@ -314,7 +316,7 @@ adjust=as.data.frame(cov.info))
 gt.table.2
 @
 
-\noindent {\bf Sex or Location of the tumor as Phenotype}\\
+\noindent {\bf Sex or Location of the Tumor as Phenotype}\\
 In contrast to the results above using stage as the clinical outcome if we had used sex or location as phenotype there would be no evidence of differential gene expression between the respective groups.
 For Goeman's test we get again similar results with slightly smaller p--values.
 
@@ -358,6 +360,8 @@ With the \Rfunction{globaltest} we get a similar matrix.
 
 <<gt.kegg, results=hide>>=
 gt.kegg <- globaltest(golubX, "ALL.AML", kegg[1:5])
+@
+<<>>=
 gt.kegg
 @
 
@@ -376,8 +380,6 @@ testing procedure.
 For this approach you need a family of null hypotheses that is closed
 under intersection. Then a single hypothesis can be rejected at level $\alpha$ if it
 is rejected along with all hypotheses included in it (Marcus et al. 1976).
-To keep things simple we choose only the four pathways that have p--values $< 0.05$ for demonstrating the 
-adjustment.
 
 For the adjustment according to Bonferroni and Holm we build a vector of
 the raw p--values. The function \Rfunction{mt.rawp2adjp} provides several adjusting
@@ -385,13 +387,12 @@ methods. We here display only the raw and ``Holm'' adjusted p--values.
 To obtain the original order of the pathways we order the result of \Rfunction{mt.rawp2adjp} according to \Robject{index}.
 
 <<>>=
-ga.kegg.raw <- ga.kegg[c(1,2,3,5), 3]
+ga.kegg.raw <- ga.kegg[1:5, 3]
 ga.kegg.adj <- mt.rawp2adjp(ga.kegg.raw)
 ga.kegg.adj$adjp[order(ga.kegg.adj$index) ,c("rawp", "Holm")]
 @
 
-The adjusted p--values are in general larger than the raw p--values
-but still all four pathways are significant.
+After correcting besides pathway ``00472'' also pathway ``00471'' turns out to be not significant. 
 
 
 \subsection{Closed Testing Procedure}
@@ -404,60 +405,75 @@ hypotheses by building all intersections between the four ``natural'' hypotheses
 tested above and all intersections of those new hypotheses and so on. 
 
 The resulting family of hypotheses can be illustrated in a directed graph. 
-The node ``1-2-3-4'' for example stands for the global hypothesis that the genes
-of all four selected pathways are not differentially expressed.
+The node ``1-2-3-4-5'' for example stands for the global hypothesis that the genes
+of all five selected pathways are not differentially expressed.
 Now the interesting hypothesis ``1'' for example can be rejected if also the hypotheses
-``1-2-3-4'',``1-2-3'',``1-2-4'',``1-3-4'',``1-2'',``1-3'' and ``1-4'' are rejected.
+``1-2-3-4-5'', ``1-2-3-4'', $\ldots$, ``1-3-4-5'', ``1-2-3'', $\ldots$, ``1-4-5'', ``1-2'', $\ldots$, ``1-5'' are rejected.
 These relationships are represented by the edges of the graph.
 Note that the required package \Rpackage{Rgraphviz} for plotting the graph
 currently only is available for Unix/Linux.
 
-
-<<eval=F>>=
-plot(graph, nodeAttrs=att)
-@
-
 <<hypoth, echo=F, fig=T>>=
 if(require(Rgraphviz))
 {
-  res <- Hnull.family(kegg[c(1,2,3,5)])
-  graph <- new("graphNEL", nodes=names(res), edgemode="directed")
-  graph <- addEdge(from=c(rep(names(res)[15],4),rep(names(res)[10],3),rep(names(res)[11],3),
-  rep(names(res)[13],3),rep(names(res)[14],3),rep(names(res)[5],2),rep(names(res)[6],2),
-  rep(names(res)[7],2),rep(names(res)[8],2),rep(names(res)[9],2),rep(names(res)[12],2)), 
-  to=c(names(res)[10],names(res)[11],names(res)[13],names(res)[14],names(res)[5],names(res)[6],
-  names(res)[8],names(res)[5],names(res)[7],names(res)[9],names(res)[6],names(res)[7],names(res)[12],
-  names(res)[8],names(res)[9],names(res)[12],names(res)[1],names(res)[2],names(res)[1],names(res)[3],
-  names(res)[1],names(res)[4],names(res)[2],names(res)[3],names(res)[2],names(res)[4],names(res)[3],
-  names(res)[4]), graph, weights=rep(1, 28))
+res <- Hnull.family(kegg[1:5])
+graph <- new("graphNEL", nodes=names(res), edgemode="directed")
+graph <- addEdge(from=c(rep(names(res)[31],5),rep(names(res)[22],4),rep(names(res)[23],4),rep(names(res)[27],4)
+  ,rep(names(res)[29],4),rep(names(res)[30],4),rep(names(res)[13],3),rep(names(res)[14],3),rep(names(res)[15],3)
+  ,rep(names(res)[19],3),rep(names(res)[18],3),rep(names(res)[25],3),rep(names(res)[20],3),rep(names(res)[21],3)
+  ,rep(names(res)[26],3),rep(names(res)[28],3),rep(names(res)[6],2),rep(names(res)[7],2),rep(names(res)[8],2)
+  ,rep(names(res)[9],2),rep(names(res)[10],2),rep(names(res)[11],2),rep(names(res)[12],2),rep(names(res)[16],2)
+  ,rep(names(res)[17],2),rep(names(res)[24],2)),
+to=c(names(res)[22],names(res)[23],names(res)[27],names(res)[29],names(res)[30],names(res)[13],names(res)
+      [14],names(res)[18],names(res)[20],names(res)[13],names(res)[15],names(res)[19],names(res)[21],names(res)[14],
+names(res)[15],names(res)[25],names(res)[26],names(res)[18],names(res)[19],names(res)[25],names(res)[28],names(res)[20],
+names(res)[21],names(res)[26],names(res)[28],names(res)[6],names(res)[7],names(res)[10],names(res)[6],names(res)[8],
+names(res)[11],names(res)[6],names(res)[9],names(res)[12],names(res)[7],names(res)[9],names(res)[17],names(res)[7],
+names(res)[8],names(res)[16],names(res)[8],names(res)[9],names(res)[24],names(res)[10],names(res)[11],names(res)[16],
+names(res)[10],names(res)[12],names(res)[17],names(res)[11],names(res)[12],names(res)[24],names(res)[16],names(res)[17],
+names(res)[24],names(res)[1],names(res)[2],names(res)[1],names(res)[3],names(res)[1],names(res)[4],names(res)[1],
+names(res)[5],names(res)[2],names(res)[3],names(res)[2],names(res)[4],names(res)[2],names(res)[5],names(res)[3],
+names(res)[4]
+,names(res)[3],names(res)[5],names(res)[4],names(res)[5]),
+graph, weights=rep(1, 75))
 
-  att <- list()
-  lab <- c("1","2","3","4","1-2","1-3","1-4","2-3","2-4","1-2-3","1-2-4","3-4","1-3-4","2-3-4","1-2-3-4")
-  names(lab) <- names(res)
-  att$label <- lab
+att <- list()
+lab <- c("1","2","3","4","5","1-2","1-3","1-4","1-5","2-3","2-4","2-5","1-2-3","1-2-4","1-2-5",
+  "3-4","3-5","1-3-4","1-3-5","2-3-4","2-3-5","1-2-3-4","1-2-3-5","4-5","1-4-5","2-4-5",
+   "1-2-4-5","3-4-5","1-3-4-5","2-3-4-5","1-2-3-4-5")
+names(lab) <- names(res)
+att$label <- lab
 
-  plot(graph, nodeAttrs=att)
+plot(graph, nodeAttrs=att)
 }
 @
 
 We can compute the closed testing procedure using the function
 
 <<closed.test>>=
-ga.closed <- GlobalAncova.closed(xx=exprs(golubX), group=gr, test.genes=kegg[c(1,2,3,5)], previous.test=ga.kegg, level=0.05, perm=1000)
+ga.closed <- GlobalAncova.closed(xx=exprs(golubX), group=gr, test.genes=kegg[1:5], previous.test=ga.kegg, level=0.05, perm=100)
 @
 
 where \Rfunarg{test.genes} is again a list of pathways. In order to shorten computing time we can provide
 the results of the previous application of \Rfunction{GlobalAncova} for the pathways of interest.
 The option \Rfunarg{level} allows to manipulate the level of significance. \Rfunarg{perm} again gives the desired number of permutations used in the permutation test. 
 
-The function \Rfunction{GlobalAncova.closed} provides the formed null hypotheses (this means lists of genes to be tested simultaneously), the test results for each pathway of interest and the names of significant and not significant pathways.
+The function \Rfunction{GlobalAncova.closed} provides the formed null hypotheses 
+(this means lists of genes to be tested simultaneously), the test results for each pathway 
+of interest and the names of significant and not significant pathways.
+If for a pathway one single hypothesis can not be rejected there is no need to test all the 
+remaining hypotheses. That is why in test results of not significant pathways the lines 
+are filled with NA's after a p--value $> \alpha$ occured.
+
 
 <<names.closed.test>>=
 names(ga.closed)
 ga.closed$test.results
+ga.closed$significant
+ga.closed$not.significant
 @
 
-Here also all four pathways turn out to be significant.
+We get the same significant and not significant pathways as before.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -566,6 +582,8 @@ Plot.subjects(exprs(golubX), gr)
 \end{center}
 \end{figure}
 
+\clearpage
+
 \begin{figure}[htb!]
 \begin{center}
 <<gt_subjects, fig=TRUE, echo=F>>=
@@ -578,8 +596,6 @@ sampleplot(gt.cc)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\clearpage
 
 
 \section{Acknowledgements}
