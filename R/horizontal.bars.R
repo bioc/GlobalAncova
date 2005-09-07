@@ -19,7 +19,7 @@ function(x,xlabel="",ylabel="",color=NULL,labelsize=.75,bar.names=NULL)
                    plot.new()
         w       <- 1.5 * max(strwidth(bar.names, "inches", labelsize))
         oldmai  <- par("mai")
-                   par(mai=c(oldmai[1:3],max(w,oldmai[4])))
+                   par(mai=c(oldmai[1:3],max(w,oldmai[4])), new=TRUE)
     }
         # plotting bars with border=F nothing appears color is NULL
 
