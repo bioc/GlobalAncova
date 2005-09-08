@@ -18,8 +18,6 @@
 
 \begin{document}
 
-\setkeys{Gin}{width=0.63\textwidth}
-
 \maketitle \tableofcontents \newpage
 
 \section{Abstract}
@@ -344,7 +342,7 @@ We regard the possibility to investigate differential gene expression simultaneo
 The user can apply \Rfunction{GlobalAncova} to compute p--values for a couple of pathways with one call by specifying the \Rfunarg{test.genes} option.  The members of each pathway to be tested must belong to genes in the expression--matrix.
 Afterwards a suitable correction for multiple testing has to be applied. An alternative based on the closed testing approach is described later.
 
-Suppose for example that we want to test the first five KEGG pathways. We proceed as follows.
+Suppose for example that we want to test the first five KEGG pathways with the Golub data. We proceed as follows.
 
 <<kegg>>=
 ga.kegg <- GlobalAncova(exprs(golubX), gr, test.genes=kegg[1:5], perm=1000) 
@@ -478,6 +476,8 @@ We get the same significant and not significant pathways as before.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\setkeys{Gin}{width=0.6\textwidth}
+
 \section{Diagnostic Plots}
 
 There are two types of diagnostic plots available to help interpret the 
@@ -486,6 +486,8 @@ The \Rfunction{Plot.genes} visualizes the
 influence of individual genes on the test result while the
 \Rfunction{Plot.subjects} visualizes the influence of individual 
 samples. Both plots are based on the decomposition of sums of squares.
+
+We use again the Golub data for demonstration of the plot functions.
 
 
 \subsection{Gene Plot}
@@ -526,9 +528,11 @@ plot(gp.cc[1:40])
 Plot.genes(exprs(golubX)[cellcycle[1:40], ], gr)
 @
 \vspace{-0.4cm}
-\caption{Gene Plot with \Rpackage{GlobalAncova}. The bar height indicates the influence of the respective gene on the test 
+\caption{{\small Gene Plot for the Golub data with \Rpackage{GlobalAncova}. 
+Shown are the first 40 genes of the cell cycle pathway. The bar height indicates the influence of the respective gene on the test 
 statistic. The colour shows in which of the phenotype groups
-the gene has higher expression values. The reference line is the residual mean square error per gene.}
+the gene has higher expression values. The reference line is the residual mean square 
+error per gene.}}
 \end{center}
 \end{figure}
 
@@ -538,9 +542,12 @@ the gene has higher expression values. The reference line is the residual mean s
 plot(gp.cc[1:40])
 @
 \vspace{-0.4cm}
-\caption{Gene Plot with \Rpackage{globaltest}. The bar height indicates the influence of the respective gene on the test 
+\caption{{\small Gene Plot for the Golub data with \Rpackage{globaltest}. 
+Shown are the first 40 genes of the cell cycle pathway. The bar height indicates the influence of the respective gene on the test 
 statistic. The colour shows in which of the phenotype groups
-the gene has higher expression values. The reference line gives the expected height of the bar under the null hypothesis. Marks indicate with how many standard deviations the bar exceeds the reference line.}
+the gene has higher expression values. The reference line gives the expected height of the 
+bar under the null hypothesis. Marks indicate with how many standard deviations the bar 
+exceeds the reference line.}}
 \end{center}
 \end{figure}
 
@@ -578,7 +585,10 @@ sampleplot(gt.cc)
 Plot.subjects(exprs(golubX), gr)
 @
 \vspace{-0.4cm}
-\caption{Subjects Plot with \Rpackage{GlobalAncova}. The bar height indicates the influence of the respective sample on the test result. If an individual does not fit into the pattern of its phenotype, negative values can occur. Bars are coloured corresponding to groups.}
+\caption{{\small Subjects Plot for the Golub data with \Rpackage{GlobalAncova}. The bar height 
+indicates the influence of the respective sample on the test result. If an individual does 
+not fit into the pattern of its phenotype, negative values can occur. Bars are coloured 
+corresponding to groups.}}
 \end{center}
 \end{figure}
 
@@ -590,7 +600,12 @@ Plot.subjects(exprs(golubX), gr)
 sampleplot(gt.cc)
 @
 \vspace{-0.4cm}
-\caption{Subjects Plot with \Rpackage{globaltest}. The bar height indicates the influence of the respective sample on the test result. If an individual does not fit into the pattern of its phenotype, negative values can occur. Bars are coloured corresponding to groups. The reference line shows the expected influence of the samples under the null hypothesis. Marks on the bars indicate the standard deviation of the influence of the sample under the null hypothesis.}
+\caption{{\small Subjects Plot for the Golub data with \Rpackage{globaltest}. The bar height 
+indicates the influence of the respective sample on the test result. If an individual does 
+not fit into the pattern of its phenotype, negative values can occur. Bars are coloured 
+corresponding to groups. The reference line shows the expected influence of the samples 
+under the null hypothesis. Marks on the bars indicate the standard deviation of the influence 
+of the sample under the null hypothesis.}}
 \end{center}   
 \end{figure}
 
