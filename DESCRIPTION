@@ -17,7 +17,7 @@ Description: We give the following arguments in support of the
         correlation. The test statistic however mirrors deviations
         from the null hypothesis. In combination with a permutation
         approach, empirical significance levels can be approximated .
-biocViews: Microarray,OneChannel,Statistics,DifferentialExpression,Pathways
+biocViews: Microarray, OneChannel, Statistics, DifferentialExpression, Pathways
 Maintainer: R. Meister <meister@tfh-berlin.de>
 Depends: multtest
 License: GPL Version 2 or newer
