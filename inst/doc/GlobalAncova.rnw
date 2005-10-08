@@ -460,6 +460,9 @@ names(lab) <- names(res)
 att$label <- lab
 
 plot(graph, nodeAttrs=att)
+} else {
+plot(1, 1, type="n", main="This plot requires Rgraphviz", 
+     axes=FALSE, xlab="", ylab="")
 }
 @
 
