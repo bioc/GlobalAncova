@@ -1,5 +1,5 @@
 % \VignetteIndexEntry{GlobalAncova}
-% \VignetteDepends{GlobalAncova, multtest}
+% \VignetteDepends{GlobalAncova, multtest, globaltest, golubEsets, hu6800, vsn}
 % \VignetteKeywords{Expression Analysis}
 % \VignettePackage{GlobalAncova}
 
@@ -88,7 +88,6 @@ library(golubEsets)
 library(hu6800)
 library(vsn)
 library(multtest)
-require(Rgraphviz)
 
 data(golubMerge)
 golubM <- update2MIAME(golubMerge)
