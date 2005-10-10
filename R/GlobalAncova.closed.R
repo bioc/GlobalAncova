@@ -56,10 +56,18 @@ function(xx,group,covars=NULL,test.genes,previous.test=NULL,level=0.05,perm=1000
 	# nodes that have been tested before within this function
 	else if(tested == TRUE & prev.tested == FALSE)
 	{
-          res.nodes          <- lapply(result, function(x) rownames(x))
           list.ind           <- lapply(res.nodes, function(x) name.j %in% x)
-          row.ind            <- which(rownames(result[list.ind==T][1][[1]]) %in% name.j)
-          result.i[j, ]      <- result[list.ind==T][1][[1]][row.ind, ]
+          
+          # the correct result has to be taken (there might be also rows with only NA's)
+          list.ind2          <- 1
+          if(sum(unlist(list.ind)) > 1)
+          {
+            res.lines        <- lapply(result[list.ind==T], function(x) x[rownames(x) == name.j])
+            noNAs            <- lapply(res.lines, function(x) !is.na(sum(x)))
+            list.ind2        <- which(unlist(noNAs)==TRUE)
+          }
+          row.ind            <- which(rownames(result[list.ind==T][list.ind2[1]][[1]]) %in% name.j)
+          result.i[j, ]      <- result[list.ind==T][list.ind2[1]][[1]][row.ind, ]
         }
         
         # nodes that have been tested before with GlobalAncova (with specified 'test.genes')
@@ -75,6 +83,7 @@ function(xx,group,covars=NULL,test.genes,previous.test=NULL,level=0.05,perm=1000
 	}
       }
     result            <- c(result, list(result.i))
+    res.nodes          <- lapply(result, function(x) rownames(x))
   }
   names(result)       <- names(new.data)[1:length(test.genes)]
   sig.nodes           <- names(new.data[sig])

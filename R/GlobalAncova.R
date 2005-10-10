@@ -83,7 +83,7 @@ SS         <- c(SS.total,SS.adjst,SS.gr.x.ge,SS.full)
 DF         <- c(N.genes*N.subjects-1,DF.adjst,DF.group+DF.gr.ge,DF.resid)
 MS         <- SS/DF
 #F.value   <- c(NA,NA,((SS.group+SS.gr.ge)/(DF.group+DF.gr.ge))/MS[4],NA)
-F.value    <- c(NA,NA,((SS.gr.x.ge)/(DF.group+DF.gr.ge))/MS[4],NA)
+F.value    <- c(NA, NA, MS[3]/MS[4], NA)
         
 ANOVA.tab            <- cbind(SS, DF, MS)
 dimnames(ANOVA.tab)  <- list(c("Total","Genes adjusted","GroupXGenes","Residual"), c("SS", "DF", "MS"))
