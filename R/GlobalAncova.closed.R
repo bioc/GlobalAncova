@@ -19,10 +19,11 @@ function(xx,group,covars=NULL,test.genes,previous.test=NULL,level=0.05,perm=1000
   for(i in 1:length(test.genes))
   {
     # hypotheses that must be tested "before" testing the end node
-    related            <- grep(names(new.data)[i], names(new.data))
-    len                <- lapply(names(new.data[related]), nchar)
-    related            <- related[order(unlist(len))]
-    
+    intersection       <- lapply(new.data, function(x) match(test.genes[[i]], x))  # Durchschn. zw. Kn. i u. jeweils anderem
+    intlength          <- lapply(intersection, function(x) sum(!is.na(x)))
+    included           <- lapply(intlength, function(x) x==length(test.genes[[i]])) # Kn., in denen Kn. i enthalten ist
+    related            <- which(unlist(included))
+
     result.i           <- matrix(NA, length(related), 4)
     dimnames(result.i) <- list(names(new.data[related]), c("genes","F.value","p.value.perm","p.value.theo"))
 
@@ -83,15 +84,12 @@ function(xx,group,covars=NULL,test.genes,previous.test=NULL,level=0.05,perm=1000
 	}
       }
     result            <- c(result, list(result.i))
-    res.nodes          <- lapply(result, function(x) rownames(x))
+    res.nodes         <- lapply(result, function(x) rownames(x))
   }
   names(result)       <- names(new.data)[1:length(test.genes)]
   sig.nodes           <- names(new.data[sig])
   nsig.nodes          <- names(new.data[nsig])
-  #hypotheses         <- names(new.data)
-  #endresult          <- list(hypotheses, new.data, result, sig.nodes, nsig.nodes)
   endresult           <- list(new.data, result, sig.nodes, nsig.nodes)
-  #names(endresult)   <- c("hypotheses","new.data","test.results","significant","not.significant")
   names(endresult)    <- c("new.data","test.results","significant","not.significant")
   return(endresult)
 }
