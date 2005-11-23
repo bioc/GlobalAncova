@@ -127,12 +127,17 @@ order           <- sample.use(i,method)
 xx.perm         <- rr.redu[,order]
 
 # correct for permutation of covars if present
+if(!is.null(covars))
+{
 X.perm.full     <- X.full[order,]
 X.perm.full[,2] <- group
 H.perm.full     <- hat.matrix(X.perm.full)
 
 rr.full.perm    <- xx.perm%*%(I-H.perm.full)
-       
+}
+else
+  rr.full.perm   <- xx.perm%*%(I-H.full)
+  
 SS.resid        <- sum(rr.full.perm*rr.full.perm)
 
 # use SS.redu from original fit
