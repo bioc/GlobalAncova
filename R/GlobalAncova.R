@@ -1,17 +1,16 @@
 "GlobalAncova" <-
 function(xx,group,covars=NULL,perm=10000,test.genes=NULL)
 {
+# if just one gene should be tested
+if(is.vector(xx))
+  xx <- t(as.matrix(xx))
+if(is.null(rownames(xx)))
+  rownames(xx)             <- 1:dim(xx)[1]
 if(is.null(test.genes))
   test.genes               <- list(rownames(xx))
 if(!is.list(test.genes))
   test.genes               <- list(test.genes)
 
-# if just one gene should be tested
-if(is.vector(xx))
-  ANOVA.list               <- GlobalAncova.1gene(xx, group, perm)
-
-else
-{
 many.pathways              <- matrix(0, length(test.genes), 4)
 dimnames(many.pathways)    <- list(names(test.genes), c("genes", "F.value", "p.value.perm", "p.value.theo"))
 
@@ -19,20 +18,13 @@ for(j in 1:length(test.genes))
 {						
 xx2 <- xx[test.genes[[j]], ]
 
+# if a pathway contains only one gene
+if(is.vector(xx2))
+  xx2 <- t(as.matrix(xx2))
+
 # dimensions
 N.subjects                 <- dim(xx)[[2]]
 N.genes                    <- dim(xx2)[[1]]
-
-# if a pathway contains only one gene
-if(is.vector(xx2))
-{
-        ANOVA.list            <- GlobalAncova.1gene(xx2, group, perm)
-        many.pathways[j, 1]   <- 1
-        many.pathways[j, 2:4] <- ANOVA.list
-}
-
-else
-{
 
 # design matrices
 # Full Model
@@ -156,8 +148,6 @@ ANOVA.list            <- list("ANOVA.table"=ANOVA.tab,"test.result.GroupXGenes"=
 many.pathways[j, 1]   <- as.numeric(length(test.genes[[j]]))
 many.pathways[j, 2:4] <- round(test.result[1:3], 4)
 }	
-}
-}
 
 if(length(test.genes) == 1)
   return(ANOVA.list)	
