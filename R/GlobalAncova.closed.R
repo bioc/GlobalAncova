@@ -4,7 +4,7 @@ function(xx,group,covars=NULL,test.genes,previous.test=NULL,level=0.05,perm=1000
   # xx: gene expression matrix
   # group: vector containing the group information; must be coded as 0-1
   # covars: covariate information
-  # test.genes: list of pathways (each containing a vector of genes)
+  # test.genes: named list of pathways (each containing a vector of genes)
   # previous.test: result of a GlobalAncova with many pathways simultaneously
   # level: alpha
   # perm: number of permutations
@@ -36,22 +36,10 @@ function(xx,group,covars=NULL,test.genes,previous.test=NULL,level=0.05,perm=1000
         # if node has not been tested before
 	if(tested == FALSE & prev.tested==FALSE)
 	{
-          # if there is only one gene in the pathway
-	  if(length(new.data[[related[j]]]) == 1)
-	  {
-	    ga               <- GlobalAncova(xx[new.data[[related[j]]],],group=group,perm=perm)
-      	    result.i[j, 1]   <- length(new.data[[related[j]]])
-	    result.i[j, 2:4] <- round(ga, 4)
-	    just.tested      <- c(just.tested, name.j)
-	  }
-	  
-	  else
-	  {
 	    ga               <- GlobalAncova(xx[new.data[[related[j]]], ],group=group,covars=covars,perm=perm)
 	    result.i[j, 1]   <- length(new.data[[related[j]]])
 	    result.i[j, 2:4] <- round(ga[[2]][1:3], 4)
 	    just.tested      <- c(just.tested, name.j)
-	  }
 	}
 	
 	# nodes that have been tested before within this function
