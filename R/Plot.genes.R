@@ -1,57 +1,101 @@
-"Plot.genes" <-
-function (xx, group, covars = NULL)
+setGeneric("Plot.genes", function(xx,formula.full,formula.red,model.dat,group,covars=NULL,
+                         test.terms,colorgroup=NULL,legendpos="topright")
+            standardGeneric("Plot.genes"))
+# xx: expression matrix (rows=genes, columns=subjects)
+# formula.full: model formula for the full model
+# formula.red: model formula for the reduced model
+# model.dat: data frame that contains the group and covariable information
+# group: group variable
+# covars: covariate information
+# test.terms: character vector of terms of interest
+# colorgroup: character variable giving the group that specifies coloring
+# legendpos: position of the legend
+
+
+############################# allgemeine Funktion ##############################
+
+setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red="formula",
+                          group="missing",covars="missing",test.terms="missing"),
+          definition = function(xx,formula.full,formula.red,model.dat,colorgroup=NULL,legendpos="topright")
 {
-# basic analysis
+  # test for model.dat
+  if(!is.data.frame(model.dat))
+    stop("'model.dat' has to be a data frame")
 
-   N.subjects   <- dim(xx)[[2]]
-   N.genes      <- dim(xx)[[1]]
-   X.full       <- cbind(1, group, covars)
-   X.redu       <- cbind(rep(1, N.subjects), covars)
-   hat.matrix   <- function(x)
-   {
-       x %*% solve(t(x) %*% x) %*% t(x)
-   }
-   H.full       <- hat.matrix(X.full)
-   H.redu       <- hat.matrix(X.redu)
-   I            <- diag(N.subjects)
-   X.addi       <- matrix(group %*% (I - H.redu), N.genes, N.subjects, byrow <- TRUE)
-   project      <- function(v, w)
-   {
-       (sum(v * w)/sum(w * w)) * w
-   }
-   rr.full      <- xx %*% (I - H.full)
-   rr.redu      <- xx %*% (I - H.redu)
+  # basic analysis
+  res <- reduSQ(xx=xx,formula.full=formula.full,formula.red=formula.red,model.dat=model.dat)
+  redu.SSQ.Genes    <- res$redu.genes
+  msE.genes         <- res$mse
 
-#   modification if test for interaction only is intended
-#   rr.addi      <- rr.redu - project(rr.redu, X.addi)
-
-# reduction sum of squares and mean square error
-
-   redu.sq           <- rr.redu^2-rr.full^2
-
-   redu.SSQ.subjects <- apply(redu.sq,2,sum)
-   redu.SSQ.genes    <- apply(redu.sq,1,sum)
-   msE.genes         <- rowSums(rr.full^2)/(N.subjects-dim(X.full)[2])
-
-# determination of upregulation
-
-   up         <- 0 < (apply(xx[,group==1],1,mean)-apply(xx[,group==0],1,mean))
-
-# plotting results
-
-   horizontal.bars(
-    x         = rev(redu.SSQ.genes),
-    xlabel    = "Reduction in Sum of Squares",
-    ylabel    = "Genes",
-    color     = 3-rev(up),
-    bar.names = rev(rownames(xx))
-   )
-
-#pp       <- rev(sort(c(-.5+(1:N.genes),.5+(1:N.genes)))) <<<<DAS WAR LEIDER FALSCH !!!!!
-pp        <- sort(c(-.5+(1:N.genes),.5+(1:N.genes)))
-vv        <- rev(rep(msE.genes,rep(2,N.genes)))
-lines(vv,pp,type="s",lwd=2)
-
-legend("topright", c("higher expression in group 0", "higher expression in group 1"), col=c(3,2), pch=15) #!
+  # plot
+  plotgenes(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos)
 }
+)
+
+
+########################## 'alte' Fkt. für 2 Gruppen ###########################
+
+setMethod("Plot.genes", signature(xx="matrix",formula.full="missing",formula.red="missing",
+                          model.dat="missing",group="numeric",test.terms="missing"),
+          definition = function(xx,group,covars=NULL,colorgroup=NULL,legendpos="topright")
+{
+  # 'group' is assumed to be the variable relevant for coloring
+  if(is.null(colorgroup))
+    colorgroup <- deparse(substitute(group))
+
+  # group name
+  group.name   <- deparse(substitute(group))
+
+  if(is.null(dim(covars)))
+    covar.names <- deparse(substitute(covars))
+  else
+    covar.names <- colnames(covars)
+
+  # get formulas and 'model.dat' out of 'group' and 'covars'
+  res          <- group2formula(group=group, group.name=group.name, covars=covars, covar.names)
+  formula.full <- res$formula.full
+  formula.red  <- res$formula.red
+  model.dat    <- res$model.dat
+
+  # basic analysis
+  res <- reduSQ(xx=xx,formula.full=formula.full,formula.red=formula.red,model.dat=model.dat)
+  redu.SSQ.Genes <- res$redu.genes
+  msE.genes      <- res$mse
+
+  # plot
+  plotgenes(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos)
+}
+)
+
+
+################### allgemeine Funktion m. Angabe v. 'terms' ###################
+
+setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red="missing",
+                          group="missing",covars="missing",test.terms="character"),
+          definition = function(xx,formula.full,test.terms,model.dat,colorgroup=NULL,legendpos="topright")
+{
+  # test for model.dat
+  if(!is.data.frame(model.dat))
+    stop("'model.dat' has to be a data frame")
+
+  # test for 'test.terms'
+  terms.all <- test.terms
+  D.full    <- model.matrix(formula.full, model.dat)
+  terms.all <- colnames(D.full)
+
+  # are all terms variables compatible with 'model.dat'?
+  if(!all(test.terms %in% terms.all))
+    stop("'test.terms' are not compatible with the specified models")
+
+  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=F]
+
+  # basic analysis
+  res <- reduSQ(xx=xx,formula.full=formula.full,D.red=D.red,model.dat=model.dat)
+  redu.SSQ.Genes <- res$redu.genes
+  msE.genes      <- res$mse
+
+  # plot
+  plotgenes(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos)
+}
+)
 

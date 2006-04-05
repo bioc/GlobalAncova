@@ -1,33 +1,80 @@
 \name{Plot.subjects}
 \alias{Plot.subjects}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Subjects Plot for Global Ancova  }
+\title{Subjects Plot for Global Ancova}
 \description{
   Produces a plot to show the influence of the samples on the test result produced by 'GlobalAncova'.
+
+  There are three possible ways of using \code{GlobalAncova}.
+  Also \code{Plot.subjects} can be invoked with these three alternatives.
   }
+
+\section{Methods}{
+\describe{
+\item{xx = "matrix", formula.full = "formula", formula.red = "formula", model.dat = "ANY", group = "missing", covars = "missing", test.terms = "missing"}{In this method, besides the expression matrix \code{xx}, model formulas for the full
+and reduced model and a data frame \code{model.dat} specifying corresponding model
+terms have to be given. Terms that are included in the full but not in the reduced
+model are those whose association with differential expression will be tested.
+The arguments \code{group}, \code{covars} and \code{test.terms} are '"missing"'
+since they are not needed for this method.}
+
+\item{xx = "matrix", formula.full = "formula", formula.red = "missing", model.dat = "ANY", group = "missing", covars = "missing", test.terms = "character"}{In this method, besides the expression matrix \code{xx}, a model formula for the full
+model and a data frame \code{model.dat} specifying corresponding model
+terms are required. The character argument \code{test.terms} names the terms of interest
+whose association with differential expression will be tested.
+The arguments \code{formula.red}, \code{group} and \code{covars} are '"missing"'
+since they are not needed for this method.}
+
+\item{xx = "matrix", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "numeric", covars = "ANY", test.terms = "missing"}{Besides the expression matrix \code{xx} a clinical variable \code{group} is
+required. Covariate adjustment is possible via the argument \code{covars} but
+more complex models have to be specified with the methods described above.
+This method emulates the function call in the first version of the package.
+The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
+\code{test.terms} are '"missing"' since they are not needed for this method.}
+}}
+
 \usage{
-Plot.subjects(xx, group, covars = NULL, sort = FALSE)
+\S4method{Plot.subjects}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, colorgroup = NULL, sort = FALSE, legendpos = "topright")
+
+\S4method{Plot.subjects}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, colorgroup = NULL, sort = FALSE, legendpos = "topright")
+
+\S4method{Plot.subjects}{matrix,missing,missing,missing,numeric,ANY,missing}(xx, group, covars = NULL, colorgroup = NULL, sort = FALSE, legendpos = "topright")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{xx}{A matrix of gene expression data, where columns correspond to samples
-              and rows to genes. The data should be properly normalized beforehand
-                  (and log- or otherwise transformed). Missing values are not allowed.
-                  Gene and sample names can be included as the row and column names of xx.}
-  \item{group}{A vector with the group membership information. In the given version group must be coded as \code{0-1}.}
-  \item{covars}{A vector or matrix which contains for each sample the covariate information.}
-  \item{sort}{Should the samples be ordered by group?}
+  \item{xx}{Matrix of gene expression data, where columns correspond to samples
+             and rows to genes. The data should be properly normalized beforehand
+             (and log- or otherwise transformed). Missing values are not allowed.
+             Gene and sample names can be included as the row and column
+             names of \code{xx}.}
+  \item{formula.full}{Model formula for the full model.}
+  \item{formula.red}{Model formula for the reduced model (that does not contain the terms of interest.)}
+  \item{model.dat}{Data frame that contains all the variable information for each sample.}
+  \item{group}{Vector with the group membership information.}
+  \item{covars}{Vector or matrix which contains the covariate information for each sample.}
+  \item{test.terms}{Character vector that contains names of the terms of interest.}
+  \item{colorgroup}{Character variable giving the group that specifies coloring.
+        If the function is called using the argument \code{group} then this variable is assumed to
+        be relevant for coloring.}
+  \item{sort}{Should the samples be ordered by \code{colorgroup}?}
+  \item{legendpos}{Position of the legend (a single
+     keyword from the list '"bottomright"', '"bottom"', '"bottomleft"',
+     '"left"', '"topleft"', '"top"', '"topright"', '"right"' and
+     '"center"').}
   }
 \author{
   Reinhard Meister \email{meister@tfh-berlin.de}\cr
-  Ulrich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}
+  Ulrich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}\cr
+  Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de}
   }
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
 \seealso{\code{\link{GlobalAncova}}, \code{\link{Plot.genes}}, \code{\link{GlobalAncova.closed}}}
 \examples{
-data(p53.signalling)
-data(group.info)
+data(vantVeer)
+data(phenodata)
 
-Plot.subjects(xx=p53.signalling, group=group.info, covars=NULL, sort=FALSE)
+Plot.subjects(xx = vantVeer, formula.full = ~metastases + ERstatus, formula.red = ~ERstatus, model.dat = phenodata, colorgroup = "metastases")
+Plot.subjects(xx = vantVeer, formula.full = ~metastases + ERstatus, test.terms = "metastases", model.dat = phenodata, colorgroup = "metastases")
+Plot.subjects(xx = vantVeer, group = phenodata$metastases, covars = phenodata$ERstatus)
 }
 \keyword{ hplot }

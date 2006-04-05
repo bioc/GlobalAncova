@@ -3,11 +3,11 @@ function(test.genes)
 {
   # 'Hnull.family' builds needed intersections of null hypotheses
   # test.genes: a list of pathways
-  
+
   new.nodes     <- list()
   name          <- list()
   new.data      <- test.genes
-  
+
   for(i in 1:length(test.genes))
   {
     for(j in 1:length(new.data))

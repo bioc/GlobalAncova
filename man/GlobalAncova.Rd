@@ -2,49 +2,105 @@
 \alias{GlobalAncova}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Global test for differential gene expression}
-\description{
- Computation of the sum of squares decomposition of gene-expression values according to a two way layout
- with gene and group as factors. Gene specific covariate effects are allowed. A MC approximation to a permutation-test
- for group main effect and gene: group interaction is provided.
- If just one gene should be tested a squared t-statistic which is equivalent to a F-statistic is computed.
- Corresponding p-values and permutation p-values are provided.
- }
+\description{Computation of a F-test for the association between expression values
+  and clinical entities. In many cases a two way layout
+  with gene and a dichotomous group as factors will be considered.
+  However, adjustment for other covariates and the analysis of arbitrary clinical variables,
+  interactions, gene co-expression, time series data and so on is also possible.
+  The test is carried out by comparison of corresponding linear models
+  via the extra sum of squares principle.
+  A MC approximation to a permutation-test is provided.
+  Corresponding p-values and permutation p-values are given.
+
+  There are three possible ways of using \code{GlobalAncova}. The general way is to define
+formulas for the full and reduced model, respectively, where the formula terms correspond
+to variables in \code{model.dat}.
+An alternative is to specify the full model and the name of the model terms
+that shall be tested regarding differential expression.
+In order to make this layout compatible with the
+function call in the first version of the package there is also a method where simply
+a group variable (and possibly covariate information) has to be given. This is maybe
+the easiest usage in cases where no 'special' effects like e.g. interactions are
+of interest.
+}
+
+\section{Methods}{
+\describe{
+\item{xx = "matrix", formula.full = "formula", formula.red = "formula", model.dat = "ANY", group = "missing", covars = "missing", test.terms = "missing"}{In this method, besides the expression matrix \code{xx}, model formulas for the full
+and reduced model and a data frame \code{model.dat} specifying corresponding model
+terms have to be given. Terms that are included in the full but not in the reduced
+model are those whose association with differential expression will be tested.
+The arguments \code{group}, \code{covars} and \code{test.terms} are '"missing"'
+since they are not needed for this method.}
+
+\item{xx = "matrix", formula.full = "formula", formula.red = "missing", model.dat = "ANY", group = "missing", covars = "missing", test.terms = "character"}{In this method, besides the expression matrix \code{xx}, a model formula for the full
+model and a data frame \code{model.dat} specifying corresponding model
+terms are required. The character argument \code{test.terms} names the terms of interest
+whose association with differential expression will be tested. The basic idea
+behind this method is that one can select single terms, possibly from the list of
+terms provided by previous \code{GlobalAncova} output, and test them without having
+to specify each time a model formula for the reduced model.
+The arguments \code{formula.red}, \code{group} and \code{covars} are '"missing"'
+since they are not needed for this method.}
+
+
+\item{xx = "matrix", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "numeric", covars = "ANY", test.terms = "missing"}{Besides the expression matrix \code{xx} a clinical variable \code{group} is
+required. Covariate adjustment is possible via the argument \code{covars} but
+more complex models have to be specified with the methods described above.
+This method emulates the function call in the first version of the package.
+The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
+\code{test.terms} are '"missing"' since they are not needed for this method.}
+}}
+
+
 \usage{
-GlobalAncova(xx, group, covars = NULL, perm = 10000, test.genes = NULL)
+\S4method{GlobalAncova}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, perm = 10000, test.genes = NULL)
+
+\S4method{GlobalAncova}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, perm = 10000, test.genes = NULL)
+
+\S4method{GlobalAncova}{matrix,missing,missing,missing,numeric,ANY,missing}(xx, group, covars = NULL, perm = 10000, test.genes = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{xx}{A matrix of gene expression data, where columns correspond to samples
+  \item{xx}{Matrix of gene expression data, where columns correspond to samples
              and rows to genes. The data should be properly normalized beforehand
              (and log- or otherwise transformed). Missing values are not allowed.
              Gene and sample names can be included as the row and column
              names of \code{xx}.}
-  \item{group}{A vector with the group membership information. In the given version group must be coded as \code{0-1}.}
-  \item{covars}{A vector or matrix which contains for each sample the covariate information.}
-  \item{perm}{The number of permutations to be used. The default is 10,000.}
-  \item{test.genes}{Vector of genes that shall be tested or list of pathways, each containing gene names.}
-  }
+  \item{formula.full}{Model formula for the full model.}
+  \item{formula.red}{Model formula for the reduced model (that does not contain the terms of interest.)}
+  \item{model.dat}{Data frame that contains all the variable information for each sample.}
+  \item{group}{Vector with the group membership information.}
+  \item{covars}{Vector or matrix which contains the covariate information for each sample.}
+  \item{test.terms}{Character vector that contains names of the terms of interest.}
+  \item{perm}{Number of permutations to be used. The default is 10,000.}
+  \item{test.genes}{Vector of gene names or a list where each element is a vector of gene names.}
+}
 \value{
-  An ANOVA table
+  A list with components
+  \item{effect}{Name(s) of the tested effect(s)}
+  \item{ANOVA}{ANOVA table}
+  \item{test.result}{F-value, theoretical p-value and permutation based p-value}
+  \item{terms}{Names of all model terms}
 }
-\references{
-Mansmann, U. and Meister, R., 2005, Testing differential gene expression
-in functional groups, \emph{Methods Inf Med} 44 (3).
-}
-\author{
-  Reinhard Meister \email{meister@tfh-berlin.de}\cr
-  Ulrich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}
-  }
+\references{Mansmann, U. and Meister, R., 2005, Testing differential gene expression
+in functional groups, \emph{Methods Inf Med} 44 (3).}
+\author{Reinhard Meister \email{meister@tfh-berlin.de}\cr
+  Ulrich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}\cr
+  Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de}}
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
 \seealso{\code{\link{Plot.genes}}, \code{\link{Plot.subjects}}, \code{\link{GlobalAncova.closed}}}
 \examples{
+data(vantVeer)
+data(phenodata)
+data(pathways)
+
 set.seed(123)
-data(p53.signalling)
-data(cov.info)
-data(group.info)
-table.1   <- GlobalAncova(xx=p53.signalling, group=group.info, covars=NULL, perm=10000, test.genes = NULL)
-table.2   <- GlobalAncova(xx=p53.signalling, group=group.info, covars=cov.info, perm=10000, test.genes = NULL)
-table.sex <- GlobalAncova(xx=p53.signalling, group=cov.info[,1], covars=NULL, perm=10000, test.genes = NULL)
-table.loc <- GlobalAncova(xx=p53.signalling, group=cov.info[,2], covars=NULL, perm=10000, test.genes = NULL)
+GlobalAncova(xx = vantVeer, formula.full = ~metastases + ERstatus, formula.red = ~ERstatus, model.dat = phenodata, test.genes=pathways[1], perm = 100)
+set.seed(123)
+GlobalAncova(xx = vantVeer, formula.full = ~metastases + ERstatus, test.terms = "metastases", model.dat = phenodata, test.genes=pathways[1], perm = 100)
+set.seed(123)
+GlobalAncova(xx = vantVeer, group = phenodata$metastases, covars = phenodata$ERstatus, test.genes=pathways[1], perm = 100)
 }
-\keyword{ models }
+\keyword{ models }% at least one, from doc/KEYWORDS
+

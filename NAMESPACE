@@ -1,0 +1,3 @@
+exportMethods(GlobalAncova, GlobalAncova.closed, Plot.genes, Plot.subjects)
+
+
