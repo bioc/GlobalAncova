@@ -570,7 +570,7 @@ geneplot(gt.vV)
 
 \begin{figure}[htb!]
 \begin{center}
-<<genes, fig=TRUE, echo=F>>=
+<<genes, fig=TRUE, echo=F, width=6, height=8>>=
 Plot.genes(xx=vantVeer[p53, ], group=metastases)
 @
 \vspace{-0.4cm}
@@ -640,7 +640,7 @@ Plot.genes(xx=vantVeer[p53, ], formula.full=~metastases, formula.red=~1, model.d
 
 \begin{figure}[htb!]
 \begin{center}
-<<genes2, fig=TRUE, echo=F>>=
+<<genes2, fig=TRUE, echo=F, width=6, height=8>>=
 Plot.genes(xx=vantVeer[p53, ], formula.full=~metastases, formula.red=~1, model.dat=phenodata, colorgroup="ERstatus")
 @
 \vspace{-0.4cm}
@@ -683,7 +683,7 @@ sampleplot(gt.vV)
 
 \begin{figure}[htb!]
 \begin{center}
-<<subjects, fig=TRUE, echo=F>>=
+<<subjects, fig=TRUE, echo=F, width=6, height=14>>=
 Plot.subjects(xx=vantVeer[p53,], group=metastases, legendpos="bottomright")
 @
 \vspace{-0.4cm}
@@ -753,7 +753,7 @@ Plot.subjects(xx=vantVeer[p53,], formula.full=~ordered(grade), formula.red=~1, m
 
 \begin{figure}[htb!]
 \begin{center}
-<<subjects2, fig=TRUE, echo=F>>=
+<<subjects2, fig=TRUE, echo=F, width=6, height=14>>=
 Plot.subjects(xx=vantVeer[p53,], formula.full=~ordered(grade), formula.red=~1, model.dat=phenodata, colorgroup="grade", legendpos="topleft")
 @
 \vspace{-0.4cm}
