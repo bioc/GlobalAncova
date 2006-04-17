@@ -400,7 +400,7 @@ The result is a matrix whose rows correspond to the different pathways.
 With the \Rfunction{globaltest} we get a similar matrix.
 
 <<gt.pathways>>=
-gt.pw <- globaltest(X=vantVeer, Y=metastases, genesets=pathways[1:4])
+gt.pw <- globaltest(X=vantVeer, Y=metastases, test.genes=pathways[1:4])
 gt.pw
 @
 
@@ -429,7 +429,7 @@ ga.pw.adj <- mt.rawp2adjp(ga.pw.raw)
 ga.result <- ga.pw.adj$adjp[order(ga.pw.adj$index) ,c("rawp", "Holm")]
 rownames(ga.result) <- names(pathways)[1:4]
 ga.result
-gt.pw.raw <- gt.pw@res[ ,"P-value"]
+gt.pw.raw <- gt.pw@res[ ,"p.val"]
 gt.pw.adj <- mt.rawp2adjp(gt.pw.raw)
 gt.result <- gt.pw.adj$adjp[order(gt.pw.adj$index) ,c("rawp", "Holm")]
 rownames(gt.result) <- names(pathways)[1:4]
