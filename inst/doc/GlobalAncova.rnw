@@ -101,7 +101,7 @@ library(hu6800)
 library(vsn)
 library(multtest)
 
-#data(golubMerge)
+data(golubMerge)
 golubM <- update2MIAME(golubMerge)
 golubX <- vsn(golubM)
 @
