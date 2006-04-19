@@ -429,7 +429,7 @@ ga.pw.adj <- mt.rawp2adjp(ga.pw.raw)
 ga.result <- ga.pw.adj$adjp[order(ga.pw.adj$index) ,c("rawp", "Holm")]
 rownames(ga.result) <- names(pathways)[1:4]
 ga.result
-gt.pw.raw <- gt.pw@res[ ,"p.val"]
+gt.pw.raw <- gt.pw@res[ ,"P-value"]
 gt.pw.adj <- mt.rawp2adjp(gt.pw.raw)
 gt.result <- gt.pw.adj$adjp[order(gt.pw.adj$index) ,c("rawp", "Holm")]
 rownames(gt.result) <- names(pathways)[1:4]
