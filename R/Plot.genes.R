@@ -12,7 +12,7 @@ setGeneric("Plot.genes", function(xx,formula.full,formula.red,model.dat,group,co
 # legendpos: position of the legend
 
 
-############################# allgemeine Funktion ##############################
+################################# general function #############################
 
 setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red="formula",
                           group="missing",covars="missing",test.terms="missing"),
@@ -33,7 +33,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red
 )
 
 
-########################## 'alte' Fkt. für 2 Gruppen ###########################
+########################## function for 2 groups ################################
 
 setMethod("Plot.genes", signature(xx="matrix",formula.full="missing",formula.red="missing",
                           model.dat="missing",group="numeric",test.terms="missing"),
@@ -68,7 +68,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="missing",formula.red
 )
 
 
-################### allgemeine Funktion m. Angabe v. 'terms' ###################
+############################# with 'test.terms' ################################
 
 setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red="missing",
                           group="missing",covars="missing",test.terms="character"),

@@ -13,7 +13,7 @@ setGeneric("Plot.subjects", function(xx,formula.full,formula.red,model.dat,group
 # legendpos: position of the legend
 
 
-############################# allgemeine Funktion ##############################
+################################# general function #############################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.red="formula",
                           group="missing",covars="missing",test.terms="missing"),
@@ -33,7 +33,7 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
 )
 
 
-########################## 'alte' Fkt. für 2 Gruppen ###########################
+########################## function for 2 groups ################################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.red="missing",
                           model.dat="missing",group="numeric",test.terms="missing"),
@@ -67,7 +67,7 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.
 )
 
 
-################### allgemeine Funktion m. Angabe v. 'terms' ###################
+############################# with 'test.terms' ################################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.red="missing",
                           group="missing",covars="missing",test.terms="character"),

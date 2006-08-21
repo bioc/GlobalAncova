@@ -26,7 +26,7 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
 )
 
 
-########################## function for 2 group ################################
+########################## function for 2 groups ################################
 
 setMethod("GlobalAncova", signature(xx="matrix",formula.full="missing",formula.red="missing",
                            model.dat="missing",group="numeric",covars="ANY",test.terms="missing"),

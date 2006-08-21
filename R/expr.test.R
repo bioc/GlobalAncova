@@ -44,7 +44,7 @@ function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,perm=10000,test.g
     # Test
     MS		<- extra.ssq /c(DF)
     F.value	<- MS[1] / MS[2]
-    p.value	<- 1 - pf(F.value, DF[1], DF[2])
+    p.value	<- pf(F.value, DF[1], DF[2], lower.tail=F)
 
     # Resampling step
     rr	   <- row.orth2d(xx2, D.red)
