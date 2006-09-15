@@ -89,7 +89,7 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
     stop("'test.terms' are not compatible with the specified models")
 
   D.full <- model.matrix(formula.full, data=model.dat)
-  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=F]
+  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=FALSE]
 
   # then apply the usual function
   expr.test(xx=xx,formula.full=formula.full,D.red=D.red,

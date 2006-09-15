@@ -79,7 +79,7 @@ setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula
     stop("'test.terms' are not compatible with the specified models")
 
   D.full <- model.matrix(formula.full, data=model.dat)
-  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=F]
+  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=FALSE]
 
   GA.closed(xx=xx,test.genes=test.genes,formula.full=formula.full,D.red=D.red,model.dat=model.dat,
                        previous.test=previous.test,level=level,perm=perm)

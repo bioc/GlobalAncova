@@ -57,12 +57,12 @@ function(xx,test.genes,formula.full,formula.red=NULL,D.red=NULL,model.dat,previo
           list.ind2          <- 1
           if(sum(unlist(list.ind)) > 1)
           {
-            res.lines        <- lapply(result[list.ind==T], function(x) x[rownames(x) == name.j])
+            res.lines        <- lapply(result[list.ind==TRUE], function(x) x[rownames(x) == name.j])
             noNAs            <- lapply(res.lines, function(x) !is.na(sum(x)))
             list.ind2        <- which(unlist(noNAs)==TRUE)
           }
-          row.ind            <- which(rownames(result[list.ind==T][list.ind2[1]][[1]]) %in% name.j)
-          result.i[j, ]      <- result[list.ind==T][list.ind2[1]][[1]][row.ind, ]
+          row.ind            <- which(rownames(result[list.ind==TRUE][list.ind2[1]][[1]]) %in% name.j)
+          result.i[j, ]      <- result[list.ind==TRUE][list.ind2[1]][[1]][row.ind, ]
         }
 
         # nodes that have been tested before with GlobalAncova (with specified 'test.genes')

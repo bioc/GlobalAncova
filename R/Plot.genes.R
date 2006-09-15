@@ -87,7 +87,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red
   if(!all(test.terms %in% terms.all))
     stop("'test.terms' are not compatible with the specified models")
 
-  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=F]
+  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=FALSE]
 
   # basic analysis
   res <- reduSQ(xx=xx,formula.full=formula.full,D.red=D.red,model.dat=model.dat)
