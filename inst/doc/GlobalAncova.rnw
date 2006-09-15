@@ -37,12 +37,14 @@ testing procedure in which the experiment--wise error rate equals the required l
 confidence of the overall test.  
 
 <<echo=F, results=hide>>=
-library(Biobase)
+library(GlobalAncova)
+library(globaltest)
+sI <- sessionInfo()
 @
 
 This document was created using R version \Sexpr{paste(R.version$major,".",R.version$minor,sep="")}
-and versions \Sexpr{package.version("GlobalAncova")} 
-and \Sexpr{package.version("globaltest")} of the packages \Rpackage{GlobalAncova} and \Rpackage{globaltest} respectively.
+and versions \Sexpr{sI$otherPkgs$GlobalAncova$Version} 
+and \Sexpr{sI$otherPkgs$globaltest$Version} of the packages \Rpackage{GlobalAncova} and \Rpackage{globaltest} respectively.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -101,13 +103,13 @@ library(hu6800)
 library(vsn)
 library(multtest)
 
-data(golubMerge)
-golubM <- update2MIAME(golubMerge)
-golubX <- vsn(golubM)
+data(Golub_Merge)
+golubX <- vsn(exprs(Golub_Merge))
+pData(golubX) <- pData(Golub_Merge)
 @
 
 This creates a dataset \Robject{golubX}, which is of the format
-\Rclass{exprSet}, the standard format for gene expression data in
+\Rclass{ExpressionSet}, the standard format for gene expression data in
 BioConductor. It consists of \Sexpr{length(geneNames(golubX))} genes and \Sexpr{length(sampleNames(golubX))}
 samples (the data are from \cite{Gol:99}). We used \Rpackage{vsn}
 to normalize the data. Any other normalization
