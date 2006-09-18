@@ -149,12 +149,14 @@ The first input \Rfunarg{xx} is a \Sexpr{dim(exprs(golubX))[[1]]} $\times$
 The second input \Rfunarg{group} is a vector that
 defines the clinical diagnosis for the \Sexpr{dim(exprs(golubX))[[2]]} patients. 
  
-Note that the new version of \Rpackage{GlobalAncova} is not any more restricted to the analysis of dichotomous phenotype groups. More complex tasks like variables with more groups or also continuous ones, time trends, gene--gene interactions and co--expression can be performed as well. Some examples will be given in section \ref{vantVeer}. The realization of such tasks is done by definition of two linear models that shall be compared via the extra sum of squares principle. Hence model formulas for the full model containing all parameters and the reduced model, where the terms of interest are omitted, have to be given. An alternative is to provide the formula for the full model and a character vector naming the terms of interest. Consequently we could run the same analysis as above with two possible further function calls shown below (output is omitted). In both cases a data frame with information about all variables for each sample is required. In the case of microarray data this can be the corresponding \Robject{pData} object. 
+Note that the new version of \Rpackage{GlobalAncova} is not any more restricted to the analysis of dichotomous phenotype groups. More complex tasks like variables with more groups or also continuous ones, time trends, gene--gene interactions and co--expression can be performed as well. Some examples will be given in section \ref{vantVeer}. The realization of such tasks is done by definition of two linear models that shall be compared via the extra sum of squares principle. Hence model formulas for the full model containing all parameters and the reduced model, where the terms of interest are omitted, have to be given. An alternative is to provide the formula for the full model and a character vector naming the terms of interest. 
+Those names can be chosen by previous output of the \Rfunction{GlobalAncova} function.
+Consequently we could run the same analysis as above with two possible further function calls shown below (output is omitted). In both cases a data frame with information about all variables for each sample is required. In the case of microarray data this can be the corresponding \Robject{pData} object. 
 %However, one has to step gently with variable names including dots or colons. Those could be interpreted as contrasts or interaction terms and therefore cause problems in the function. %Thus here we build a new model data frame.
 
 <<all2, eval=F>>= 
 GlobalAncova(xx=exprs(golubX), formula.full=~ALL.AML, formula.red=~1, model.dat=pData(golubX), perm=100)
-GlobalAncova(xx=exprs(golubX), formula.full=~ALL.AML, test.terms="ALL.AML", model.dat=pData(golubX), perm=100)
+GlobalAncova(xx=exprs(golubX), formula.full=~ALL.AML, test.terms="ALL.AMLAML", model.dat=pData(golubX), perm=100)
 @  
 
 To avoid alpha--inflation due to correlated data and effects of non--normality of the data tests for significance of the resulting F--ratios are performed using a permutation test approach.
