@@ -14,7 +14,7 @@ function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,perm=10000,test.g
     if(is.numeric(unlist(test.genes)))
         test.genes <- lapply(test.genes, as.character)
 
-    xx2        <- xx[unlist(unique(test.genes)),,drop=F]
+    xx2        <- xx[unique(unlist(test.genes)),,drop=F]
     #N.Genes     <- nrow(xx2)
     N.Genes    <- sapply(test.genes, length)
     N.Subjects <- ncol(xx2)
