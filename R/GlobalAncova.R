@@ -26,10 +26,10 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
 )
 
 
-########################## function for 2 groups ################################
+########################## function for 2 group ################################
 
 setMethod("GlobalAncova", signature(xx="matrix",formula.full="missing",formula.red="missing",
-                           model.dat="missing",group="numeric",covars="ANY",test.terms="missing"),
+                           model.dat="missing",group="ANY",covars="ANY",test.terms="missing"),
           definition = function(xx,group,covars=NULL,perm=10000,test.genes=NULL)
 {
 # xx: expression matrix (rows=genes, columns=subjects)
@@ -96,5 +96,32 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
                 model.dat=model.dat,perm=perm,test.genes=test.genes)
 }
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

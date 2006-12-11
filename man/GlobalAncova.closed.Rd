@@ -32,7 +32,7 @@ whose association with differential expression will be tested.
 The arguments \code{formula.red}, \code{group} and \code{covars} are '"missing"'
 since they are not needed for this method.}
 
-\item{xx = "matrix", test.genes="list", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "numeric", covars = "ANY", test.terms = "missing"}{Besides
+\item{xx = "matrix", test.genes="list", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "ANY", covars = "ANY", test.terms = "missing"}{Besides
  the expression matrix \code{xx} and the list of gene groups
 \code{test.genes} a clinical variable \code{group} is
 required. Covariate adjustment is possible via the argument \code{covars} but
@@ -48,7 +48,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 
 \S4method{GlobalAncova.closed}{matrix,list,formula,missing,ANY,missing,missing,character}(xx, test.genes, previous.test, level, formula.full, test.terms, model.dat, perm = 10000)
 
-\S4method{GlobalAncova.closed}{matrix,list,missing,missing,missing,numeric,ANY,missing}(xx, test.genes, previous.test, level, group, covars = NULL, perm = 10000)
+\S4method{GlobalAncova.closed}{matrix,list,missing,missing,missing,ANY,ANY,missing}(xx, test.genes, previous.test, level, group, covars = NULL, perm = 10000)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

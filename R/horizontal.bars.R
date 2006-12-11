@@ -1,13 +1,16 @@
 "horizontal.bars" <-
-function(x,xlabel="",ylabel="",color=NULL,labelsize=.75,bar.names=NULL)
+function(x, labelsize=.75, bar.names=NULL, color, xlim,...)
 {
         # function for plotting horizontal bars with labels added at right margin
         # bars are determined by value of x which is assumed to be a vector
         # no formal check of variables performed
         # setting the plot region
 
-        xlim    <- 0.05*c(-1,1)*range(x)+c(min(x),max(x))
-        xlim[1] <- min(0,xlim[1])
+        if(missing(xlim))
+        {  
+          xlim    <- 0.05*c(-1,1)*range(x)+c(min(x),max(x))
+          xlim[1] <- min(0,xlim[1])
+        }
         n       <- length(x)
         ylim    <- c(0,n+1)
 
@@ -19,13 +22,13 @@ function(x,xlabel="",ylabel="",color=NULL,labelsize=.75,bar.names=NULL)
                    plot.new()
         w       <- 1.5 * max(strwidth(bar.names, "inches", labelsize))
         oldmai  <- par("mai")
-                   par(mai=c(oldmai[1:3],max(w,oldmai[4])), new=TRUE)
+                   par(mai=c(oldmai[1:3],max(w,oldmai[4])), new=T)
     }
-        # plotting bars with border=FALSE nothing appears color is NULL
+        # plotting bars with border=F nothing appears color is NULL
 
 
-plot(0,type="n",xlim=xlim,ylim=ylim,yaxt="n",xlab=xlabel,ylab=ylabel)
-                rect(rep(0,n),(1:n)-.3,x,(1:n)+.3,col=color,border="white")
+plot(0,type="n", xlim=xlim, ylim=ylim, yaxt="n",...)
+                rect(rep(0,n),(1:n)-.3,x,(1:n)+.3, col=color, border="white")
                 box()
 
         # adding bar.names at right margin
@@ -36,4 +39,3 @@ plot(0,type="n",xlim=xlim,ylim=ylim,yaxt="n",xlab=xlabel,ylab=ylabel)
                 par(mai=oldmai)
    }
 }
-

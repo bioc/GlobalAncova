@@ -37,6 +37,7 @@ testing procedure in which the experiment--wise error rate equals the required l
 confidence of the overall test.  
 
 <<echo=F, results=hide>>=
+#library(Biobase)
 library(GlobalAncova)
 library(globaltest)
 sI <- sessionInfo()
@@ -48,7 +49,21 @@ and \Sexpr{sI$otherPkgs$globaltest$Version} of the packages \Rpackage{GlobalAnco
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Changes in Version 2.x.x}
+%!!!!!!!!!!!!!!!!!!!!!!!
+
+\section{Changes to Previous Versions} 
+
+\subsection{Version 2.5.1}
+
+\begin{itemize}
+\item Testing several groups of genes is now more efficient and less time consuming.
+\item In the gene and subjects plots bar heights (gene-wise reduction in sum of squares and subject-wise reduction in sum of squares, respectively) can be returned. %This eases the identification of genes with most influence regarding differential expression or of subjects behaving like outliers.
+\item Plots are more flexible regarding graphical parameters like specification of colors, titles, axis labels and axis limits.
+\end{itemize}
+
+
+\subsection{Version 2.x.x}
+%!!!!!!!!!!!!!!!!!!!!!!!
 
 \begin{itemize}
 \item The major modification in the new version is the transfer from simple two group comparisons to a general linear model framework where arbitrary clinical variables (in especially with more groups or also continuous ones), time trends, gene--gene interactions, co--expression and so forth can be analysed. 
@@ -150,7 +165,7 @@ The second input \Rfunarg{group} is a vector that
 defines the clinical diagnosis for the \Sexpr{dim(exprs(golubX))[[2]]} patients. 
  
 Note that the new version of \Rpackage{GlobalAncova} is not any more restricted to the analysis of dichotomous phenotype groups. More complex tasks like variables with more groups or also continuous ones, time trends, gene--gene interactions and co--expression can be performed as well. Some examples will be given in section \ref{vantVeer}. The realization of such tasks is done by definition of two linear models that shall be compared via the extra sum of squares principle. Hence model formulas for the full model containing all parameters and the reduced model, where the terms of interest are omitted, have to be given. An alternative is to provide the formula for the full model and a character vector naming the terms of interest. 
-Those names can be chosen by previous output of the \Rfunction{GlobalAncova} function.
+Those names can be chosen by previous output of the \Rfunction{GlobalAncova} 
 Consequently we could run the same analysis as above with two possible further function calls shown below (output is omitted). In both cases a data frame with information about all variables for each sample is required. In the case of microarray data this can be the corresponding \Robject{pData} object. 
 %However, one has to step gently with variable names including dots or colons. Those could be interpreted as contrasts or interaction terms and therefore cause problems in the function. %Thus here we build a new model data frame.
 
@@ -404,7 +419,7 @@ The result is a matrix whose rows correspond to the different pathways.
 With the \Rfunction{globaltest} we get a similar matrix.
 
 <<gt.pathways>>=
-gt.pw <- globaltest(X=vantVeer, Y=metastases, test.genes=pathways[1:4])
+gt.pw <- globaltest(X=vantVeer, Y=metastases, genesets=pathways[1:4])
 gt.pw
 @
 
@@ -555,8 +570,14 @@ The added reference line is the residual mean square error per gene and correspo
 expected height of the 
 bars under the null hypothesis which says that the gene is not associated 
 with the clinical outcome. 
+%!!!!!!!!!!!!!!!!!!!!!!!
+The actual and expected bar heights also correspond to the nominator and denominator of gene-wise F-statistics. Hence the ratio of the two values is a measure for the association of the respective gene with the phenotype.
+Bar heights for all genes can be returned by setting the option \Rfunarg{returnValues} to \Robject{TRUE}. This helps to detect genes with most influence on the global statistics.
+Note however that comparisons between different gene groups can not easily be done by means of these values directly since different group sizes have an impact on global significance.  
+ 
+%!!!!!!!!!!!!!!!!!!!!!!!
 %Covariate information can be included in the same way as in the \Rfunction{GlobalAncova} function with the \Rfunarg{covars} option.
-The bars can be colored according to a variable of interest with the option \Rfunarg{colorgroup} in order to show in which of the groups a gene has the highest expression values.
+The bars can be colored according to a variable of interest with the option \Rfunarg{Colorgroup} in order to show in which of the groups a gene has the highest expression values.
 
 The commands for creating gene plots in the \Rpackage{GlobalAncova} and
 the \Rpackage{globaltest} are as follows. Note that for the former one again three alternatives for function calls are provided, see section \ref{onepathway} for details.   
@@ -580,7 +601,7 @@ Plot.genes(xx=vantVeer[p53, ], group=metastases)
 \vspace{-0.4cm}
 \caption{{\small \label{ga.genepl1} Gene Plot for the van t'Veer data with \Rpackage{GlobalAncova}. 
 Shown are the genes of the p53--signalling pathway. The bar height indicates the influence of the respective gene on the test 
-statistic. The colour shows in which of the phenotype groups
+statistic. The color shows in which of the phenotype groups
 the gene has higher expression values. The reference line is the residual mean square 
 error per gene.}}
 \end{center}
@@ -639,13 +660,13 @@ exceeds the reference line.}}
 In this case where only the influence of one variable is of interest (and therefore the easiest version of possible function calls is chosen), the same variable is assumed to be relevant for coloring. However one is free to specify another coloring. For example for the same plot we could ask which genes are higher expressed in samples with either positive or negative Estrogen receptor status, see figure \ref{ga.genepl2}.
 
 <<geneplot>>=
-Plot.genes(xx=vantVeer[p53, ], formula.full=~metastases, formula.red=~1, model.dat=phenodata, colorgroup="ERstatus")
+Plot.genes(xx=vantVeer[p53, ], formula.full=~metastases, formula.red=~1, model.dat=phenodata, Colorgroup="ERstatus")
 @
 
 \begin{figure}[htb!]
 \begin{center}
 <<genes2, fig=TRUE, echo=F, width=6, height=8>>=
-Plot.genes(xx=vantVeer[p53, ], formula.full=~metastases, formula.red=~1, model.dat=phenodata, colorgroup="ERstatus")
+Plot.genes(xx=vantVeer[p53, ], formula.full=~metastases, formula.red=~1, model.dat=phenodata, Colorgroup="ERstatus")
 @
 \vspace{-0.4cm}
 \caption{{\small \label{ga.genepl2} Gene Plot for the van t'Veer data with \Rpackage{GlobalAncova}. 
@@ -668,11 +689,14 @@ A small p--value will
 therefore generally coincide with many positive bars. If there 
 are still tall negative bars, these indicate deviating samples: 
 removing a sample with a negative bar would result in a lower 
-p-value.
+p-value. 
 %Again we can use \Rfunarg{covars} for covariate adjustment.
 The bars are colored to distinguish samples 
-of different clinical entities that can again be specified by the user through the option \Rfunarg{colorgroup}. With the option \Rfunarg{sort} 
+of different clinical entities that can again be specified by the user through the option \Rfunarg{Colorgroup}. With the option \Rfunarg{sort} 
 it is also possible to sort the bars with respect to the phenotype groups.
+%!!!!!!!!!!!!!!!!!!
+Also in the subjects plot bar heights can be returned by setting the option \Rfunarg{returnValues} to \Robject{TRUE}. That may help to detect, not only visually, samples which do not fit into their respective clinical groups.
+%!!!!!!!!!!!!!!!!!!
 %Before plotting we add the sample names to the expression matrix. 
 %Otherwise with \Rfunction{Plot.subjects} samples would just
 %be enumerated from 1 to \Sexpr{length(pData(golubX))}.
@@ -706,7 +730,7 @@ sampleplot(gt.vV)
 \vspace{-0.4cm}
 \caption{{\small \label{gt.subjects1} Subjects Plot for the van t'Veer data with \Rpackage{globaltest}. The bar height 
 indicates the influence of the respective sample on the test result. If an individual does 
-not fit into the pattern of its phenotype, negative values can occur. Bars are coloured 
+not fit into the pattern of its phenotype, negative values can occur. Bars are colored 
 corresponding to groups. The reference line shows the expected influence of the samples 
 under the null hypothesis. Marks on the bars indicate the standard deviation of the influence 
 of the sample under the null hypothesis.}}
@@ -752,13 +776,13 @@ of the sample under the null hypothesis.}}
 The function \Rfunction{Plot.subjects} can be invoked by the three alternative function calls (see section \ref{onepathway}) and hence also plots corresponding to more complex testing challenges can be produced as well. To give just one example we consider again the influence of the tumor grade, which can take three possible values, on gene expression (figure \ref{ga.subjects2}).
 
 <<subjectsplot2>>=
-Plot.subjects(xx=vantVeer[p53,], formula.full=~ordered(grade), formula.red=~1, model.dat=phenodata, colorgroup="grade", legendpos="topleft")
+Plot.subjects(xx=vantVeer[p53,], formula.full=~ordered(grade), formula.red=~1, model.dat=phenodata, Colorgroup="grade", legendpos="topleft")
 @
 
 \begin{figure}[htb!]
 \begin{center}
 <<subjects2, fig=TRUE, echo=F, width=6, height=14>>=
-Plot.subjects(xx=vantVeer[p53,], formula.full=~ordered(grade), formula.red=~1, model.dat=phenodata, colorgroup="grade", legendpos="topleft")
+Plot.subjects(xx=vantVeer[p53,], formula.full=~ordered(grade), formula.red=~1, model.dat=phenodata, Colorgroup="grade", legendpos="topleft")
 @
 \vspace{-0.4cm}
 \caption{{\small \label{ga.subjects2} Subjects Plot for the van t'Veer data with \Rpackage{GlobalAncova}. Tumor grade is the clinical variable of interest. The bar height 

@@ -1,5 +1,5 @@
 setGeneric("Plot.genes", function(xx,formula.full,formula.red,model.dat,group,covars=NULL,
-                         test.terms,colorgroup=NULL,legendpos="topright")
+                         test.terms,Colorgroup=NULL,legendpos="topright",returnValues=FALSE,...)
             standardGeneric("Plot.genes"))
 # xx: expression matrix (rows=genes, columns=subjects)
 # formula.full: model formula for the full model
@@ -8,15 +8,15 @@ setGeneric("Plot.genes", function(xx,formula.full,formula.red,model.dat,group,co
 # group: group variable
 # covars: covariate information
 # test.terms: character vector of terms of interest
-# colorgroup: character variable giving the group that specifies coloring
+# Colorgroup: character variable giving the group that specifies coloring
 # legendpos: position of the legend
 
 
-################################# general function #############################
+############################# allgemeine Funktion ##############################
 
 setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red="formula",
                           group="missing",covars="missing",test.terms="missing"),
-          definition = function(xx,formula.full,formula.red,model.dat,colorgroup=NULL,legendpos="topright")
+          definition = function(xx,formula.full,formula.red,model.dat,Colorgroup=NULL,legendpos="topright",returnValues=FALSE,...)
 {
   # test for model.dat
   if(!is.data.frame(model.dat))
@@ -28,20 +28,20 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red
   msE.genes         <- res$mse
 
   # plot
-  plotgenes(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos)
+  plotgenes(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
 
 
-########################## function for 2 groups ################################
+########################## 'alte' Fkt. für 2 Gruppen ###########################
 
 setMethod("Plot.genes", signature(xx="matrix",formula.full="missing",formula.red="missing",
-                          model.dat="missing",group="numeric",test.terms="missing"),
-          definition = function(xx,group,covars=NULL,colorgroup=NULL,legendpos="topright")
+                          model.dat="missing",group="ANY",test.terms="missing"),
+          definition = function(xx,group,covars=NULL,Colorgroup=NULL,legendpos="topright",returnValues=FALSE,...)
 {
   # 'group' is assumed to be the variable relevant for coloring
-  if(is.null(colorgroup))
-    colorgroup <- deparse(substitute(group))
+  if(is.null(Colorgroup))
+    Colorgroup <- deparse(substitute(group))
 
   # group name
   group.name   <- deparse(substitute(group))
@@ -52,7 +52,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="missing",formula.red
     covar.names <- colnames(covars)
 
   # get formulas and 'model.dat' out of 'group' and 'covars'
-  res          <- group2formula(group=group, group.name=group.name, covars=covars, covar.names)
+  res          <- group2formula(group=group, group.name=group.name, covars=covars, covar.names=covar.names)
   formula.full <- res$formula.full
   formula.red  <- res$formula.red
   model.dat    <- res$model.dat
@@ -63,20 +63,22 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="missing",formula.red
   msE.genes      <- res$mse
 
   # plot
-  plotgenes(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos)
+  plotgenes(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
 
-
-############################# with 'test.terms' ################################
+################### allgemeine Funktion m. Angabe v. 'terms' ###################
 
 setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red="missing",
                           group="missing",covars="missing",test.terms="character"),
-          definition = function(xx,formula.full,test.terms,model.dat,colorgroup=NULL,legendpos="topright")
+          definition = function(xx,formula.full,test.terms,model.dat,Colorgroup=NULL,legendpos="topright",returnValues=FALSE,...)
 {
   # test for model.dat
   if(!is.data.frame(model.dat))
     stop("'model.dat' has to be a data frame")
+
+  # test for 'test.terms' and derive 'formula.red'
+  #formula.red <- terms2formula(formula.full=formula.full, test.terms=test.terms, model.dat=model.dat)
 
   # test for 'test.terms'
   terms.all <- test.terms
@@ -87,7 +89,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red
   if(!all(test.terms %in% terms.all))
     stop("'test.terms' are not compatible with the specified models")
 
-  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=FALSE]
+  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=F]
 
   # basic analysis
   res <- reduSQ(xx=xx,formula.full=formula.full,D.red=D.red,model.dat=model.dat)
@@ -95,7 +97,6 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red
   msE.genes      <- res$mse
 
   # plot
-  plotgenes(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos)
+  plotgenes(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Genes=redu.SSQ.Genes,msE.genes=msE.genes,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
-

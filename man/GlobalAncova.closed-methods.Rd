@@ -2,7 +2,7 @@
 \alias{GlobalAncova.closed-methods}
 \alias{GlobalAncova.closed,matrix,list,formula,formula,ANY,missing,missing,missing-method}
 \alias{GlobalAncova.closed,matrix,list,formula,missing,ANY,missing,missing,character-method}
-\alias{GlobalAncova.closed,matrix,list,missing,missing,missing,numeric,ANY,missing-method}
+\alias{GlobalAncova.closed,matrix,list,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Methods for Function GlobalAncova.closed}
 \description{
@@ -31,7 +31,7 @@ whose association with differential expression will be tested.
 The arguments \code{formula.red}, \code{group} and \code{covars} are '"missing"'
 since they are not needed for this method.}
 
-\item{xx = "matrix", test.genes="list", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "numeric", covars = "ANY", test.terms = "missing"}{Besides
+\item{xx = "matrix", test.genes="list", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "ANY", covars = "ANY", test.terms = "missing"}{Besides
  the expression matrix \code{xx} and the list of gene groups
 \code{test.genes} a clinical variable \code{group} is
 required. Covariate adjustment is possible via the argument \code{covars} but

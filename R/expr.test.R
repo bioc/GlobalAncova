@@ -1,81 +1,66 @@
 "expr.test" <-
 function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,perm=10000,test.genes=NULL)
 {
-  # if just one gene should be tested
-  if(is.vector(xx))
-    xx <- t(as.matrix(xx))
+    # if just one gene should be tested
+    if(is.vector(xx))
+        xx <- t(as.matrix(xx))
 
-  if(is.null(rownames(xx)))
-    rownames(xx) <- 1:dim(xx)[1]
-  if(is.null(test.genes))
-    test.genes <- list(rownames(xx))
-  if(!is.list(test.genes))
-    test.genes <- list(test.genes)
+    if(is.null(rownames(xx)))         
+        rownames(xx) <- 1:nrow(xx)
+    if(is.null(test.genes))
+        test.genes <- list(rownames(xx))
+    if(!is.list(test.genes))
+        test.genes <- list(test.genes)
+    if(is.numeric(unlist(test.genes)))
+        test.genes <- lapply(test.genes, as.character)
 
-  many.pathways           <- matrix(0, length(test.genes), 4)
-  dimnames(many.pathways) <- list(names(test.genes), c("genes","F.value","p.value","p.perm"))
-
-  for(j in 1:length(test.genes))
-  {
-    xx2 <- xx[test.genes[[j]], ]
-
-    # if pathway contains just one gene
-    if(is.vector(xx2))
-      xx2 <- t(as.matrix(xx2))
-
-    N.Genes 	<- dim(xx2)[1]
-    N.Subjects 	<- dim(xx2)[2]
-
-    # Design matrices
-    D.full 	<- model.matrix(formula.full, data=model.dat)
+    xx2        <- xx[unlist(unique(test.genes)),,drop=F]
+    #N.Genes     <- nrow(xx2)
+    N.Genes    <- sapply(test.genes, length)
+    N.Subjects <- ncol(xx2)
+  
+    # design matrices
+    D.full     <- model.matrix(formula.full, data=model.dat)
     if(is.null(D.red))
-      D.red 	<- model.matrix(formula.red,  data=model.dat)
-    N.par.full	<- dim(D.full)[2]
-    N.par.red	<- dim(D.red)[2]
+        D.red  <- model.matrix(formula.red,  data=model.dat)
+    N.par.full <- ncol(D.full)
+    N.par.red  <- ncol(D.red)
 
-    # extra sum of squares & full residual sum of squares
-    extra.ssq	<- red.ssq(xx2, D.full, D.red)
+    # checking for NA's
+    if(nrow(D.full) < N.Subjects)
+        stop("Missing values in the model variables")
+     
+    # degrees of freedom
+    DF.full  <- N.Genes * (N.Subjects - N.par.full)
+    DF.extra <- N.Genes * (N.par.full - N.par.red)        
+  
+    # sums of squares
+    genewiseSS <- genewiseGA(xx2, D.full, D.red) 
+    SS.full    <- sapply(test.genes, function(x) sum(genewiseSS[x,"denominator"]))
+    SS.extra   <- sapply(test.genes, function(x) sum(genewiseSS[x,"nominator"]))
+    MS.full    <- SS.full / DF.full
+    MS.extra   <- SS.extra / DF.extra
+    
+    # F statistic and theoretical p-value for each gene group
+    F.value    <- MS.extra / MS.full
+    p.value    <- pf(F.value, DF.extra, DF.full, lower.tail=F)
 
-    DF.ssq.res.full <- N.Genes * (N.Subjects - N.par.full)
-    DF.ssq.res.red  <- N.Genes * (N.Subjects - N.par.red)
-    DF.extra.ssq    <- DF.ssq.res.red - DF.ssq.res.full
-    DF		    <- c(DF.extra.ssq, DF.ssq.res.full)
+    # resampling step
+    p.perm <- resampleGA(xx2, D.full, D.red, perm, test.genes, F.value, DF.full, DF.extra) 
 
-    # Test
-    MS		<- extra.ssq /c(DF)
-    F.value	<- MS[1] / MS[2]
-    p.value	<- pf(F.value, DF[1], DF[2], lower.tail=FALSE)
+    # results
+    test.result           <- cbind(F.value, p.value, p.perm)
+    colnames(test.result) <- c("F.value", "p.value", "p.perm")
 
-    # Resampling step
-    rr	   <- row.orth2d(xx2, D.red)
-    rr.cov <- (diag(dim(D.red)[1]) - D.red %*% solve(t(D.red) %*% D.red) %*% t(D.red))
-    rr	   <- rr %*% diag(1 / sqrt(diag(rr.cov)))
-    count  <- 0
-    for(i in 1:perm)
-    {
-      ord         <- sample(N.Subjects)
-      MS.resample <- red.ssq(rr[,ord], D.full, D.red) / DF
-      count       <- count + ((MS.resample[1] / MS.resample[2]) > F.value)
+    if(length(test.genes) == 1) {
+        effect.names          <- effectnames(D.full, D.red)
+        ANOVA.tab             <- cbind(c(SS.extra,SS.full), c(DF.extra,DF.full), c(MS.extra,MS.full))
+        dimnames(ANOVA.tab)   <- list(c("Effect", "Error"), c("SSQ", "DF", "MS"))
+        result <- list("effect"=effect.names,"ANOVA"=ANOVA.tab,"test.result"=t(test.result),"terms"=colnames(D.full))
     }
-    p.perm <- count / perm
 
-    # Results
-    #effect.names          <- colnames(D.full)[!colnames(D.full) %in% colnames(D.red)]
-    effect.names          <- effectnames(D.full, D.red)
-    ANOVA.tab 	          <- cbind(extra.ssq, DF, MS)
-    dimnames(ANOVA.tab)   <- list(c("Effect", "Error"), c("SSQ", "DF", "MS"))
-    test.result   	  <- rbind(F.value, p.value, p.perm)
-    dimnames(test.result) <- list(c("F.value", "p.value", "p.perm"), "")
-    #ANOVA.list            <- list("effect"="","ANOVA"=ANOVA.tab,"test.result"=test.result,"terms"=colnames(D.full))
-    ANOVA.list            <- list("effect"=effect.names,"ANOVA"=ANOVA.tab,"test.result"=test.result,"terms"=colnames(D.full))
-
-    many.pathways[j, 1]   <- as.numeric(length(test.genes[[j]]))
-    many.pathways[j, 2:4] <- round(test.result[1:3], 4)
-  }
-
-  if(length(test.genes) == 1)
-    return(ANOVA.list)
-  else
-    return(many.pathways)
+    else 
+        result <- cbind("genes"=N.Genes, test.result)
+    
+    return(result)
 }
-

@@ -1,5 +1,5 @@
 setGeneric("Plot.subjects", function(xx,formula.full,formula.red,model.dat,group,covars=NULL,
-                            test.terms,colorgroup=NULL,sort=FALSE,legendpos="topright")
+                            test.terms,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
            standardGeneric("Plot.subjects"))
 # xx: expression matrix (rows=genes, columns=subjects)
 # formula.full: model formula for the full model
@@ -8,16 +8,17 @@ setGeneric("Plot.subjects", function(xx,formula.full,formula.red,model.dat,group
 # group: group variable
 # covars: covariate information
 # test.terms: character vector of terms of interest
-# colorgroup: character variable giving the group that specifies coloring
-# sort: shall samples be sorted by 'colorgroup'?
+# Colorgroup: character variable giving the group that specifies coloring
+# sort: shall samples be sorted by 'Colorgroup'?
 # legendpos: position of the legend
+# returnValues: shall subject-wise reduction in sum of squares = bar heights be returned?
 
 
-################################# general function #############################
+############################# allgemeine Funktion ##############################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.red="formula",
                           group="missing",covars="missing",test.terms="missing"),
-          definition = function(xx,formula.full,formula.red,model.dat,colorgroup=NULL,sort=FALSE,legendpos="topright")
+          definition = function(xx,formula.full,formula.red,model.dat,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
 {
   # test for model.dat
   if(!is.data.frame(model.dat))
@@ -28,20 +29,21 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
   redu.SSQ.Subjects    <- res$redu.subjects
 
   # plot
-  plotsubjects(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos)
+  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
 
 
-########################## function for 2 groups ################################
+
+########################## 'alte' Fkt. für 2 Gruppen ###########################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.red="missing",
-                          model.dat="missing",group="numeric",test.terms="missing"),
-          definition = function(xx,group,covars=NULL,colorgroup=NULL,sort=FALSE,legendpos="topright")
+                          model.dat="missing",group="ANY",test.terms="missing"),
+          definition = function(xx,group,covars=NULL,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
 {
   # 'group' is assumed to be the variable relevant for coloring
-  if(is.null(colorgroup))
-    colorgroup <- deparse(substitute(group))
+  if(is.null(Colorgroup))
+    Colorgroup <- deparse(substitute(group))
 
   # group name
   group.name   <- deparse(substitute(group))
@@ -52,7 +54,7 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.
     covar.names <- colnames(covars)
 
   # get formulas and 'model.dat' out of 'group' and 'covars'
-  res          <- group2formula(group=group, group.name=group.name, covars=covars, covar.names)
+  res          <- group2formula(group=group, group.name=group.name, covars=covars, covar.names=covar.names)
   formula.full <- res$formula.full
   formula.red  <- res$formula.red
   model.dat    <- res$model.dat
@@ -62,16 +64,17 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.
   redu.SSQ.Subjects <- res$redu.subjects
 
   # plot
-  plotsubjects(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos)
+  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
 
 
-############################# with 'test.terms' ################################
+
+################### allgemeine Funktion m. Angabe v. 'terms' ###################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.red="missing",
                           group="missing",covars="missing",test.terms="character"),
-          definition = function(xx,formula.full,test.terms,model.dat,colorgroup=NULL,sort=FALSE,legendpos="topright")
+          definition = function(xx,formula.full,test.terms,model.dat,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
 {
   # test for model.dat
   if(!is.data.frame(model.dat))
@@ -89,16 +92,13 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
   if(!all(test.terms %in% terms.all))
     stop("'test.terms' are not compatible with the specified models")
 
-  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=FALSE]
+  D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=F]
 
   # basic analysis
   res <- reduSQ(xx=xx,formula.full=formula.full,D.red=D.red,model.dat=model.dat)
   redu.SSQ.Subjects <- res$redu.subjects
 
   # plot
-  plotsubjects(xx=xx,model.dat=model.dat,colorgroup=colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos)
+  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
-
-
-

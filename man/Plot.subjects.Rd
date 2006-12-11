@@ -25,7 +25,7 @@ whose association with differential expression will be tested.
 The arguments \code{formula.red}, \code{group} and \code{covars} are '"missing"'
 since they are not needed for this method.}
 
-\item{xx = "matrix", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "numeric", covars = "ANY", test.terms = "missing"}{Besides the expression matrix \code{xx} a clinical variable \code{group} is
+\item{xx = "matrix", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "ANY", covars = "ANY", test.terms = "missing"}{Besides the expression matrix \code{xx} a clinical variable \code{group} is
 required. Covariate adjustment is possible via the argument \code{covars} but
 more complex models have to be specified with the methods described above.
 This method emulates the function call in the first version of the package.
@@ -34,11 +34,11 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 }}
 
 \usage{
-\S4method{Plot.subjects}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, colorgroup = NULL, sort = FALSE, legendpos = "topright")
+\S4method{Plot.subjects}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
 
-\S4method{Plot.subjects}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, colorgroup = NULL, sort = FALSE, legendpos = "topright")
+\S4method{Plot.subjects}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
 
-\S4method{Plot.subjects}{matrix,missing,missing,missing,numeric,ANY,missing}(xx, group, covars = NULL, colorgroup = NULL, sort = FALSE, legendpos = "topright")
+\S4method{Plot.subjects}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -53,7 +53,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
   \item{group}{Vector with the group membership information.}
   \item{covars}{Vector or matrix which contains the covariate information for each sample.}
   \item{test.terms}{Character vector that contains names of the terms of interest.}
-  \item{colorgroup}{Character variable giving the group that specifies coloring.
+  \item{Colorgroup}{Character variable giving the group that specifies coloring.
         If the function is called using the argument \code{group} then this variable is assumed to
         be relevant for coloring.}
   \item{sort}{Should the samples be ordered by \code{colorgroup}?}
@@ -61,6 +61,8 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
      keyword from the list '"bottomright"', '"bottom"', '"bottomleft"',
      '"left"', '"topleft"', '"top"', '"topright"', '"right"' and
      '"center"').}
+  \item{returnValues}{Shall bar heights (subject-wise reduction in sum of squares) be returned?}
+  \item{\dots}{Graphical parameters for specifying colors, titles etc.}
   }
 \author{
   Reinhard Meister \email{meister@tfh-berlin.de}\cr

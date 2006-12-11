@@ -15,7 +15,7 @@ setGeneric("GlobalAncova.closed", function(xx,test.genes,formula.full,formula.re
 # perm: number of permutations
 
 
-################################# general function #############################
+############################## allgemeine Funktion #############################
 
 setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula.full="formula",formula.red="formula",
                           group="missing",covars="missing",test.terms="missing"),
@@ -32,11 +32,11 @@ setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula
 )
 
 
-########################## function for 2 groups ################################
+########################## 'alte' Fkt. für 2 Gruppen ###########################
 
 
 setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula.full="missing",formula.red="missing",
-                          model.dat="missing",group="numeric",test.terms="missing"),
+                          model.dat="missing",group="ANY",test.terms="missing"),
           definition = function(xx,test.genes,group,covars=NULL,previous.test=NULL,level=0.05,perm=10000)
 {
   # parameter names
@@ -59,7 +59,7 @@ setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula
 )
 
 
-############################# with 'test.terms' ################################
+################### allgemeine Funktion m. Angabe v. 'terms' ###################
 
 setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula.full="formula",formula.red="missing",
                           group="missing",covars="missing",test.terms="character"),

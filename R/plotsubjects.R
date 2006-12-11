@@ -1,21 +1,27 @@
 "plotsubjects" <-
-function(xx, model.dat, colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos)
+function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos, returnValues=FALSE, col, xlab, ylab, ...)
 {
-# colorgroup: character variable giving the group that specifies coloring
-# sort: shall samples be sorted by 'colorgroup'?
+# Colorgroup: character variable giving the group that specifies coloring
+# sort: shall samples be sorted by 'Colorgroup'?
+# returnValues: shall subject-wise reduction in sum of squares = bar heights be returned?
 
-  if(!is.character(colorgroup) & !is.null(colorgroup))
-    stop("'colorgroup' has to be a character")
+  if(!is.character(Colorgroup) & !is.null(Colorgroup))
+    stop("'Colorgroup' has to be a character")
 
   if(is.null(colnames(xx)))
     colnames(xx) <- seq(1:dim(xx)[2])
   N.Genes <- dim(xx)[1]
 
-  # color palette
-  palette(c("#931638",rgb(1,.95,0.1),"lightblue","NavyBlue","#F7B50C","lightgreen","grey","mistyrose","#008751",rgb(1,.2,.2)))
+  if(missing(col))
+    # color palette
+    palette(c("#931638",rgb(1,.95,0.1),"lightblue","NavyBlue","#F7B50C","lightgreen","grey","mistyrose","#008751",rgb(1,.2,.2)))
+  else if(is.numeric(col))
+    palette(palette()[rep(col,2)])
+  else
+    palette(rep(col,2))
 
   # if a group variable is given and if it is not continuous
-  colorgroup.vector <- as.numeric(model.dat[,colorgroup])
+  colorgroup.vector <- as.numeric(model.dat[,Colorgroup])
   N.groups          <- length(unique(colorgroup.vector))
   if(N.groups > 0 & N.groups <= 10)
   {
@@ -30,7 +36,7 @@ function(xx, model.dat, colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos)
       for(i in 1:N.groups)
       {
         color[gr.sort == unique(gr.sort)[i]] <- i
-        label    <- c(label, paste(colorgroup, "=", unique(gr.sort)[i]))
+        label    <- c(label, paste(Colorgroup, "=", unique(gr.sort)[i]))
       }
     }
 
@@ -41,7 +47,7 @@ function(xx, model.dat, colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos)
         x          <- redu.SSQ.Subjects
         barnames   <- colnames(xx)
         color[colorgroup.vector == sort(unique(colorgroup.vector))[i]] <- i
-        label      <- c(label, paste(colorgroup, "=", sort(unique(model.dat[,colorgroup]))[i]))
+        label      <- c(label, paste(Colorgroup, "=", sort(unique(model.dat[,Colorgroup]))[i]))
       }
     }
   }
@@ -55,13 +61,18 @@ function(xx, model.dat, colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos)
   }
 
 # plotting results
+  if(missing(xlab))
+    xlab <- "Reduction in Sum of Squares"
+  if(missing(ylab))
+    ylab <- "Subjects"
+
   #bars
   horizontal.bars(
         x         = rev(x),
-        xlabel    = "Reduction in Sum of Squares",
-        ylabel    = "Subjects",
+        xlab      = xlab,
+        ylab      = ylab,
         color     = rev(color),
-        bar.names = rev(barnames)
+        bar.names = rev(barnames), ...
   )
 
   # legend
@@ -69,5 +80,10 @@ function(xx, model.dat, colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos)
     legend(legendpos, label, col=1:N.groups, pch=15)
 
   palette("default")
-}
 
+ # return bar heights
+  if(returnValues){
+    names(x) <- rownames(xx)
+    return(x)
+  }
+}

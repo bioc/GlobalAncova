@@ -1,20 +1,26 @@
 "plotgenes" <-
-function(xx, model.dat, colorgroup, redu.SSQ.Genes, msE.genes, legendpos)
+function(xx, model.dat, Colorgroup, redu.SSQ.Genes, msE.genes, legendpos, returnValues=FALSE, col, xlab, ylab, ...)
 {
-# colorgroup: character variable giving the group that specifies coloring
+# Colorgroup: character variable giving the group that specifies coloring
+# returnValues: shall gene-wise reductions in sum of squares = bar heights be returned?
 
-  if(!is.character(colorgroup) & !is.null(colorgroup))
-    stop("'colorgroup' has to be a character")
+  if(!is.character(Colorgroup) & !is.null(Colorgroup))
+    stop("'Colorgroup' has to be a character")
 
   if(is.null(rownames(xx)))
     rownames(xx) <- 1:dim(xx)[1]
-  N.Genes 	 <- dim(xx)[1]
+  N.Genes    <- dim(xx)[1]
 
-  # color palette
- palette(c("#931638",rgb(1,.95,0.1),"lightblue","NavyBlue","#F7B50C","lightgreen","grey","mistyrose","#008751",rgb(1,.2,.2)))
-
-  # if a colorgroup variable is given and if it is not continuous
-  colorgroup.vector <- as.numeric(model.dat[,colorgroup])
+  if(missing(col))
+    # default color palette
+    palette(c("#931638",rgb(1,.95,0.1),"lightblue","NavyBlue","#F7B50C","lightgreen","grey","mistyrose","#008751",rgb(1,.2,.2)))
+  else if(is.numeric(col))
+    palette(palette()[rep(col,2)])      # 'rep(col,2), da d. Palette nicht nur aus 1 Farbe bestehen kann (falls nur 1 angeg.)
+  else  
+    palette(rep(col,2))
+ 
+  # if a Colorgroup variable is given and if it is not continuous
+  colorgroup.vector <- as.numeric(model.dat[,Colorgroup])
   N.groups <- length(unique(colorgroup.vector))
   if(N.groups > 0 & N.groups <= 10)
   {
@@ -34,7 +40,7 @@ function(xx, model.dat, colorgroup, redu.SSQ.Genes, msE.genes, legendpos)
       {
         color[up == sort(unique(colorgroup.vector))[i]] <- i
         colind     <- c(colind, i)
-        label <- c(label, paste("max. expression in",colorgroup,"=",sort(unique(model.dat[,colorgroup]))[i]))
+        label <- c(label, paste("max. expression in",Colorgroup,"=",sort(unique(model.dat[,Colorgroup]))[i]))
       }
     }
   }
@@ -44,13 +50,18 @@ function(xx, model.dat, colorgroup, redu.SSQ.Genes, msE.genes, legendpos)
     color        <- 1
 
   # plotting results
+  if(missing(xlab))
+    xlab <- "Reduction in Sum of Squares"
+  if(missing(ylab))
+    ylab <- "Genes"
+
   #bars
   horizontal.bars(
         x         = rev(redu.SSQ.Genes),
-        xlabel    = "Reduction in Sum of Squares",
-        ylabel    = "Genes",
+        xlab      = xlab,
+        ylab      = ylab,
         color     = rev(color),
-        bar.names = rev(rownames(xx))
+        bar.names = rev(rownames(xx)), ...
   )
 
   # MSE-line
@@ -63,5 +74,10 @@ function(xx, model.dat, colorgroup, redu.SSQ.Genes, msE.genes, legendpos)
     legend(legendpos, label, col=colind, pch=15)
 
   palette("default")
+  
+  # return bar heights
+  if(returnValues){
+    names(redu.SSQ.Genes) <- rownames(xx)
+    return(redu.SSQ.Genes)
+  }
 }
-

@@ -2,7 +2,7 @@
 \alias{Plot.subjects-methods}
 \alias{Plot.subjects,matrix,formula,formula,ANY,missing,missing,missing-method}
 \alias{Plot.subjects,matrix,formula,missing,ANY,missing,missing,character-method}
-\alias{Plot.subjects,matrix,missing,missing,missing,numeric,ANY,missing-method}
+\alias{Plot.subjects,matrix,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Methods for Function Plot.subjects}
 \description{
@@ -27,7 +27,7 @@ whose association with differential expression will be tested.
 The arguments \code{formula.red}, \code{group} and \code{covars} are '"missing"'
 since they are not needed for this method.}
 
-\item{xx = "matrix", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "numeric", covars = "ANY", test.terms = "missing"}{Besides the expression matrix \code{xx} a clinical variable \code{group} is
+\item{xx = "matrix", formula.full = "missing", formula.red = "missing", model.dat = "missing", group = "ANY", covars = "ANY", test.terms = "missing"}{Besides the expression matrix \code{xx} a clinical variable \code{group} is
 required. Covariate adjustment is possible via the argument \code{covars} but
 more complex models have to be specified with the methods described above.
 This method emulates the function call in the first version of the package.
