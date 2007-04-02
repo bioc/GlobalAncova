@@ -1,8 +1,8 @@
 Package: GlobalAncova
 Title: Calculates a global test for differential gene expression
         between groups
-Version: 2.5.1
-Date: 2006-03-29
+Version: 3.0.0
+Date: 2006-12-06
 Author: U. Mansmann, R. Meister, M. Hummel
 Description: We give the following arguments in support of the
         GlobalAncova approach: After appropriate normalisation,
@@ -17,9 +17,12 @@ Description: We give the following arguments in support of the
         using the classical F-test is inappropriate, due to
         correlation. The test statistic however mirrors deviations
         from the null hypothesis. In combination with a permutation
-        approach, empirical significance levels can be approximated .
+        approach, empirical significance levels can be approximated.
+	  Alternatively, an approximation yields asymptotic p-values.
+	  This work was supported by the NGFN grant 01 GR 0459, BMBF, Germany.
 biocViews: Microarray, OneChannel, Statistics, DifferentialExpression, Pathways
 Maintainer: R. Meister <meister@tfh-berlin.de>
-Depends: methods
-Suggests: Biobase, globaltest, multtest, golubEsets, hu6800, vsn
+Depends: methods, corpcor, globaltest
+Imports: annotate
+Suggests: Biobase, GO, multtest, golubEsets, hu6800, hgu133a, vsn
 License: GPL Version 2 or newer

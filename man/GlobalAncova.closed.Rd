@@ -44,11 +44,17 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 
 
 \usage{
-\S4method{GlobalAncova.closed}{matrix,list,formula,formula,ANY,missing,missing,missing}(xx, test.genes, previous.test, level, formula.full, formula.red, model.dat, perm = 10000)
+\S4method{GlobalAncova.closed}{matrix,list,formula,formula,ANY,missing,missing,missing}(xx, test.genes, 
+          previous.test, level, formula.full, formula.red, model.dat, method = c("permutation","approx"), perm = 10000, 
+          max.group.size = 2500, eps = 1e-16, acc = 50)
 
-\S4method{GlobalAncova.closed}{matrix,list,formula,missing,ANY,missing,missing,character}(xx, test.genes, previous.test, level, formula.full, test.terms, model.dat, perm = 10000)
+\S4method{GlobalAncova.closed}{matrix,list,formula,missing,ANY,missing,missing,character}(xx, test.genes, 
+          previous.test, level, formula.full, test.terms, model.dat, method = c("permutation","approx"), perm = 10000, 
+          max.group.size = 2500, eps = 1e-16, acc = 50)
 
-\S4method{GlobalAncova.closed}{matrix,list,missing,missing,missing,ANY,ANY,missing}(xx, test.genes, previous.test, level, group, covars = NULL, perm = 10000)
+\S4method{GlobalAncova.closed}{matrix,list,missing,missing,missing,ANY,ANY,missing}(xx, test.genes, 
+          previous.test, level, group, covars = NULL, method = c("permutation","approx"), perm = 10000, 
+          max.group.size = 2500, eps = 1e-16, acc = 50)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -57,9 +63,9 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
              (and log- or otherwise transformed). Missing values are not allowed.
              Gene and sample names can be included as the row and column
              names of \code{xx}.}
-  \item{test.genes}{A list of pathways that shall be tested, each containing vectors of gene names.}
+  \item{test.genes}{A list of named pathways that shall be tested, each containing vectors of gene names.}
   \item{previous.test}{The output of a call to \code{GlobalAncova} with specified option
-                           \code{test.genes} according to the pathways of interest.}
+                           \code{test.genes} according to the pathways of interest (optional).}
   \item{level}{The global level of significance of the testing procedure.}
   \item{formula.full}{Model formula for the full model.}
   \item{formula.red}{Model formula for the reduced model (that does not contain the terms of interest).}
@@ -67,7 +73,12 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
   \item{group}{Vector with the group membership information.}
   \item{covars}{Vector or matrix which contains the covariate information for each sample.}
   \item{test.terms}{Character vector that contains names of the terms of interest.}
-  \item{perm}{Number of permutations to be used. The default is 10,000.}
+  \item{method}{Raw p-values can be calculated permutation-based (\code{"permutation"}) or by means of an approximation (\code{"approx"}).}
+  \item{perm}{Number of permutations to be used for the permutation approach. The default is 10,000.}
+  \item{max.group.size}{Maximum size of a gene set for which the asymptotic p-value is calculated. 
+                        For bigger gene sets the permutation approach is used.}
+  \item{eps}{Resolution of the asymptotic p-value.}
+  \item{acc}{Accuracy parameter needed for the approximation. Higher values indicate higher accuracy.}
 }
 \value{
   A list with components

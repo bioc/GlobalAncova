@@ -1,5 +1,5 @@
 setGeneric("Plot.subjects", function(xx,formula.full,formula.red,model.dat,group,covars=NULL,
-                            test.terms,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
+                            test.terms,test.genes=NULL,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
            standardGeneric("Plot.subjects"))
 # xx: expression matrix (rows=genes, columns=subjects)
 # formula.full: model formula for the full model
@@ -14,33 +14,49 @@ setGeneric("Plot.subjects", function(xx,formula.full,formula.red,model.dat,group
 # returnValues: shall subject-wise reduction in sum of squares = bar heights be returned?
 
 
-############################# allgemeine Funktion ##############################
+################################# general function #############################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.red="formula",
                           group="missing",covars="missing",test.terms="missing"),
-          definition = function(xx,formula.full,formula.red,model.dat,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
-{
+          definition = function(xx,formula.full,formula.red,model.dat,test.genes=NULL,Colorgroup=NULL,
+                                sort=FALSE,legendpos="topright",returnValues=FALSE,...){
   # test for model.dat
   if(!is.data.frame(model.dat))
     stop("'model.dat' has to be a data frame")
+
+  # test for test.genes (i.e. only one gene set can be given and not a list of gene sets)
+  if(!is.null(test.genes) & !(data.class(test.genes) %in% c("numeric","character")))
+    stop("'test.genes' has to be a vector of gene names or indices")
+    
+  # get gene set 
+  if(!is.null(test.genes))
+    xx <- xx[test.genes,] 
 
   # basic analysis
   res <- reduSQ(xx=xx,formula.full=formula.full,formula.red=formula.red,model.dat=model.dat)
   redu.SSQ.Subjects    <- res$redu.subjects
 
   # plot
-  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos,returnValues=returnValues,...)
+  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,
+                sort=sort,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
 
 
 
-########################## 'alte' Fkt. für 2 Gruppen ###########################
+########################## function for 2 groups ###############################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.red="missing",
                           model.dat="missing",group="ANY",test.terms="missing"),
-          definition = function(xx,group,covars=NULL,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
-{
+          definition = function(xx,group,covars=NULL,test.genes=NULL,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...){
+  # test for test.genes (i.e. only one gene set can be given and not a list of gene sets)
+  if(!is.null(test.genes) & !(data.class(test.genes) %in% c("numeric","character")))
+    stop("'test.genes' has to be a vector of gene names or indices")
+    
+  # get gene set 
+  if(!is.null(test.genes))
+    xx <- xx[test.genes,] 
+
   # 'group' is assumed to be the variable relevant for coloring
   if(is.null(Colorgroup))
     Colorgroup <- deparse(substitute(group))
@@ -64,24 +80,30 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.
   redu.SSQ.Subjects <- res$redu.subjects
 
   # plot
-  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos,returnValues=returnValues,...)
+  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,
+              sort=sort,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
 
 
 
-################### allgemeine Funktion m. Angabe v. 'terms' ###################
+############################# with 'test.terms' ################################
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.red="missing",
                           group="missing",covars="missing",test.terms="character"),
-          definition = function(xx,formula.full,test.terms,model.dat,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
-{
+          definition = function(xx,formula.full,test.terms,model.dat,test.genes=NULL,Colorgroup=NULL,
+                                sort=FALSE,legendpos="topright",returnValues=FALSE,...){
   # test for model.dat
   if(!is.data.frame(model.dat))
     stop("'model.dat' has to be a data frame")
 
-  # test for 'test.terms' and derive 'formula.red'
-  #formula.red <- terms2formula(formula.full=formula.full, test.terms=test.terms, model.dat=model.dat)
+  # test for test.genes (i.e. only one gene set can be given and not a list of gene sets)
+  if(!is.null(test.genes) & !(data.class(test.genes) %in% c("numeric","character")))
+    stop("'test.genes' has to be a vector of gene names or indices")
+    
+  # get gene set 
+  if(!is.null(test.genes))
+    xx <- xx[test.genes,] 
 
   # test for 'test.terms'
   terms.all <- test.terms
@@ -99,6 +121,90 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
   redu.SSQ.Subjects <- res$redu.subjects
 
   # plot
-  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,sort=sort,legendpos=legendpos,returnValues=returnValues,...)
+  plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,
+              sort=sort,legendpos=legendpos,returnValues=returnValues,...)
 }
 )
+
+
+################################################################################
+################################################################################
+
+# main function
+plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos, returnValues=FALSE, col, xlab, ylab, ...){
+  if(!is.character(Colorgroup) & !is.null(Colorgroup))
+    stop("'Colorgroup' has to be a character")
+
+  if(is.null(colnames(xx)))
+    colnames(xx) <- seq(1:dim(xx)[2])
+  N.Genes <- dim(xx)[1]
+
+  if(missing(col))
+    # color palette
+    palette(c("#931638",rgb(1,.95,0.1),"lightblue","NavyBlue","#F7B50C","lightgreen","grey","mistyrose","#008751",rgb(1,.2,.2)))
+  else if(is.numeric(col))
+    palette(palette()[rep(col,2)])
+  else
+    palette(rep(col,2))
+
+  # if a group variable is given and if it is not continuous
+  colorgroup.vector <- as.numeric(model.dat[,Colorgroup])
+  N.groups          <- length(unique(colorgroup.vector))
+  if(N.groups > 0 & N.groups <= 10){
+    color        <- numeric(N.groups)
+    label        <- numeric(0)
+
+    if(sort == TRUE){
+      x          <- redu.SSQ.Subjects[order(colorgroup.vector)]
+      barnames   <- colnames(xx)[order(colorgroup.vector)]
+      gr.sort    <- sort(colorgroup.vector)
+      for(i in 1:N.groups){
+        color[gr.sort == unique(gr.sort)[i]] <- i
+        label    <- c(label, paste(Colorgroup, "=", unique(gr.sort)[i]))
+      }
+    }
+
+    else{
+      for(i in 1:N.groups){
+        x          <- redu.SSQ.Subjects
+        barnames   <- colnames(xx)
+        color[colorgroup.vector == sort(unique(colorgroup.vector))[i]] <- i
+        label      <- c(label, paste(Colorgroup, "=", sort(unique(model.dat[,Colorgroup]))[i]))
+      }
+    }
+  }
+
+  # if no group is given or for a continuous group variable
+  else{
+    x            <- redu.SSQ.Subjects
+    barnames     <- colnames(xx)
+    color        <- 1
+  }
+
+# plotting results
+  if(missing(xlab))
+    xlab <- "Reduction in Sum of Squares"
+  if(missing(ylab))
+    ylab <- "Subjects"
+
+  #bars
+  horizontal.bars(
+        x         = rev(x),
+        xlab      = xlab,
+        ylab      = ylab,
+        color     = rev(color),
+        bar.names = rev(barnames), ...
+  )
+
+  # legend
+  if(N.groups > 0 & N.groups <= 10)
+    legend(legendpos, label, col=1:N.groups, pch=15)
+
+  palette("default")
+
+ # return bar heights
+  if(returnValues){
+    names(x) <- rownames(xx)
+    return(x)
+  }
+}

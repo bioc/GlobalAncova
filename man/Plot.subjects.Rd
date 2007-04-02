@@ -1,9 +1,9 @@
 \name{Plot.subjects}
 \alias{Plot.subjects}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Subjects Plot for Global Ancova}
+\title{Subjects Plot for GlobalAncova}
 \description{
-  Produces a plot to show the influence of the samples on the test result produced by 'GlobalAncova'.
+  Produces a plot to show the influence of the samples on the test result produced by \code{\link{GlobalAncova}}.
 
   There are three possible ways of using \code{GlobalAncova}.
   Also \code{Plot.subjects} can be invoked with these three alternatives.
@@ -34,11 +34,11 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 }}
 
 \usage{
-\S4method{Plot.subjects}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
+\S4method{Plot.subjects}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, test.genes = NULL, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
 
-\S4method{Plot.subjects}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
+\S4method{Plot.subjects}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, test.genes = NULL, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
 
-\S4method{Plot.subjects}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
+\S4method{Plot.subjects}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL, test.genes = NULL, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -53,6 +53,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
   \item{group}{Vector with the group membership information.}
   \item{covars}{Vector or matrix which contains the covariate information for each sample.}
   \item{test.terms}{Character vector that contains names of the terms of interest.}
+  \item{test.genes}{Vector of gene names or gene indices specifying a gene set.}
   \item{Colorgroup}{Character variable giving the group that specifies coloring.
         If the function is called using the argument \code{group} then this variable is assumed to
         be relevant for coloring.}
@@ -74,9 +75,10 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 \examples{
 data(vantVeer)
 data(phenodata)
+data(pathways)
 
-Plot.subjects(xx = vantVeer, formula.full = ~metastases + ERstatus, formula.red = ~ERstatus, model.dat = phenodata, colorgroup = "metastases")
-Plot.subjects(xx = vantVeer, formula.full = ~metastases + ERstatus, test.terms = "metastases", model.dat = phenodata, colorgroup = "metastases")
-Plot.subjects(xx = vantVeer, group = phenodata$metastases, covars = phenodata$ERstatus)
+Plot.subjects(xx = vantVeer, formula.full = ~metastases + ERstatus, formula.red = ~ERstatus, model.dat = phenodata, test.genes = pathways[[3]], colorgroup = "metastases")
+Plot.subjects(xx = vantVeer, formula.full = ~metastases + ERstatus, test.terms = "metastases", model.dat = phenodata, test.genes = pathways[[3]], colorgroup = "metastases")
+Plot.subjects(xx = vantVeer, group = phenodata$metastases, covars = phenodata$ERstatus, test.genes = pathways[[3]])
 }
 \keyword{ hplot }

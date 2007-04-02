@@ -1,0 +1,326 @@
+% \VignetteIndexEntry{GlobalAncova.decomp}
+% \VignetteDepends{GlobalAncova}
+% \VignetteKeywords{Expression Analysis}
+% \VignettePackage{GlobalAncova.decomp}
+
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+\documentclass[a4paper]{article}
+
+\title{GlobalAncova with Special Sum of Squares Decompositions}
+
+\author{Ramona Scheufele \and Manuela Hummel \and Reinhard Meister \and Ulrich Mansmann}
+
+
+\begin{document}
+
+\maketitle \tableofcontents %\newpage
+
+\section{Abstract}
+
+<<echo=F, results=hide>>=
+#library(Biobase)
+library(GlobalAncova)
+data(vantVeer)
+data(phenodata)	
+data(pathways)	
+sI <- sessionInfo()
+options(width=70)
+@
+
+This vignette shows the enhancements made for \Rpackage{GlobalAncova}. Basically, there are four ideas implemented:
+
+\begin{itemize}
+\item decomposition of the sum of squares of a linear model
+\item a plotting function for the sequential decomposition
+\item pairwise comparison for factor levels
+\item adjustment for global covariates
+\end{itemize}
+
+The decomposition of the model sum of squares results in an ANOVA table, which
+shows the sum of squares due to each term of a linear model. It can be used either
+on a global basis or for a small group of genes on a gene-wise
+basis. Pairwise comparisons allow conclusions about whether or not the gene expressions of two levels of a factor are significantly different. An adjustment for global covariates is possible in cases
+where not only one but two expression sets per subject exist. If the second set describes the subject’s "`normal"' status, it can be used to reduce the variance between subjects.\\
+Since a permutation approach is not (yet) implemented as it is in the basic \Rfunction{GlobalAncova} function, the functionalities described in this vignette may be seen like rather descriptive tools.
+
+This document was created using R version \Sexpr{paste(R.version$major,".",R.version$minor,sep="")}
+and version \Sexpr{sI$otherPkgs$GlobalAncova$Version} of the \Rpackage{GlobalAncova} package.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Sequential and Type III Decomposition}
+
+Decomposition of sum of squares (SSQ) can be used so as to show the effect of each
+factor of a linear model on the gene expression. Two types of decomposition of the
+model SSQ are presented here: the sequential and the type III decomposition. Both
+are computed using the extra sum of squares principle repeatedly, yet they have
+different approaches with regard to which factors are to be kept or to be left out.
+For both decompositions an F-test can be performed.\\
+The two methods are implemented in the function \Rfunction{GlobalAncova.decomp} and can be selected
+by specifying the argument \Rfunarg{method}, which can be either one of \Rfunarg{"sequential"} (default), \Rfunarg{"type3"} or \Rfunarg{"all"}. The latest yields a list of both. Other arguments to \Rfunction{GlobalAncova.decomp} are \Rfunarg{xx} specifying the expression matrix, \Rfunarg{formula} describing the model to be decomposed and \Rfunarg{model.dat} determining phenotype data. The names or indices of the group of genes to be analysed can be set in the \Rfunarg{test.genes} parameter.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\subsection{Sequential Decomposition}
+
+\vspace{.5cm}
+\noindent {\bf Sequential Decomposition}\\
+In the sequential or hierarchical decomposition, the sum of squares of each term
+of the model are calculated by adding to the model term after term and obtaining
+the increase in model SSQ due the addition. Thus, each term is adjusted for all preceding terms but not for the succeeding ones. Consequently, the order of terms
+in the model is important as the following examples show.
+Applying an F-test to the sequential SSQ is only meaningful if a logical or hierarchical
+order of factors exists (e.g. main effects first followed by interaction effects).
+Only in this case, it can be tested when the factors start to be insignificant.
+The following examples are based on the van’t Veer breast cancer data set, which is included in the \Rpackage{GlobalAncova} package. 
+A subset of the data consisting of the expression values for \Sexpr{dim(phenodata)[1]} patients without {\it BRCA1} or {\it BRCA2} mutations is available. The dataset (\Robject{vantVeer}) is restricted to \Sexpr{dim(vantVeer)[1]} genes associated with \Sexpr{length(pathways)} cancer related pathways that are provided as a list named (\Robject{pathways}).
+The phenotype data of this study (\Robject{phenodata}) include the grade of the tumour (\Robject{grade}), whether or not metastases were developed (\Robject{metastases}) and the estrogen  receptor status (\Robject{ERstatus}). Giving the assumption that all three factors measured have an effect on gene expression, a possible linear model for the gene expressions could be
+
+<<data, results=hide>>=
+library(GlobalAncova)
+data(vantVeer)
+data(phenodata)	
+data(pathways)	
+formula <- ~ grade + metastases + ERstatus
+@
+
+We will now test which of the terms of the
+former model have effects on the overall gene expression.
+
+<<sequential>>=
+GlobalAncova.decomp(xx = vantVeer, formula = formula, model.dat = phenodata, method = "sequential")
+@
+
+Apparently, all factors of the model are significant. Note however, that since expressions are correlated and have non-normal distribution, the p-values derived from the F-distribution
+lead to alpha-inflation.
+
+In oder to demonstrate the impact of the order of terms we will repeat the analysis
+using the same model but in reverse order.
+
+<<>>=
+formula2 <- ~ ERstatus + metastases + grade
+GlobalAncova.decomp(xx = vantVeer, formula = formula2, model.dat = phenodata, method = "sequential")
+@
+
+Differences in sum of squares due to different ordering of terms indicate a non-orthogonal
+design matrix.
+One major property of the sequential method is that the sums of squares due to the
+single terms add up to the full model SSQ. This is not generally the case in the type
+III decomposition.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\subsection{Type III Decomposition}
+
+\vspace{.5cm}
+\noindent {\bf Type III Decomposition}\\
+In contrast to the sequential decomposition, the type III decomposition is calculated
+by removing only a single term at a time from the full model. That is, every term is
+adjusted for every other term in the model and ist thus treated as if ordered last.
+To select the type III sum of squares the option \Rfunarg{method = "type3"} has to be set.
+The terms of the model derived from the van't Veer dataset can now be tested by
+using the following call
+
+<<type3>>=
+GlobalAncova.decomp(xx = vantVeer, formula = formula, model.dat = phenodata, method = "type3")
+@
+
+The SSQ due to the last term is the same in both decompositions. All terms but the
+last have generally smaller type III than sequential sums of squares. Only in case of an orthogonal design matrix they have equal sums of squares in both decompositions.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Testing Groups of Genes}
+
+In some studies, the interest lies not with the entire expression matrix but only with
+certain groups of genes, e.g. pathways. The names or indices of these genes can be
+specified in the option \Rfunarg{test.genes}. As example, we use the first three cancer relevant pathways given in the object \Robject{pathways}.
+
+<<pathw>>=
+GlobalAncova.decomp(xx = vantVeer, formula = formula, model.dat = phenodata, method = "type3", test.genes = pathways[1:3])
+@
+
+Estrogen receptor status and tumour grade are significant in all three pathways, whereas the indicator of the development of metastases is not significant in any of them.
+
+\vspace{.5cm}
+\noindent {\bf Gene-wise Analysis}\\
+For a more detailed analysis, it is furthermore possible to display the sequential
+decomposition for each gene seperately. Due to the large numerical output, this
+option will only be interesting for a limited number of genes. It can be chosen
+by setting genewise=TRUE. This option also serves the purpose of providing a
+nummerical view of what is shown by the function \Rfunction{Plot.sequential}, see section \ref{plots}. %There, results of sequential decomposition are visualized. 
+Just for demonstration we will show the gene-wise result of the sequential decomposition for the first three genes of the first pathway.
+
+<<genewise>>=
+GlobalAncova.decomp(xx = vantVeer, formula = formula, model.dat = phenodata, test.genes = pathways[[1]][1:3], genewise = TRUE)
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Diagnostic Plots} \label{plots}
+
+In this section a graphical method will be introduced to visualize the result of genewise
+sequential decomposition. This graphic can either be plotted on its own or in
+combination with the function \Rfunction{Plot.genes}, see \Rpackage{GlobalAncova} vignette.\\
+The function \Rfunction{Plot.sequential} yields a bar plot with bars for the single genes and one for the over all result. The segments of the bars indicate the extra sum of squares due to each
+factor relative to the model SSQ of the corresponding gene. In order to enable an
+easier comparison between the genes, the model SSQ of each gene is set to 1.
+The arguments to this function are the expression matrix \Rfunarg{xx}, the \Rfunarg{formula}
+of the model to be decomposed, the phenotype data \Rfunarg{model.dat} and optionally a vector of gene names or indices \Rfunarg{test.genes} specifying the gene set and the name of the gene set \Rfunarg{name.geneset} (for the title of the plot). As an example we will investigate the structure of the cell cycle pathway genes from the van't Veer study, see figure \ref{seq.plot}.
+
+<<plotseq, eval=F>>=
+Plot.sequential(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat = phenodata, test.genes = pathways[[3]], name.geneset = "cell cycle pathway")
+@
+
+\begin{figure}[htb!]
+\begin{center}
+<<fig=T, eps=F, echo=F>>=
+Plot.sequential(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat = phenodata, test.genes = pathways[[3]], name.geneset = "cell cycle pathway")
+@
+%\vspace{-0.4cm}
+\caption{{\small \label{seq.plot} Sequential decomposition of model sum of squares for the cell cycle genes in the van't Veer data.}}
+\end{center}
+\end{figure}
+
+In order to gain information about the significance of the factors, it is also possible
+to combine the former plot with the \Rpackage{GlobalAncova} gene plot. The gene plot shows
+for two given models the gene-wise extra sum of squares and the mean square error in a
+barplot. In the combined plot, the gene plot is used to show the extra sum of squares
+due to all factors of the model altogether. Hence, not only the decomposition can
+be visualized but also the significance of the full model for each gene.
+For displaying again the effects on the cell cycle genes in the van't Veer data with the combined plot (figure \ref{all.plot}) we use
+
+<<combplot, eval=F>>=
+Plot.all(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat = phenodata, test.genes = pathways[[3]], name.geneset = "cell cycle pathway")
+@
+
+\begin{figure}[htb!]
+\begin{center}
+<<fig=T, eps=F, echo=F>>=
+Plot.all(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat = phenodata, test.genes = pathways[[3]], name.geneset = "cell cycle pathway")
+@
+%\vspace{-0.4cm}
+\caption{{\small \label{all.plot} Sequential decomposition of model sum of squares and model mean squares for the cell cycle genes in the van't Veer data.}}
+\end{center}
+\end{figure}
+
+This graphical methods helps to investigate a lot of different and complex models, e.g. differential co-expression.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Pairwise Comparisons of Factor Levels}
+
+Some studies focus on the connection between a single factor and gene expression.
+This is, for instance, the case when the factor in question provides some kind of
+classification. To investigate how a classification is reflected in the gene expression,
+pair-wise comparisons of factor levels can be used.
+The method presented here analyses for a pair of factor levels whether the genes
+under observation are diffentely expressed, i.e. it can detect whether the difference
+between two levels is reflected in the gene expression. As measurement for the extra
+sum of squares due to this difference, the method uses the decrease in residual sum
+of squares obtained when the two are set to the same level.
+Pairwise comparisons can be performed by using the function \Rfunction{pair.compare}.
+Similarly to the function \Rfunction{GlobalAncova.decomp}, \Rfunction{pair.compare} requires the arguments \Rfunarg{xx} (expression matrix), \Rfunarg{formula} (model) and \Rfunarg{model.dat} (phenotype data). Furthermore,
+the argument \Rfunarg{group} has to be set to the name of the factor which is to be analysed.
+The function yields an ANOVA table with a row for each possible combination of the
+factor levels. Since pair-wise comparison is a multiple testing problem, not only the
+p-values based on the permutation test are returned but also the Bonferroni-Holm
+adjusted p-values.\\
+As an example we will perform pair-wise comparisons of the three levels of tumour grade in the van't Veer data.
+
+<<pairwise>>=
+pair.compare(xx = vantVeer, formula = ~ grade, model.dat = phenodata, group = "grade", perm = 100)
+@
+
+There are essential differences between stages 1 and 3 and 2 and 3, respectively, whereas stages 1 and 2 seem to be rather similar.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Adjusting for a Global Covariate}
+
+Considerable variability between patients is the rule in medical statistics. Therefore,
+adjustment for covariates is often applied so as to reduce variance. Natural candidates
+for adjustement are covariates representing the baseline status of patients.
+For microarray data, gene expressions from normal (non-cancer) tissue of a patient
+might play this role of giving baseline status, which can then be compared to the
+tumour probe of the same patient. Analogously, tumour probes of a former biopsy
+might be used to trace changes.\\
+The adjustment for covariates is also implemented in the \Rfunction{GlobalAncova.decomp} call. It
+uses the arguments \Rfunarg{zz} and \Rfunarg{zz.per.gene}. The former defines the expression matrix
+of the global covariate, and the later is a logical value specifying whether or not
+different parameters should be used for each gene.
+
+<<echo=F>>=
+data(colon.tumour)
+@
+
+The data for the following examples are taken from the colon cancer study of \cite{Groe:06}.
+In this study, tumour as well as normal tissue expressions were measured. Just for demonstration we picked a set of \Sexpr{nrow(colon.tumour)} genes which are associated with cell proliferation and which are measured in tumour and normal tissue of 12 colon cancer patients. The most important factors considered are the carcinoma stage (\Robject{UICC.stage}), the gender (\Robject{sex}) and the location of the tumour (distal/proximal).
+At first a type III decomposition will be performed only for the tumour data in order
+to show potential differences made by the later adjustment:
+
+<<groene>>=
+data(colon.tumour)
+data(colon.normal)
+data(colon.pheno)
+formula <- ~ UICC.stage + sex + location
+GlobalAncova.decomp(xx = colon.tumour, formula = formula, model.dat = colon.pheno, method = "type3")
+@
+
+In order to adjust for the expression in normal state the of cells, intuitively we could use the difference between tumour and normal tissue expression for analysis:
+
+<<diff>>=
+GlobalAncova.decomp(xx = colon.tumour - colon.normal, formula = formula, model.dat = colon.pheno, method = "type3")
+@
+
+In this example the adjustment does not yield a considerable difference to the previous result. Note however, that we consider here a rather arbitrary selection of genes.
+
+\vspace{.5cm}
+\noindent {\bf Adjustment by using one parameter for all genes}\\
+A more general way is to adjust by $xx - \beta \cdot zz$ allowing $\beta$ to be different from 1.
+The parameter $\beta$ is estimated as the least square estimate of the model $xx = \beta \cdot zz$.
+Thus, we account for a relatively different ground level in the two expression sets.
+This kind of adjustment can be chosen by specifying zz as the gene expression matrix
+of the global covariate:
+
+<<zz>>=
+GlobalAncova.decomp(xx = colon.tumour, formula = formula, model.dat = colon.pheno, method = "all", zz = colon.normal)
+@
+
+\vspace{.5cm}
+\noindent {\bf Adjustment by using a different parameter for every gene}\\
+In the last approach using the model $xx = zz \beta$ for adjustment, the parameter vector
+$\beta$ is estimated on a gene-wise basis. This adjustement can be selected by additionally
+setting the option \Rfunarg{zz.per.gene = TRUE}. However, the biological meaning of this model seems unclear.
+
+<<zzgw>>=
+GlobalAncova.decomp(xx = colon.tumour, formula = formula, model.dat = colon.pheno, method = "all", zz = colon.normal, zz.per.gene = TRUE)
+@
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\clearpage
+
+\section{Acknowledgements}
+
+This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.
+
+
+\vspace{1cm}
+!! welche Referenz zu den Zerlegungen?
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

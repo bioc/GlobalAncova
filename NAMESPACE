@@ -1,3 +1,9 @@
-exportMethods(GlobalAncova, GlobalAncova.closed, Plot.genes, Plot.subjects)
+importFrom(annotate, lookUp, Secondary, Term)
+
+#importFrom(globaltest, GOstructure)
+
+exportMethods("GlobalAncova", "GlobalAncova.closed", "Plot.genes", "Plot.subjects")
+
+export(GAGO, GlobalAncova.decomp, pair.compare, Plot.sequential, Plot.all)
 
 
