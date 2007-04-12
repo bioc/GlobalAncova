@@ -2,8 +2,8 @@ Package: GlobalAncova
 Title: Calculates a global test for differential gene expression
         between groups
 Version: 3.0.0
-Date: 2006-12-06
-Author: U. Mansmann, R. Meister, M. Hummel
+Date: 2007-04-12
+Author: U. Mansmann, R. Meister, M. Hummel, R. Scheufele
 Description: We give the following arguments in support of the
         GlobalAncova approach: After appropriate normalisation,
         gene-expression-data appear rather symmetrical and outliers
