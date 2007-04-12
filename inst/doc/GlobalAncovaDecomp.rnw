@@ -181,7 +181,7 @@ Plot.sequential(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat =
 
 \begin{figure}[htb!]
 \begin{center}
-<<fig=T, eps=F, echo=F>>=
+<<fig=T, echo=F>>=
 Plot.sequential(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat = phenodata, test.genes = pathways[[3]], name.geneset = "cell cycle pathway")
 @
 %\vspace{-0.4cm}
@@ -203,7 +203,7 @@ Plot.all(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat = phenod
 
 \begin{figure}[htb!]
 \begin{center}
-<<fig=T, eps=F, echo=F>>=
+<<fig=T, echo=F>>=
 Plot.all(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat = phenodata, test.genes = pathways[[3]], name.geneset = "cell cycle pathway")
 @
 %\vspace{-0.4cm}
