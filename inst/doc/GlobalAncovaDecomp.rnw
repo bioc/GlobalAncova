@@ -78,7 +78,7 @@ in the model is important as the following examples show.
 Applying an F-test to the sequential SSQ is only meaningful if a logical or hierarchical
 order of factors exists (e.g. main effects first followed by interaction effects).
 Only in this case, it can be tested when the factors start to be insignificant.
-The following examples are based on the van’t Veer breast cancer data set, which is included in the \Rpackage{GlobalAncova} package. 
+The following examples are based on the van’t Veer breast cancer data set \cite{vV:02}, which is included in the \Rpackage{GlobalAncova} package. 
 A subset of the data consisting of the expression values for \Sexpr{dim(phenodata)[1]} patients without {\it BRCA1} or {\it BRCA2} mutations is available. The dataset (\Robject{vantVeer}) is restricted to \Sexpr{dim(vantVeer)[1]} genes associated with \Sexpr{length(pathways)} cancer related pathways that are provided as a list named (\Robject{pathways}).
 The phenotype data of this study (\Robject{phenodata}) include the grade of the tumour (\Robject{grade}), whether or not metastases were developed (\Robject{metastases}) and the estrogen  receptor status (\Robject{ERstatus}). Giving the assumption that all three factors measured have an effect on gene expression, a possible linear model for the gene expressions could be
 
@@ -317,8 +317,8 @@ GlobalAncova.decomp(xx = colon.tumour, formula = formula, model.dat = colon.phen
 This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.
 
 
-\vspace{1cm}
-!! welche Referenz zu den Zerlegungen?
+%\vspace{1cm}
+%!! welche Referenz zu den Zerlegungen?
 
 \bibliographystyle{plain}
 \bibliography{references}
