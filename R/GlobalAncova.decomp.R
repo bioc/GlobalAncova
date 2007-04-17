@@ -231,7 +231,7 @@ decomp.ssq.genewise <- function(xx, formula, model.dat=NULL) {
 
 # !!
 #    ssq[,i]<-red.ssq.genewise(xx,D.full,D.red)[,1]
-    ssq[,i] <- genewiseGA(xx, D.full, D.red)[,1]
+    ssq[,i] <- genewiseGA(xx, D.full, D.red=D.red)[,1]
 # !!
 
     D.red<-D.full

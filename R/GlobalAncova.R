@@ -128,7 +128,7 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
     DF.extra <- N.Genes * (N.par.full - N.par.red)
 
     # sums of squares
-    genewiseSS <- genewiseGA(xx2, D.full, D.red)
+    genewiseSS <- genewiseGA(xx2, D.full, D.red=D.red)
     SS.full    <- sapply(test.genes, function(x) sum(genewiseSS[x,"denominator"]))
     SS.extra   <- sapply(test.genes, function(x) sum(genewiseSS[x,"nominator"]))
     MS.full    <- SS.full / DF.full
@@ -219,11 +219,12 @@ row.orth2d <- function(xx, D)
 ################################################################################
 
 # computes nominator and denominator of GlobalAncova statistic for each single gene
-genewiseGA <- function(xx, D.full, D.red){  
+genewiseGA <- function(xx, D.full, D.red=NULL, SS.red.i=NULL){  
     R.full <- row.orth2d(xx, D.full)
-    R.red  <- row.orth2d(xx, D.red)
- 
-    SS.red.i <- rowSums(R.red*R.red)
+    if(is.null(SS.red.i)){
+      R.red  <- row.orth2d(xx, D.red) 
+      SS.red.i <- rowSums(R.red*R.red)
+    }
 
     # denominator: residual sum of squares in the full model
     SS.full.i <- rowSums(R.full*R.full)
@@ -241,13 +242,19 @@ genewiseGA <- function(xx, D.full, D.red){
 resampleGA <- function(xx, D.full, D.red, perm, test.genes, F.value, DF.full, DF.extra){
     N.Subjects  <- ncol(xx)
     rr     <- row.orth2d(xx, D.red)
-    rr.cov <- (diag(nrow(D.red)) - D.red %*% solve(t(D.red) %*% D.red) %*% t(D.red))
-    rr     <- rr %*% diag(1 / sqrt(diag(rr.cov)))
-    
-    count  <- numeric(length(test.genes))
+
+    # sum of squares in reduced model do not have to be re-calculated in each permutation
+    genewSS  <- genewiseGA(xx, D.full, D.red=D.red)
+    SS.red.i <- genewSS[,1] + genewSS[,2]   # SS.red = SS.extra + SS.full
+
+    D.full.perm <- D.full
+    test.col <- !colnames(D.full) %in% colnames(D.red)
+    count <- numeric(length(test.genes))
     for(i in 1:perm) {
-      ord          <- sample(N.Subjects)
-      genewSS.perm <- genewiseGA(rr[,ord,drop=F], D.full, D.red) 
+      # permute only values of interesting variables
+      ord <- sample(N.Subjects)
+  		D.full.perm[,test.col] <- D.full[ord, test.col]	 		 
+      genewSS.perm <- genewiseGA(rr, D.full.perm, SS.red.i=SS.red.i) 
       F.perm       <- sapply(test.genes, function(x) sum(genewSS.perm[x,1]) / sum(genewSS.perm[x,2])) / (DF.extra / DF.full)
       count        <- count + (F.perm > F.value)
     }

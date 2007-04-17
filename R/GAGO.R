@@ -346,7 +346,7 @@ setMethod("pGAapprox", signature(xx="matrix",formula.full="formula",formula.red=
         stop("Missing values in the model variables")
 
      # extra sum of squares
-     genewiseSS <- genewiseGA(xx2, D.full, D.red)
+     genewiseSS <- genewiseGA(xx2, D.full, D.red=D.red)
      SS.extra   <- sapply(test.genes, function(x) sum(genewiseSS[x,"nominator"]))
 
      # get eigen values
