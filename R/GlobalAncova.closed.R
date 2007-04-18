@@ -111,11 +111,11 @@ GA.closed <- function(xx,test.genes,formula.full,formula.red=NULL,D.red=NULL,mod
     included           <- lapply(intlength, function(x) x==length(test.genes[[i]])) # Kn., in denen Kn. i enthalten ist
     related            <- which(unlist(included))
 
-    result.i           <- matrix(NA, length(related), 4)
+    result.i           <- matrix(NA, length(related), 3)
     method             <- match.arg(method)
     dimnames(result.i) <- switch(method, 
-                          "permutation" = list(names(new.data[related]), c("genes","F.value","p.value","p.perm")),
-                          "approx"      = list(names(new.data[related]), c("genes","F.value","p.value","p.approx")))
+                          "permutation" = list(names(new.data[related]), c("genes","F.value","p.perm")),
+                          "approx"      = list(names(new.data[related]), c("genes","F.value","p.approx")))
 
     for(j in 1:length(related)){
         name.j         <- names(new.data[related[j]])
@@ -131,11 +131,11 @@ GA.closed <- function(xx,test.genes,formula.full,formula.red=NULL,D.red=NULL,mod
             ga <- expr.test(xx=xx[new.data[[related[j]]], ],formula.full=formula.full,
                              D.red=D.red,model.dat=model.dat,method=method,perm=perm,max.group.size=max.group.size,eps=eps,acc=acc)
           result.i[j, 1]   <- length(new.data[[related[j]]])
-          pvals            <- round(ga$test.result[1:3], 4)
+          pvals            <- round(ga$test.result[1:2], 4)
           # if 'method=approx' is chosen but some gene groups are bigger than 'max.group.size' 
-          if(is.na(pvals[3]))
-            pvals[3] <- round(ga$test.result[4], 4)  # then take the permutation p-value
-          result.i[j, 2:4] <- pvals
+          if(is.na(pvals[2]))
+            pvals[2] <- round(ga$test.result[3], 4)  # then take the permutation p-value
+          result.i[j, 2:3] <- pvals
           just.tested      <- c(just.tested, name.j)
 	     }
 
@@ -157,14 +157,14 @@ GA.closed <- function(xx,test.genes,formula.full,formula.red=NULL,D.red=NULL,mod
        else {
           # if 'method=approx' is chosen but some gene groups are bigger than 'max.group.size'
           ifelse(method == "permutation",
-            result.i[j,] <- c(previous.test[name.j,1:3], p.perm=previous.test[name.j,"p.perm"]), 
+            result.i[j,] <- c(previous.test[name.j,1:2], p.perm=previous.test[name.j,"p.perm"]), 
             ifelse(is.na(previous.test[name.j,"p.approx"]), # if 'method=approx' is chosen but some gene groups are bigger than 'max.group.size' 
-              result.i[j,] <- c(previous.test[name.j,1:3], p.approx=previous.test[name.j,"p.perm"]),  # -> take permutation p-value
-              result.i[j,] <- c(previous.test[name.j,1:3], p.approx=previous.test[name.j,"p.approx"])))         
+              result.i[j,] <- c(previous.test[name.j,1:2], p.approx=previous.test[name.j,"p.perm"]),  # -> take permutation p-value
+              result.i[j,] <- c(previous.test[name.j,1:2], p.approx=previous.test[name.j,"p.approx"]))) 
        }
 
        # stop if one of the hypotheses can not be rejected
-       if(result.i[j, 4] > level){
+       if(result.i[j, 3] > level){
       	  sig          <- sig[sig != i]
       	  nsig         <- c(nsig, i)
       	  break

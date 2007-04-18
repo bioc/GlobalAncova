@@ -141,10 +141,10 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
       test.result <- cbind(genes=N.Genes, F.value=F.value)
       return(test.result)
     }
-    p.value <- pf(F.value, DF.extra, DF.full, lower.tail=F)
+    #p.value <- pf(F.value, DF.extra, DF.full, lower.tail=F)
 
     # permutation p-values
-    p.perm <- NULL
+    p.value <- p.perm <- NULL
     if(method == "permutation" | method == "both") {
         p.perm <- resampleGA(xx2, D.full, D.red, perm, test.genes, F.value, DF.full, DF.extra)
         p.value <- cbind(p.value, p.perm)
