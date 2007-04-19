@@ -9,7 +9,6 @@
 # used by setting zz.per.gene to TRUE.
 # 'method': c("sequential","type3","all")
 
-# !!
 GlobalAncova.decomp <- function(xx, formula, model.dat=NULL, method=c("sequential","type3","all"),
               test.genes=NULL, genewise=FALSE, zz=NULL, zz.per.gene=FALSE){
   # if just one gene should be tested
@@ -31,12 +30,6 @@ GlobalAncova.decomp <- function(xx, formula, model.dat=NULL, method=c("sequentia
       xx2 <- xx[test.genes[[j]], ,drop=FALSE]
       zz2 <- zz[test.genes[[j]], ,drop=FALSE]
 
-      # if pathway contains just one gene     # !! braucht's nicht
-#      if(is.vector(xx2)){
-#        xx2 <- t(as.matrix(xx2))
-#        zz2 <- t(as.matrix(zz2))
-#      }
-
       res <- c(res, list(decomp.ssq(xx=xx2, formula=formula, model.dat=model.dat,
                     zz=zz2, zz.per.gene=zz.per.gene, method=method)))
    }
@@ -51,7 +44,7 @@ GlobalAncova.decomp <- function(xx, formula, model.dat=NULL, method=c("sequentia
  else{
    if(length(test.genes) > 1)
      stop("genewise analysis only valid with one gene group")
-   method <- match.arg(method)   # !!
+   method <- match.arg(method)  
    if(method != "sequential")
      warning("genewise analysis yields only sequential decomposition")
 
@@ -63,7 +56,6 @@ GlobalAncova.decomp <- function(xx, formula, model.dat=NULL, method=c("sequentia
  }
  return(res)
 }
-# !!
 
 
 ################################################################################
@@ -145,10 +137,7 @@ decomp.ssq <- function(xx, formula, model.dat=NULL, method=c("sequential","type3
   seq.f<-c(seq.ms[1:nt]/seq.ms[nt+1],NA)
 
  # p-value
-# !!
-#  seq.p<-1-pf(seq.f,df,df[nt+1])
   seq.p <- pf(seq.f, df, df[nt+1], lower.tail=FALSE)
-# !!
 
 #___4. type III decomposition
 
@@ -183,7 +172,7 @@ decomp.ssq <- function(xx, formula, model.dat=NULL, method=c("sequential","type3
               sequential=sequential,
               typeIII=typeIII)
 
-  method <- match.arg(method)        # !!
+  method <- match.arg(method)        
   switch(method, sequential=res$sequential, type3=res$typeIII, all=res)
 }
 
@@ -228,12 +217,7 @@ decomp.ssq.genewise <- function(xx, formula, model.dat=NULL) {
   for (i in 2:nt)
   {
     D.full<-D[,1:position[i]]
-
-# !!
-#    ssq[,i]<-red.ssq.genewise(xx,D.full,D.red)[,1]
     ssq[,i] <- genewiseGA(xx, D.full, D.red=D.red)[,1]
-# !!
-
     D.red<-D.full
   }
 
@@ -291,9 +275,7 @@ xx.adj <- function(x,z){
 
 xx.row.adj <- function(xx, zz){
   beta <- rowSums(xx*zz) / rowSums(zz*zz)
-  #xx-diag(beta)%*%as.matrix(zz)
-  # viel schneller u. v.a. auch m. großen zz möglich:
-  sweep(xx, 1, beta, "*")
+  xx - sweep(zz, 1, beta, "*")
 }
 
 
