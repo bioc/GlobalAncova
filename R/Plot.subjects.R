@@ -204,7 +204,7 @@ plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALS
 
  # return bar heights
   if(returnValues){
-    names(x) <- rownames(xx)
+    names(x) <- barnames
     return(x)
   }
 }
