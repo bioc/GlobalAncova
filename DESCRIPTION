@@ -1,7 +1,7 @@
 Package: GlobalAncova
 Title: Calculates a global test for differential gene expression
         between groups
-Version: 3.3.0
+Version: 3.3.1
 Date: 2007-04-12
 Author: U. Mansmann, R. Meister, M. Hummel, R. Scheufele
 Description: We give the following arguments in support of the
@@ -22,7 +22,7 @@ Description: We give the following arguments in support of the
 	  This work was supported by the NGFN grant 01 GR 0459, BMBF, Germany.
 biocViews: Microarray, OneChannel, Statistics, DifferentialExpression, Pathways
 Maintainer: R. Meister <meister@tfh-berlin.de>
-Depends: methods, corpcor, globaltest
-Imports: annotate
+Depends: methods, corpcor, globaltest, AnnotationDbi, annotate
+Imports: annotate, AnnotationDbi
 Suggests: Biobase, GO, multtest, golubEsets, hu6800, hgu133a, vsn
 License: GPL Version 2 or newer
