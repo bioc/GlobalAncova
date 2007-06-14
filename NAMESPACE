@@ -1,5 +1,5 @@
 importFrom(annotate, lookUp)
-importFrom(AnnotationDbi, Secondary, Term)
+importFrom(AnnotationDbi, Secondary)
 
 #importFrom(globaltest, GOstructure)
 

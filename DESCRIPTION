@@ -23,6 +23,6 @@ Description: We give the following arguments in support of the
 biocViews: Microarray, OneChannel, Statistics, DifferentialExpression, Pathways
 Maintainer: R. Meister <meister@tfh-berlin.de>
 Depends: methods, corpcor, globaltest, AnnotationDbi, annotate
-Imports: annotate, AnnotationDbi
+Imports: AnnotationDbi, annotate
 Suggests: Biobase, GO, multtest, golubEsets, hu6800, hgu133a, vsn
 License: GPL Version 2 or newer
