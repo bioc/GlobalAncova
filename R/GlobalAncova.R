@@ -418,4 +418,15 @@ group2formula <- function(group, group.name, covars, covar.names){
 
 
 
+################################################################################
+
+# .onLoad is called when the package is loaded
+.onLoad <- function(lib, pkg) require(methods)
+
+.onAttach <- function(lib, pkg) {
+    if(interactive() && .Platform$OS.type == "windows" && .Platform$GUI == "Rgui"){
+      addVigs2WinMenu("GlobalAncova")
+    }
+}
+
 
