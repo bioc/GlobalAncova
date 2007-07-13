@@ -3,7 +3,7 @@ Plot.sequential <- function(xx, formula, model.dat=NULL, test.genes=NULL, name.g
 {
 # !!
  if(!is.null(test.genes))
-   xx <- xx[test.genes,]
+   xx <- xx[test.genes,,drop=FALSE]
 # !!
  ANOVA.g<-decomp.ssq.genewise(xx,formula,model.dat)
  ssq<-ANOVA.g$SSQ

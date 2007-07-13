@@ -27,7 +27,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red
     
   # get gene set 
   if(!is.null(test.genes))
-    xx <- xx[test.genes,] 
+    xx <- xx[test.genes,,drop=FALSE] 
 
   # basic analysis
   res <- reduSQ(xx=xx,formula.full=formula.full,formula.red=formula.red,model.dat=model.dat)
@@ -52,7 +52,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="missing",formula.red
     
   # get gene set 
   if(!is.null(test.genes))
-    xx <- xx[test.genes,] 
+    xx <- xx[test.genes,,drop=FALSE] 
 
   # 'group' is assumed to be the variable relevant for coloring
   if(is.null(Colorgroup))
@@ -99,7 +99,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red
     
   # get gene set 
   if(!is.null(test.genes))
-    xx <- xx[test.genes,] 
+    xx <- xx[test.genes,,drop=FALSE] 
 
   # test for 'test.terms'
   terms.all <- test.terms
