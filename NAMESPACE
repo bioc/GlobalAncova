@@ -1,7 +1,8 @@
 importFrom(annotate, lookUp)
-importFrom(AnnotationDbi, Secondary)
 
-#importFrom(globaltest, GOstructure)
+importFrom(AnnotationDbi, Term, Secondary)
+
+#import(globaltest)
 
 exportMethods("GlobalAncova", "GlobalAncova.closed", "Plot.genes", "Plot.subjects")
 

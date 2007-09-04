@@ -76,7 +76,7 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
 
   # are all terms variables compatible with 'model.dat'?
   if(!all(test.terms %in% terms.all))
-    stop("'test.terms' are not compatible with the specified models")
+    stop("'test.terms' is not compatible with the specified models")
 
   D.full <- model.matrix(formula.full, data=model.dat)
   D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=FALSE]
@@ -417,16 +417,5 @@ group2formula <- function(group, group.name, covars, covar.names){
 }
 
 
-
-################################################################################
-
-# .onLoad is called when the package is loaded
-.onLoad <- function(lib, pkg) require(methods)
-
-.onAttach <- function(lib, pkg) {
-    if(interactive() && .Platform$OS.type == "windows" && .Platform$GUI == "Rgui"){
-      addVigs2WinMenu("GlobalAncova")
-    }
-}
 
 

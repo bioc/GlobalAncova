@@ -114,7 +114,7 @@ data(pathways)
 set.seed(123)
 GlobalAncova(xx = vantVeer, formula.full = ~metastases + ERstatus, formula.red = ~ERstatus, model.dat = phenodata, test.genes=pathways[1], method="both", perm = 100)
 set.seed(123)
-GlobalAncova(xx = vantVeer, formula.full = ~metastases + ERstatus, test.terms = "metastases", model.dat = phenodata, test.genes=pathways[1], method="both", perm = 100)
+#GlobalAncova(xx = vantVeer, formula.full = ~metastases + ERstatus, test.terms = "metastases", model.dat = phenodata, test.genes=pathways[1], method="both", perm = 100)
 set.seed(123)
 GlobalAncova(xx = vantVeer, group = phenodata$metastases, covars = phenodata$ERstatus, test.genes=pathways[1], method="both", perm = 100)
 }
