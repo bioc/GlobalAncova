@@ -82,7 +82,7 @@ GAGO <- function(..., GO, focus, maxalpha = 0.05, stopafter = 100, verbose = FAL
         alloffspring <- GO@offspring[[term]]
         if (length(alloffspring) > 0) {
           offspringSets <- GO@genesets[alloffspring]
-          TermAtoms <- getAtoms(offspringSets)                                  # Get the set of atoms
+          TermAtoms <- globaltest:::getAtoms(offspringSets)                                  # Get the set of atoms
           atoms[[term]] <- TermAtoms
           unions[[term]] <- matrix(rep(TRUE, length(TermAtoms)), 1, length(TermAtoms))  # Prepare the matrix of unions of atoms
           sigUnions[[term]] <- FALSE
@@ -110,11 +110,11 @@ GAGO <- function(..., GO, focus, maxalpha = 0.05, stopafter = 100, verbose = FAL
         for (i in 1:length(propagate)) {
           basePattern <- offspring[[term]][propagate[[i]],] # The propagated GO term as unions of atoms
           ancestorPatterns <- fillPattern(basePattern)      # All superset patterns as unions of atoms
-          ancestorPatterns <- ancestorPatterns[!intersectPatterns(ancestorPatterns, pPatterns),,drop=FALSE]    # Remove duplicates
+          ancestorPatterns <- ancestorPatterns[!globaltest:::intersectPatterns(ancestorPatterns, pPatterns),,drop=FALSE]    # Remove duplicates
           pPatterns <- rbind(pPatterns, ancestorPatterns)
         }
-        matchedPatterns1 <- intersectPatterns(pPatterns, unions[[term]])  # These new patterns were already testable
-        matchedPatterns2 <- intersectPatterns(unions[[term]], pPatterns)  # These already testable patterns are now called significant
+        matchedPatterns1 <- globaltest:::intersectPatterns(pPatterns, unions[[term]])  # These new patterns were already testable
+        matchedPatterns2 <- globaltest:::intersectPatterns(unions[[term]], pPatterns)  # These already testable patterns are now called significant
         newPatterns <- pPatterns[!matchedPatterns1,, drop=FALSE]          # These are new patterns
         if (verbose) cat("\tSignificance of", nrow(newPatterns), "genesets from", propagate, " propagated to", term, "\n")
         unions[[term]] <- rbind(unions[[term]], newPatterns)              # Make all supersets testable and give them raw p 0
@@ -131,7 +131,7 @@ GAGO <- function(..., GO, focus, maxalpha = 0.05, stopafter = 100, verbose = FAL
       # Find whether there are GO terms among the newly significant unions
       sigPatterns <- unions[[term]][newsigs,, drop=FALSE]
       offspringPatterns <- offspring[[term]][!sigOffspring[[term]],,drop=FALSE]     # Patterns of not already significant offspring
-      matched <- intersectPatterns(offspringPatterns, sigPatterns)                  # Any new offspring terms among the significant patterns?
+      matched <- globaltest:::intersectPatterns(offspringPatterns, sigPatterns)                  # Any new offspring terms among the significant patterns?
       newSigOffspring <- rownames(offspringPatterns)[matched]
       if (verbose && (length(setdiff(newSigOffspring, propagate))>0)) {
         cat("Significant:", setdiff(newSigOffspring, propagate), "\n")
@@ -148,7 +148,7 @@ GAGO <- function(..., GO, focus, maxalpha = 0.05, stopafter = 100, verbose = FAL
           for (iy in (1:length(pattern))[pattern]) { # For-loop over the TRUEs
             newpattern <- pattern
             newpattern[iy] <- FALSE # All direct subsets have one extra FALSE
-            reallyNew <- !any(intersectPatterns(matrix(newpattern,nrow=1), unions[[term]])) # Is the pattern really new?
+            reallyNew <- !any(globaltest:::intersectPatterns(matrix(newpattern,nrow=1), unions[[term]])) # Is the pattern really new?
             if (reallyNew) {      # Are the other parents of this pattern also present?
               parentspresent <- all(sapply((1:length(newpattern))[!pattern], function(iz) { # Loop over the FALSEs of pattern
                 newpatternparent <- newpattern
@@ -203,7 +203,7 @@ GAGO <- function(..., GO, focus, maxalpha = 0.05, stopafter = 100, verbose = FAL
       focus[present1 | present2]
     })      # Creates a list of new significant GO terms, listing the subtrees they appear in
     names(affectedGOwithParents) <- newSigGO
-    indirectAffected <- turnListAround(affectedGOwithParents)  # Reverses the list to a list of subtrees, listing the significant GO offspring terms
+    indirectAffected <- globaltest:::turnListAround(affectedGOwithParents)  # Reverses the list to a list of subtrees, listing the significant GO offspring terms
 
     # Output progress information
     if (!verbose) {
