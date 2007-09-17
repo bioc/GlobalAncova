@@ -1,8 +1,7 @@
 
 # function to compute pairwise comparisons for different factor levels
-pair.compare<-function(xx,formula,group,model.dat=NULL,test.genes=NULL,perm=10000) # !! perm=10000 statt 1000
+pair.compare<-function(xx,formula,group,model.dat=NULL,test.genes=NULL,perm=10000) 
 {
-# !!
   # if just one gene should be tested
   if(is.vector(xx))
       xx <- t(as.matrix(xx))
@@ -18,7 +17,6 @@ pair.compare<-function(xx,formula,group,model.dat=NULL,test.genes=NULL,perm=1000
   model.dat[,group]<-group.var
   model.work<-model.dat
   n.tests    <- length(test.genes)
-# !!
 
   n.subjects <- dim(xx)[2]
 
@@ -31,7 +29,6 @@ pair.compare<-function(xx,formula,group,model.dat=NULL,test.genes=NULL,perm=1000
   if(dim(D.full)[1] < n.subjects)
     stop("Missing values in the model variables")
 
-# !!
   res <- list()
   for(j in 1:n.tests){
     # select test.genes
@@ -39,7 +36,6 @@ pair.compare<-function(xx,formula,group,model.dat=NULL,test.genes=NULL,perm=1000
     n.genes <- nrow(xx2)
     df.full<-dim(D.full)[2]*n.genes
     ssq.full<-sum(row.orth2d(xx2,D.full)^2)
-# !!
 
     red.ssq<-vector()
     df<-names<-vector()
@@ -53,7 +49,7 @@ pair.compare<-function(xx,formula,group,model.dat=NULL,test.genes=NULL,perm=1000
       model.work[,group]<-set.pair(group.var,i,j)
       D.red<-model.matrix(formula,model.work)
 
-      rr <- row.orth2d(xx2,D.red)                # !!  xx2
+      rr <- row.orth2d(xx2,D.red)               
       red.ssq[k]<-sum(rr^2) - ssq.full
       names[k]<-paste(levels[i],":",levels[j])
       df[k]<-df.full-dim(D.red)[2]*n.genes
@@ -81,13 +77,9 @@ pair.compare<-function(xx,formula,group,model.dat=NULL,test.genes=NULL,perm=1000
   ms<-red.ssq/df
   f<-c(ms[1:(k-1)]/ms[k],NA)
 
-  #f.count <- function(F.perm.g, f)
-  #  sum(F.perm.g > f)
-
   p.perm.mat <- sweep(F.perm, 1, f[-k], ">")
   p.perm <- rowSums(p.perm.mat) / perm
 
-# !!
   res <- c(res, list(cbind(SSQ=red.ssq,df=df,MS=ms,F=f,p.perm=c(p.perm,NA))))
   }
    if(n.tests == 1)
@@ -95,7 +87,6 @@ pair.compare<-function(xx,formula,group,model.dat=NULL,test.genes=NULL,perm=1000
    else
      names(res) <- names(test.genes)
   return (res)
-# !!
 }
 
 

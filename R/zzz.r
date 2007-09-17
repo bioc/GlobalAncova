@@ -1,11 +1,5 @@
-.onLoad <- function (libname, pkgname)
-{
-  #library.dynam("GlobalAncova", pkgname, libname)
-  #dll <- file.path(libname, paste("GlobalAncova", .Platform$dynlib.ext, sep=""))
-  #dyn.load(dll)   
+.onLoad <- function (libname, pkgname){
   require(methods)
-  #require("MASS")
-  #require("haplo.stats")
 }
 
 .onAttach <- function(lib, pkg) {

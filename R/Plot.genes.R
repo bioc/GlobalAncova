@@ -165,9 +165,7 @@ setMethod("Plot.genes", signature(xx="matrix",formula.full="formula",formula.red
 
 # main function
 plotgenes <- function(xx, model.dat, Colorgroup, redu.SSQ.Genes, msE.genes, legendpos, returnValues=FALSE, bar.names, col, xlab, ylab, ...){
-  # !!
-  if(!is.character(Colorgroup) && !is.null(Colorgroup))  # einfaches & könnte zu logischem Vektor führen -> Warnung
-  # !!
+  if(!is.character(Colorgroup) && !is.null(Colorgroup))  
     stop("'Colorgroup' has to be a character")
 
   N.Genes    <- dim(xx)[1]
@@ -176,16 +174,14 @@ plotgenes <- function(xx, model.dat, Colorgroup, redu.SSQ.Genes, msE.genes, lege
     # default color palette
     palette(c("#931638",rgb(1,.95,0.1),"lightblue","NavyBlue","#F7B50C","lightgreen","grey","mistyrose","#008751",rgb(1,.2,.2)))
   else if(is.numeric(col))
-    palette(palette()[rep(col,2)])      # 'rep(col,2), da d. Palette nicht nur aus 1 Farbe bestehen kann (falls nur 1 angeg.)
+    palette(palette()[rep(col,2)])      
   else  
     palette(rep(col,2))
  
   # if a Colorgroup variable is given and if it is not continuous
   colorgroup.vector <- as.numeric(model.dat[,Colorgroup])
   N.groups <- length(unique(colorgroup.vector))
-  # !!
   if(N.groups > 0 && N.groups <= 10){
-  # !!
     # in which group has a gene the highest expression
     means <- NULL
     for(elt in unique(colorgroup.vector))
@@ -230,9 +226,7 @@ plotgenes <- function(xx, model.dat, Colorgroup, redu.SSQ.Genes, msE.genes, lege
   lines(vv,pp,type="s",lwd=2)
 
   # legend
-  # !!
   if(N.groups > 0 && N.groups <= 10)
-  # !!
     legend(legendpos, label, col=colind, pch=15)
 
   palette("default")
@@ -261,7 +255,6 @@ horizontal.bars <- function(x, labelsize=.75, bar.names=NULL, color, xlim,...){
         ylim    <- c(0,n+1)
 
         # enlarging right margin for bar.names
-
         names   <- TRUE
                    plot.new()
         w       <- max(1.5 * max(strwidth(bar.names, "inches", labelsize)), .6)   # !!

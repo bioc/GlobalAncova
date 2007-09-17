@@ -40,7 +40,7 @@ GlobalAncova.decomp <- function(xx, formula, model.dat=NULL, method=c("sequentia
      names(res) <- names(test.genes)
  }
 
- # genweise
+ # genewise
  else{
    if(length(test.genes) > 1)
      stop("genewise analysis only valid with one gene group")

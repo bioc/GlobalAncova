@@ -1,10 +1,8 @@
 # plots the genewise sequential sum of squares adjusted by model SSQ (model - intercept =100%)
-Plot.sequential <- function(xx, formula, model.dat=NULL, test.genes=NULL, name.geneset="")  # !! 'test.genes', 'name.geneset' statt 'name.pathw'
+Plot.sequential <- function(xx, formula, model.dat=NULL, test.genes=NULL, name.geneset="")  
 {
-# !!
  if(!is.null(test.genes))
    xx <- xx[test.genes,,drop=FALSE]
-# !!
  ANOVA.g<-decomp.ssq.genewise(xx,formula,model.dat)
  ssq<-ANOVA.g$SSQ
  nt<-length(ANOVA.g$terms)-1   #number of terms

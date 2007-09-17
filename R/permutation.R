@@ -43,7 +43,7 @@ resampleGA <- function(xx, formula.full, D.full, D.red, model.dat, perm, test.ge
     permMat <- apply(permMat, 2, order)  # get possible orderings
   }
 
-  test.col0 <- which(test.col) -1 # in C beginnen arrays mit 0, daher "-1"
+  test.col0 <- which(test.col) -1 
   count <- .C ("permut", PACKAGE="GlobalAncova", as.double(D.full),as.integer(nrow(D.full)),
                    as.integer(ncol(D.full)) , as.double(D.full.perm) ,
                    as.double (D.red) , as.integer(nrow(D.red)),as.integer(ncol(D.red)),

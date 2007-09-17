@@ -1,13 +1,11 @@
 
 # function that combines 'Plot.sequential' and 'Plot.genes'
-Plot.all<-function(xx,formula,model.dat=NULL, test.genes=NULL, name.geneset="")  # !! 'test.genes', 'name.geneset' statt 'name.pathw'
+Plot.all<-function(xx,formula,model.dat=NULL, test.genes=NULL, name.geneset="")  
 {
-# !!
  def.par <- par(no.readonly = TRUE) # save default, for resetting...
 
  if(!is.null(test.genes))
    xx <- xx[test.genes,]
-# !!
 
   mat<-matrix(1:4,2,2)
   heights<-c(.9,.1)
@@ -15,37 +13,27 @@ Plot.all<-function(xx,formula,model.dat=NULL, test.genes=NULL, name.geneset="") 
   layout(mat,widths,heights)
 
 #screen(1)
-  plot.ssq.genewise2(xx,formula,model.dat,name.geneset)  # !!
+  plot.ssq.genewise2(xx,formula,model.dat,name.geneset)  
 
 #screen(2)
-  plot.ssq.all(xx,formula,model.dat)#,"(signature genes)")  # !!
+  plot.ssq.all(xx,formula,model.dat)#,"(signature genes)")  
 
 #screen(3)
   redu<-reduSQ(xx,formula,formula.red=~1,model.dat=model.dat)
   # center labels
   n.genes<-dim(xx)[1]
   all.name<-paste("all",n.genes,"genes")
-# !!
-#  names.plus<-c(names(redu$redu.MS.genes),all.name)   # redu.MS.genes u. redu.genes war nun das selbe -> ersteres gibt es nicht mehr
   names.plus <- c(names(redu$redu.genes),all.name)
-#  names(redu$redu.MS.genes)<-center.labels(names.plus)[1:n.genes]
   names(redu$redu.genes) <- center.labels(names.plus)[1:n.genes]
-#  plotgenes2(redu$redu.MS.genes,redu$mse)
   plotgenes2(redu$redu.genes, redu$mse)
-# !!
 
 #screen4
-# !!
-#  redu.all<-reduSQ.all(xx,formula,formula.red=~1,model.dat=model.dat)  # 'reduSQ.all' kann man sich sparen
-#  red.MS<-redu.all["redu.MS.genes"]
   red.genes <- sum(redu$redu.genes) / n.genes
   names(red.genes) <- all.name
   red.mse <- sum(redu$mse) / n.genes
-#  plotallgenes(red.MS,redu.all["mse"])
   plotallgenes(red.genes, red.mse)
   
   par(def.par)#- reset to default
-# !!
 }
 
 

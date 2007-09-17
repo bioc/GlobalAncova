@@ -166,9 +166,7 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
 
 # main function
 plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos, returnValues=FALSE, bar.names, col, xlab, ylab, ...){
-  # !!
-  if(!is.character(Colorgroup) && !is.null(Colorgroup))   # einfaches & könnte zu logischem Vektor führen -> Warnung
-  # !!
+  if(!is.character(Colorgroup) && !is.null(Colorgroup))  
     stop("'Colorgroup' has to be a character")
 
   N.Genes <- dim(xx)[1]
@@ -184,9 +182,7 @@ plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALS
   # if a group variable is given and if it is not continuous
   colorgroup.vector <- as.numeric(model.dat[,Colorgroup])
   N.groups          <- length(unique(colorgroup.vector))
-  # !!
   if(N.groups > 0 && N.groups <= 10){
-  # !!
     color        <- numeric(N.groups)
     label        <- numeric(0)
 
@@ -231,9 +227,7 @@ plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALS
   )
 
   # legend
-  # !!
   if(N.groups > 0 && N.groups <= 10)
-  # !!
     legend(legendpos, label, col=1:N.groups, pch=15)
 
   palette("default")

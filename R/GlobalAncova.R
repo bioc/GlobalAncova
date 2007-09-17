@@ -1,8 +1,6 @@
-# !! test.genes nicht auf NULL
 setGeneric("GlobalAncova", function(xx,formula.full,formula.red,model.dat,group,covars=NULL,
                             test.terms,test.genes,method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50)
            standardGeneric("GlobalAncova"))
-# !!
 # this function computes a Global Ancova which tests for differential gene expression
 # xx: expression matrix (rows=genes, columns=subjects)
 # formula.full: model formula for the full model
@@ -21,10 +19,8 @@ setGeneric("GlobalAncova", function(xx,formula.full,formula.red,model.dat,group,
 
 setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.red="formula",
                            model.dat="ANY",group="missing",covars="missing",test.terms="missing"),
-# !!
           definition = function(xx,formula.full,formula.red,model.dat,test.genes,
                            method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){
-# !!
 
   # test for model.dat
   if(!is.data.frame(model.dat))
@@ -40,10 +36,8 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
 
 setMethod("GlobalAncova", signature(xx="matrix",formula.full="missing",formula.red="missing",
                            model.dat="missing",group="ANY",covars="ANY",test.terms="missing"),
-# !!
           definition = function(xx,group,covars=NULL,test.genes,
                            method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){                           
-# !!
 
   # parameter names
   group.name   <- deparse(substitute(group))
@@ -70,10 +64,8 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="missing",formula.r
 
 setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.red="missing",
                            model.dat="ANY",group="missing",covars="missing",test.terms="character"),
-# !!  Achtung: test.terms muß NACH model.dat kommen, so wie in d. Signatur !!
           definition = function(xx,formula.full,model.dat,test.terms,test.genes,
                            method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){
-# !!
 
   # test for model.dat
   if(!is.data.frame(model.dat))
@@ -100,7 +92,6 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
 ################################################################################
 
 # main function of GlobalAncova
-# !! test.genes nicht mehr auf NULL setzen zwecks Fehlerabfrage
 expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test.genes,
                      method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){ 
                            
@@ -117,7 +108,6 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
     if(!(missing(test.genes) || is.vector(test.genes)))
       #stop("'test.genes' does not define valid gene sets")
       stop("'test.genes' should be a vector or list")
-# !!                  
                               
     # if just one gene should be tested
     if(is.vector(xx))
@@ -125,18 +115,14 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
 
     if(is.null(rownames(xx)))
         rownames(xx) <- 1:nrow(xx)
-# !!
     if(missing(test.genes))
         test.genes <- list(rownames(xx))
-# !!
     if(!is.list(test.genes))
         test.genes <- list(test.genes)
     if(is.numeric(unlist(test.genes)))
         test.genes <- lapply(test.genes, as.character)
-# !!
     if(!all(unlist(test.genes) %in% rownames(xx)))
       stop("gene names in 'test.genes' do not correspond to gene names in 'xx'")
-# !!
 
     xx2        <- xx[unique(unlist(test.genes)),,drop=F]
     N.Genes    <- sapply(test.genes, length)
@@ -148,14 +134,12 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
     if(is.null(D.red))
         D.red  <- model.matrix(formula.red,  data=model.dat)
         
-# !! 
     # check if reduced model is included in full model
     terms.full <- colnames(D.full)
     terms.red <- colnames(D.red)
     if(!all(terms.red %in% terms.full))
       #stop("the reduced model is not part of the full model")
       stop("full model and reduced model are not nested")
-# !!
 
     N.par.full <- ncol(D.full)
     N.par.red  <- ncol(D.red)
@@ -185,19 +169,13 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
 
     # permutation p-values
     p.value <- p.perm <- NULL
-    # !!
-    if(method == "permutation" || method == "both") {     # einfaches | könnte zu logischem Vektor führen -> Warnung
-    # !!
-# !!
+    if(method == "permutation" || method == "both") {     
         p.perm <- resampleGA(xx2, formula.full, D.full, D.red, model.dat, perm, test.genes, F.value, DF.full, DF.extra)
-# !!
         p.value <- cbind(p.value, p.perm)
     }
 
     # asymptotic p-values
-    # !!
     if(method == "approx" || method == "both"){
-    # !!
         # compute eigen values of (H.full-H.red) and XX'
         require(corpcor)
         ew.H.nom <- eigen(hat.matrix(D.full) - hat.matrix(D.red))$values
@@ -210,11 +188,9 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
         w <- which(N.Genes <= max.group.size)
         test.genes.red <- test.genes[w]    
         
-# !!
         ew.cov <- lapply(test.genes.red, function(y) eigen(cov.shrink(t(xx2[y,,drop=FALSE]), verbose=FALSE), only.values = TRUE)$values)
         # all pairwise products of eigen values
         ew.nom   <- lapply(ew.cov, function(x) as.vector(outer(x, ew.H.nom, "*")))
-# !!
 
         # compute approximate p-values
         p.approx <- rep(NA, N.tests)
@@ -224,15 +200,11 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
         p.value <- cbind(p.value, p.approx)
         
         # make permutation test for large gene sets
-        # !!
-        if(is.null(p.perm) && toobig) {        # einfaches & könnte zu logischem Vektor führen -> Warnung
-        # !!
+        if(is.null(p.perm) && toobig) {       
            w <- which(N.Genes > max.group.size)
            test.genes.red <- test.genes[w]
            p.perm <- rep(NA, N.tests)
-# !!
            p.perm[w] <- resampleGA(xx2, formula.full, D.full, D.red, model.dat, perm, test.genes.red, F.value[w], DF.full[w], DF.extra[w])
-# !!
            p.value <- cbind(p.value, p.perm)
         }
     }
@@ -286,18 +258,6 @@ genewiseGA <- function(xx, D.full, D.red=NULL, SS.red.i=NULL){
 
 ################################################################################
 
-# !!
-# Funktion f. d. Permutationstest jetzt in permutation.R
-# !!
-
-################################################################################
-
-# !!
-# Funktionen f. d. asymptotischen p-Werte jetzt in 'approximation.R'
-# !!
-
-################################################################################
-
 # extracts the name of the tested effect
 effectnames <- function(D.full, D.red){
 # (because there can be problems with interactions:
@@ -318,9 +278,7 @@ effectnames <- function(D.full, D.red){
      {
        # if there are identical columns, these represent the same factor and hence
        #  are added to the 'non-effect-terms'
-       # !!
        if(identical(id[,i],id[,j]) && i!=j)
-       # !!
          no.effect <- c(no.effect, names.all[interact[c(i,j)]])
      }
    }
