@@ -57,13 +57,13 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 
 \usage{
 \S4method{GlobalAncova}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, 
-          test.genes = NULL, method = c("permutation","approx","both","Fstat"), perm = 10000, max.group.size = 2500, eps = 1e-16, acc = 50)
+          test.genes, method = c("permutation","approx","both","Fstat"), perm = 10000, max.group.size = 2500, eps = 1e-16, acc = 50)
 
 \S4method{GlobalAncova}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, 
-          test.genes = NULL, method = c("permutation","approx","both","Fstat"), perm = 10000, max.group.size = 2500, eps = 1e-16, acc = 50)
+          test.genes, method = c("permutation","approx","both","Fstat"), perm = 10000, max.group.size = 2500, eps = 1e-16, acc = 50)
 
 \S4method{GlobalAncova}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL,   
-          test.genes = NULL, method = c("permutation","approx","both","Fstat"), perm = 10000, max.group.size = 2500, eps = 1e-16, acc = 50)
+          test.genes, method = c("permutation","approx","both","Fstat"), perm = 10000, max.group.size = 2500, eps = 1e-16, acc = 50)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -103,19 +103,17 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 in functional groups, \emph{Methods Inf Med} 44 (3).}
 \author{Reinhard Meister \email{meister@tfh-berlin.de}\cr
   Ulrich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}\cr
-  Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de}}
+  Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de} \cr
+  with contributions from Sven Knueppel}
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
-\seealso{\code{\link{Plot.genes}}, \code{\link{Plot.subjects}}, \code{\link{GlobalAncova.closed}}}
+\seealso{\code{\link{Plot.genes}}, \code{\link{Plot.subjects}}, \code{\link{GlobalAncova.closed}}, \code{\link{GAGO}}, \code{\link{GlobalAncova.decomp}}}
 \examples{
 data(vantVeer)
 data(phenodata)
 data(pathways)
 
-set.seed(123)
 GlobalAncova(xx = vantVeer, formula.full = ~metastases + ERstatus, formula.red = ~ERstatus, model.dat = phenodata, test.genes=pathways[1], method="both", perm = 100)
-set.seed(123)
-#GlobalAncova(xx = vantVeer, formula.full = ~metastases + ERstatus, test.terms = "metastases", model.dat = phenodata, test.genes=pathways[1], method="both", perm = 100)
-set.seed(123)
+GlobalAncova(xx = vantVeer, formula.full = ~metastases + ERstatus, test.terms = "metastases", model.dat = phenodata, test.genes=pathways[1], method="both", perm = 100)
 GlobalAncova(xx = vantVeer, group = phenodata$metastases, covars = phenodata$ERstatus, test.genes=pathways[1], method="both", perm = 100)
 }
 \keyword{ models }% at least one, from doc/KEYWORDS

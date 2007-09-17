@@ -1,6 +1,8 @@
+# !! test.genes nicht auf NULL
 setGeneric("GlobalAncova", function(xx,formula.full,formula.red,model.dat,group,covars=NULL,
-                            test.terms,test.genes=NULL,method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50)
+                            test.terms,test.genes,method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50)
            standardGeneric("GlobalAncova"))
+# !!
 # this function computes a Global Ancova which tests for differential gene expression
 # xx: expression matrix (rows=genes, columns=subjects)
 # formula.full: model formula for the full model
@@ -19,8 +21,11 @@ setGeneric("GlobalAncova", function(xx,formula.full,formula.red,model.dat,group,
 
 setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.red="formula",
                            model.dat="ANY",group="missing",covars="missing",test.terms="missing"),
-          definition = function(xx,formula.full,formula.red,model.dat,test.genes=NULL,
+# !!
+          definition = function(xx,formula.full,formula.red,model.dat,test.genes,
                            method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){
+# !!
+
   # test for model.dat
   if(!is.data.frame(model.dat))
     stop("'model.dat' has to be a data frame")
@@ -35,8 +40,11 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
 
 setMethod("GlobalAncova", signature(xx="matrix",formula.full="missing",formula.red="missing",
                            model.dat="missing",group="ANY",covars="ANY",test.terms="missing"),
-          definition = function(xx,group,covars=NULL,test.genes=NULL,
+# !!
+          definition = function(xx,group,covars=NULL,test.genes,
                            method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){                           
+# !!
+
   # parameter names
   group.name   <- deparse(substitute(group))
 
@@ -62,23 +70,23 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="missing",formula.r
 
 setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.red="missing",
                            model.dat="ANY",group="missing",covars="missing",test.terms="character"),
-          definition = function(xx,formula.full,test.terms,model.dat,test.genes=NULL,
-                           method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50)
-{
+# !!  Achtung: test.terms muß NACH model.dat kommen, so wie in d. Signatur !!
+          definition = function(xx,formula.full,model.dat,test.terms,test.genes,
+                           method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){
+# !!
+
   # test for model.dat
   if(!is.data.frame(model.dat))
     stop("'model.dat' has to be a data frame")
 
   # test for 'test.terms'
-  terms.all <- test.terms
-  D.full    <- model.matrix(formula.full, model.dat)
+  D.full    <- model.matrix(formula.full, data=model.dat)
   terms.all <- colnames(D.full)
 
   # are all terms variables compatible with 'model.dat'?
   if(!all(test.terms %in% terms.all))
     stop("'test.terms' is not compatible with the specified models")
 
-  D.full <- model.matrix(formula.full, data=model.dat)
   D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=FALSE]
 
   # then apply the usual function
@@ -92,20 +100,43 @@ setMethod("GlobalAncova", signature(xx="matrix",formula.full="formula",formula.r
 ################################################################################
 
 # main function of GlobalAncova
-expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test.genes=NULL,
-                     method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){             
+# !! test.genes nicht mehr auf NULL setzen zwecks Fehlerabfrage
+expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test.genes,
+                     method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){ 
+                           
+    # check if formula variables correspond to columns of 'model.dat'
+    design.terms <- as.character(terms(formula.full)@variables)[-1]
+    if(!all(design.terms %in% names(model.dat)))
+      stop("terms in 'formula.full' do not match variables in 'model.dat'")  
+
+    # check if dimensions of expression and phenotype data match
+    if(ncol(xx) != nrow(model.dat))
+      stop("number of samples in expression matrix 'xx' differs from number of samples in 'model.dat'")
+
+    # check 'test.genes'
+    if(!(missing(test.genes) || is.vector(test.genes)))
+      #stop("'test.genes' does not define valid gene sets")
+      stop("'test.genes' should be a vector or list")
+# !!                  
+                              
     # if just one gene should be tested
     if(is.vector(xx))
         xx <- t(as.matrix(xx))
 
     if(is.null(rownames(xx)))
         rownames(xx) <- 1:nrow(xx)
-    if(is.null(test.genes))
+# !!
+    if(missing(test.genes))
         test.genes <- list(rownames(xx))
+# !!
     if(!is.list(test.genes))
         test.genes <- list(test.genes)
     if(is.numeric(unlist(test.genes)))
         test.genes <- lapply(test.genes, as.character)
+# !!
+    if(!all(unlist(test.genes) %in% rownames(xx)))
+      stop("gene names in 'test.genes' do not correspond to gene names in 'xx'")
+# !!
 
     xx2        <- xx[unique(unlist(test.genes)),,drop=F]
     N.Genes    <- sapply(test.genes, length)
@@ -116,6 +147,16 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
     D.full     <- model.matrix(formula.full, data=model.dat)
     if(is.null(D.red))
         D.red  <- model.matrix(formula.red,  data=model.dat)
+        
+# !! 
+    # check if reduced model is included in full model
+    terms.full <- colnames(D.full)
+    terms.red <- colnames(D.red)
+    if(!all(terms.red %in% terms.full))
+      #stop("the reduced model is not part of the full model")
+      stop("full model and reduced model are not nested")
+# !!
+
     N.par.full <- ncol(D.full)
     N.par.red  <- ncol(D.red)
 
@@ -141,17 +182,22 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
       test.result <- cbind(genes=N.Genes, F.value=F.value)
       return(test.result)
     }
-    #p.value <- pf(F.value, DF.extra, DF.full, lower.tail=F)
 
     # permutation p-values
     p.value <- p.perm <- NULL
-    if(method == "permutation" | method == "both") {
-        p.perm <- resampleGA(xx2, D.full, D.red, perm, test.genes, F.value, DF.full, DF.extra)
+    # !!
+    if(method == "permutation" || method == "both") {     # einfaches | könnte zu logischem Vektor führen -> Warnung
+    # !!
+# !!
+        p.perm <- resampleGA(xx2, formula.full, D.full, D.red, model.dat, perm, test.genes, F.value, DF.full, DF.extra)
+# !!
         p.value <- cbind(p.value, p.perm)
     }
 
     # asymptotic p-values
-    if(method == "approx" | method == "both"){
+    # !!
+    if(method == "approx" || method == "both"){
+    # !!
         # compute eigen values of (H.full-H.red) and XX'
         require(corpcor)
         ew.H.nom <- eigen(hat.matrix(D.full) - hat.matrix(D.red))$values
@@ -164,13 +210,11 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
         w <- which(N.Genes <= max.group.size)
         test.genes.red <- test.genes[w]    
         
-        ew.cov     <- sapply(test.genes.red, function(y) eigen(cov.shrink(t(xx2[y,,drop=FALSE]), verbose=FALSE), only.values = TRUE)$values)
-        if(!is.list(ew.cov))    # if only one gene group is tested
-            ew.cov <- list(ew.cov)
+# !!
+        ew.cov <- lapply(test.genes.red, function(y) eigen(cov.shrink(t(xx2[y,,drop=FALSE]), verbose=FALSE), only.values = TRUE)$values)
         # all pairwise products of eigen values
-        ew.nom   <- sapply(ew.cov, function(x) as.vector(outer(x, ew.H.nom, "*")))
-        if(!is.list(ew.nom))    # if only one gene group is tested
-            ew.nom <- list(ew.nom)
+        ew.nom   <- lapply(ew.cov, function(x) as.vector(outer(x, ew.H.nom, "*")))
+# !!
 
         # compute approximate p-values
         p.approx <- rep(NA, N.tests)
@@ -180,11 +224,15 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
         p.value <- cbind(p.value, p.approx)
         
         # make permutation test for large gene sets
-        if(is.null(p.perm) & toobig) {
+        # !!
+        if(is.null(p.perm) && toobig) {        # einfaches & könnte zu logischem Vektor führen -> Warnung
+        # !!
            w <- which(N.Genes > max.group.size)
            test.genes.red <- test.genes[w]
            p.perm <- rep(NA, N.tests)
-           p.perm[w] <- resampleGA(xx2, D.full, D.red, perm, test.genes.red, F.value[w], DF.full[w], DF.extra[w])
+# !!
+           p.perm[w] <- resampleGA(xx2, formula.full, D.full, D.red, model.dat, perm, test.genes.red, F.value[w], DF.full[w], DF.extra[w])
+# !!
            p.value <- cbind(p.value, p.perm)
         }
     }
@@ -238,115 +286,15 @@ genewiseGA <- function(xx, D.full, D.red=NULL, SS.red.i=NULL){
 
 ################################################################################
 
-# conducts the permutation test
-resampleGA <- function(xx, D.full, D.red, perm, test.genes, F.value, DF.full, DF.extra){
-    N.Subjects  <- ncol(xx)
-    rr     <- row.orth2d(xx, D.red)
-
-    # sum of squares in reduced model do not have to be re-calculated in each permutation
-    genewSS  <- genewiseGA(xx, D.full, D.red=D.red)
-    SS.red.i <- genewSS[,1] + genewSS[,2]   # SS.red = SS.extra + SS.full
-
-    D.full.perm <- D.full
-    test.col <- !colnames(D.full) %in% colnames(D.red)
-    count <- numeric(length(test.genes))
-    for(i in 1:perm) {
-      # permute only values of interesting variables
-      ord <- sample(N.Subjects)
-  		D.full.perm[,test.col] <- D.full[ord, test.col]	 		 
-      genewSS.perm <- genewiseGA(rr, D.full.perm, SS.red.i=SS.red.i) 
-      F.perm       <- sapply(test.genes, function(x) sum(genewSS.perm[x,1]) / sum(genewSS.perm[x,2])) / (DF.extra / DF.full)
-      count        <- count + (F.perm > F.value)
-    }
-    
-    return(count / perm)
-}
-
+# !!
+# Funktion f. d. Permutationstest jetzt in permutation.R
+# !!
 
 ################################################################################
 
-# calculates the asymptotic p-value using the method of Robbins and Pitman (1949)
-.pAsymptotic <- function(x, lams, eps, acc) {
-# x: quantile
-# lams: vector of eigenvalues
-# eps: accuracy
-# acc: accuracy for removing small eigenvalues
-
-  lams <- .weed(lams = lams, accuracy = acc)
-  lams <- sort(lams, decreasing=TRUE)
-  m <- length(lams)
-  if (m == 0) 
-    p <- NA
-  else {
-    bet <- min(lams)
-
-    # get an upper bound to the number of iterations needed
-    Q2 <- qnorm(eps)^2
-    maxiter <- trunc(0.5 * (x/bet + Q2 + sqrt(2*Q2*x/bet + Q2*Q2) - m))
-
-    # starting values
-    d <- numeric(maxiter)
-    c <- numeric(maxiter + 1)
-    c[1] <- prod(sqrt(bet / lams))
-    restc <- 1 - c[1]
-    chi <- pchisq(x / bet, df = m, lower.tail = FALSE)
-    partialsum <- c[1] * chi
-    dbase <- (1 - bet / lams)
-    ready <- FALSE
-    ix <- 1
-
-    # iterate!
-    while (!ready) {
-      d[ix] <- 0.5 * sum(dbase^ix)
-      c[ix+1] <- mean(c[1:ix] * d[ix:1])
-      if (restc > 100 * .Machine$double.neg.eps) {
-        restc <- restc - c[ix+1]
-      } else {
-        restc <- c[ix+1] * lams[1] / lams[m]
-      }
-      chi <- pchisq(x / bet, df = m + 2 * ix, lower.tail = FALSE)
-      partialsum <- partialsum + c[ix+1] * chi
-      error <- restc * pchisq(x / bet, df = m + 2 * ix + 2, lower.tail = TRUE)
-      ready <- (error < eps) || (ix == maxiter) || (error / partialsum < 10^-4)
-      ix <- ix + 1
-    }
-    p <- partialsum + restc
-    if (p < eps) { p <- 0 }
-  }
-  p
-}
-
-################################################################################
-
-# Removes extremely small eigenvalues
-.weed <- function(lams, accuracy) {
-# lams: vector of eigenvalues
-  if (missing(accuracy)) {
-    thresh <- 1/50
-  } else {
-    thresh <- 1/accuracy
-  }
-  lams <- -sort(-lams)
-  m <- length(lams)
-  if (lams[1] == 0) {
-    lams <- numeric(0)
-    m <- 0
-  } else {
-    while (lams[m] / lams[1] < thresh) {
-      q <- m-1
-      r <- m-2
-      lams[q] <- lams[q] + lams[m]
-      while ((r > 0) && (lams[r] < lams[q])) {
-        lams[r:q] <- mean(lams[r:q])
-        r <- r - 1
-      }
-      m <- q
-    }
-    lams <- lams[1:m]
-  }
-  lams
-}
-
+# !!
+# Funktionen f. d. asymptotischen p-Werte jetzt in 'approximation.R'
+# !!
 
 ################################################################################
 
@@ -370,7 +318,9 @@ effectnames <- function(D.full, D.red){
      {
        # if there are identical columns, these represent the same factor and hence
        #  are added to the 'non-effect-terms'
-       if(identical(id[,i],id[,j]) & i!=j)
+       # !!
+       if(identical(id[,i],id[,j]) && i!=j)
+       # !!
          no.effect <- c(no.effect, names.all[interact[c(i,j)]])
      }
    }
@@ -415,7 +365,6 @@ group2formula <- function(group, group.name, covars, covar.names){
   
   return(list(formula.full=formula.full, formula.red=formula.red, model.dat=model.dat))
 }
-
 
 
 

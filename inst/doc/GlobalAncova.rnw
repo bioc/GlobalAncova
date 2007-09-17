@@ -13,7 +13,7 @@
 
 \title{Global testing of differential gene expression}
 
-\author{Manuela Hummel \and Reinhard Meister \and Ulrich Mansmann} %\and Ramona Scheufele \and Sven Knueppel}
+\author{Manuela Hummel \and Reinhard Meister \and Ulrich Mansmann} %\and Ramona Scheufele }
 
 
 \begin{document}
@@ -45,14 +45,25 @@ sI <- sessionInfo()
 
 This document was created using R version \Sexpr{paste(R.version$major,".",R.version$minor,sep="")}
 and versions \Sexpr{sI$otherPkgs$GlobalAncova$Version} 
-and \Sexpr{sI$otherPkgs$globaltest$Version} of the packages \Rpackage{GlobalAncova} and \Rpackage{globaltest} respectively.
+and \Sexpr{sI$otherPkgs$globaltest$Version} of the packages \Rpackage{GlobalAncova} and \Rpackage{globaltest}, respectively.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \section{Changes to Previous Versions} 
 
-\subsection{Version 3.x.x}
+\noindent {\bf Version 3.3.3}
+
+\begin{itemize}
+\item The permutation approach is now implemented in \emph{C} and therefore faster.
+\item If the number of possible phenotype permutations is smaller than the number specified in \Rfunarg{perm} (i.e. in very small sample sizes), 
+all possible permutations are considered for the permutation test.   
+\item Some more error messages are included.
+\item In \Rfunction{Plot.genes} and \Rfunction{Plot.subjects} bar labels can be manipulated with the argument \Rfunarg{bar.names}.
+\end{itemize}
+
+\vspace{0.2cm}
+\noindent {\bf Version 3.x.x}
 
 \begin{itemize}
 \item Besides the permutation-based p-values also asymptotic p-values based on an approximation of the distribution of the test statistic are provided. Theoretical F-test p-values are no longer displayed since they are not valid in case of correlations or non-normality. 
@@ -61,8 +72,8 @@ and \Sexpr{sI$otherPkgs$globaltest$Version} of the packages \Rpackage{GlobalAnco
 \item Now the parameter \Rfunarg{test.genes} allows for specifying the gene group which a graph shall be based on in the plotting functions. 
 \end{itemize}
 
-
-\subsection{Version 2.5.1}
+\vspace{0.2cm}
+\noindent {\bf Version 2.5.1}
 
 \begin{itemize}
 \item Testing several groups of genes is now more efficient and less time consuming.
@@ -70,8 +81,8 @@ and \Sexpr{sI$otherPkgs$globaltest$Version} of the packages \Rpackage{GlobalAnco
 \item Plots are more flexible regarding graphical parameters like specification of colors, titles, axis labels and axis limits.
 \end{itemize}
 
-
-\subsection{Version 2.x.x}
+\vspace{0.2cm}
+\noindent {\bf Version 2.x.x}
 
 \begin{itemize}
 \item The major modification in the new version is the transfer from simple two group comparisons to a general linear model framework where arbitrary clinical variables (in especially with more groups or also continuous ones), time trends, gene--gene interactions, co--expression and so forth can be analysed. 
@@ -79,6 +90,7 @@ and \Sexpr{sI$otherPkgs$globaltest$Version} of the packages \Rpackage{GlobalAnco
 \item A bug was fixed concerning testing only a single gene for differential expression with the global ANCOVA F--test.
 \item Within the closed testing procedure a bug was fixed concerning testing non--disjunct groups of genes.
 \end{itemize}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -101,16 +113,19 @@ expression of single genes. In these methods pathways where many genes show mino
 values may not be identified.
 Goeman's global test and the ANCOVA global test were designed to address this issue.
 
-Applying global tests for differential expression in pathways substantially reduces the number of tests compared to gene-wise multiple testing. The amount of correction for multiple testing decreases.
+Applying global tests for differential expression in pathways substantially reduces the number of tests compared to gene-wise multiple 
+testing. The amount of correction for multiple testing decreases.
 Function (KEGG, GO) or location (chromosome, cytoband) could be used as grouping criteria, for example.
 
 We want to compare our method with the global test of Goeman et al., 2004 \cite{Goe:04}.
 Therefore text and examples in this document follow to a certain extent the vignette presented in the R-package 
 \Rpackage{globaltest}.
-Our function \Rfunction{GlobalAncova} tests whether the expectation of expression levels differs between biological entities for a given group of genes.
+Our function \Rfunction{GlobalAncova} tests whether the expectation of expression levels differs between biological entities for a 
+given group of genes.
 This vignette has its focus on the practical use of the test. 
 For more details about the mathematical background and the interpretation of results,
-we refer to the paper by Mansmann and Meister, 2005 \cite{MaMei:05}.
+we refer to the paper by Mansmann and Meister, 2005 \cite{MaMei:05}
+and the technical report of Hummel, Meister and Mansmann \cite{Hummel:07}.
 
 This document shows the functionality of the R-package \Rpackage{GlobalAncova}. 
 The datasets, all necessary R--packages and our package \Rpackage{GlobalAncova}
@@ -151,11 +166,15 @@ with ALL and \Sexpr{sum(golubX$ALL.AML=="AML")} with AML.
 
 Suppose we are interested in testing whether AML and ALL have
 different gene expression patterns for certain pathways, for example from the
-KEGG database.
+KEGG database. 
+With \Rpackage{globaltest} we answer the question whether the expression profile has prognostic power with respect
+to diagnosis of AML or ALL.
+\Rpackage{GlobalAncova} asks for differences in mean expression between the two clinical groups.
 
-\vspace{0.2cm}
-\noindent {\bf All Genes}\\
-We start by applying our test to all genes in the Golub dataset so that differences in the overall gene-expression pattern can be demonstrated. 
+\subsubsection{Testing all Genes}
+
+We start by applying our test to all genes in the Golub dataset so that differences in the overall gene-expression pattern can be 
+demonstrated. 
 
 <<echo=F>>=
 options(width=70)
@@ -163,7 +182,7 @@ options(width=70)
 
 <<all>>=
 gr <- as.numeric(golubX$ALL.AML=="ALL")
-ga.all <- GlobalAncova(xx=exprs(golubX), group=gr, covars=NULL, perm=100, test.genes=NULL)
+ga.all <- GlobalAncova(xx=exprs(golubX), group=gr, covars=NULL, perm=100)
 @ 
 
 The first input \Rfunarg{xx} is a \Sexpr{dim(exprs(golubX))[[1]]} $\times$ 
@@ -171,7 +190,12 @@ The first input \Rfunarg{xx} is a \Sexpr{dim(exprs(golubX))[[1]]} $\times$
 The second input \Rfunarg{group} is a vector that
 defines the clinical diagnosis for the \Sexpr{dim(exprs(golubX))[[2]]} patients. 
  
-Note that \Rpackage{GlobalAncova} is not restricted to the analysis of dichotomous phenotype groups. More complex tasks like variables with more groups or also continuous ones, time trends, gene--gene interactions and co--expression can be performed as well. Some examples will be given in section \ref{vantVeer}. The realization of such tasks is done by definition of two linear models that shall be compared via the extra sum of squares principle. Hence model formulas for the full model containing all parameters and the reduced model, where the terms of interest are omitted, have to be given. An alternative is to provide the formula for the full model and a character vector naming the terms of interest. 
+Note that \Rpackage{GlobalAncova} is not restricted to the analysis of dichotomous phenotype groups. More complex tasks like variables 
+with more groups or also continuous ones, time trends, gene--gene interactions and co--expression can be performed as well. Some examples 
+will be given in section \ref{vantVeer}. The realization of such tasks is done by definition of two linear models that shall be compared 
+via the extra sum of squares principle. Hence model formulas for the full model containing all parameters and the reduced model, where 
+the terms of interest are omitted, have to be given. An alternative is to provide the formula for the full model and a character vector 
+naming the terms of interest. 
 Those names can be chosen by previous output of the \Rfunction{GlobalAncova} function. 
 Consequently we could run the same analysis as above with two possible further function calls shown below (output is omitted). In both cases a data frame with information about all variables for each sample is required. In the case of microarray data this can be the corresponding \Robject{pData} object. 
 %However, one has to step gently with variable names including dots or colons. Those could be interpreted as contrasts or interaction terms and therefore cause problems in the function. %Thus here we build a new model data frame.
@@ -181,17 +205,25 @@ GlobalAncova(xx=exprs(golubX), formula.full=~ALL.AML, formula.red=~1, model.dat=
 GlobalAncova(xx=exprs(golubX), formula.full=~ALL.AML, test.terms="ALL.AMLAML", model.dat=pData(golubX), perm=100)
 @  
 
-To avoid alpha--inflation due to correlated data and effects of non--normality of the data tests for significance of the resulting F--ratios are performed using a permutation test approach. 
-We apply permutation of samples which is equivalent to permuting rows of the full design matrix. Note that permutation is only conducted for such columns of the design matrix that correspond to the variables of interest. Values of additional covariates remain in the original order. This prevents us for destroying covariate effects. Still the permutation approach is not optimal since residuals may be correlated. However, this does not seem to be a severe problem.  
-The argument \Rfunarg{perm} defines the number of permutations.  
-The number of permutations is 10,000 for default but in the current version the test for many genes can take quite a long time with 10,000 permutations. Here we set \Rfunarg{perm} to just 100 or 1000 so that creating this vignette will not last too long. For getting more reliable results one should recompute the examples with more permutations. \\
-As an alternative to the permutation approach an approximation of the F--statistic nominator according to \cite{Rob:49} yields asymptotic p--values. %To use the approximation specify the parameter \Rfunarg{method = "approx"} (\Rfunarg{method = "permutation"} is the default) or \Rfunarg{method = "both"} to get both p--values. 
+To avoid alpha--inflation due to correlated data and effects of non--normality of the data tests for significance of the resulting F--ratios are performed using a 
+permutation test approach. 
+We apply permutation of samples which is equivalent to permuting rows of the full design matrix. Note that permutation is only 
+conducted for such columns of the design matrix that correspond to the variables of interest. Values of additional covariates 
+remain in the original order. This prevents us for destroying covariate effects. Still the permutation approach is not optimal since 
+residuals may be correlated. However, this does not seem to be a severe problem.  
+The argument \Rfunarg{perm} defines the number of permutations, which is 10,000 for default. Here we set \Rfunarg{perm} to just 100 or 1000 so that creating this vignette 
+will not last too long. For getting more reliable results one should recompute the examples with more permutations. \\
+As an alternative to the permutation approach an approximation of the F--statistic nominator according to \cite{Rob:49} yields 
+asymptotic p--values. 
+%To use the approximation specify the parameter \Rfunarg{method = "approx"} (\Rfunarg{method = "permutation"} is the default) or \Rfunarg{method = "both"} to get both p--values. 
 Note that the approximation is not feasible for very large gene groups since the huge gene expression covariance matrix has to be estimated, which is not possible for too many genes. 
-The default value for group size (\Rfunarg{max.group.size}) is 2500, groups above this size are treated by the permutation approach. When using work stations with good working memory this number may be increased.
+The default value for group size (\Rfunarg{max.group.size}) is 2500, groups above this size are treated by the permutation approach. 
+When using work stations with good working memory this number may be increased.
 The estimation of the covariance matrix is carried out with the R package \Rpackage{corpcor} from \cite{corpcor}.\\
 Whether the permutation--based or the asymptotic p--values or both should be calculated is controlled by the argument \Rfunarg{method}. 
 
-The result of the \Rfunction{GlobalAncova} function is a typical ANOVA table with information about sums of squares, degrees of freedom and mean sums of squares for the effect and error term, respectively. 
+The result of the \Rfunction{GlobalAncova} function is a typical ANOVA table with information about sums of squares, degrees of freedom 
+and mean sums of squares for the effect and error term, respectively. 
 Besides F--statistics %and classical F--test p--values,
 there are given either p--values from the permutation test or the asymptotic p--values or both. 
 %Which of them are calculated is controled by the argument \Rfunarg{method}.  
@@ -220,8 +252,8 @@ gt.all
 Both tests show that the data contain overwhelming evidence for differential gene expression
 between AML and ALL.
 
-\vspace{0.2cm}
-\noindent {\bf Cell Cycle Pathway}\\
+\subsubsection{Testing the Cell Cycle Pathway}
+
 Now we ask the more specific question of whether there is evidence for differential gene expression
 between both diagnoses restricted to genes belonging to the cell cycle pathway.
 First we load all KEGG pathways. 
@@ -265,8 +297,8 @@ gt.cc
 The test results clearly indicate that the expression pattern of the cell cycle pathway 
 is different between the two clinical groups. 
 
-\vspace{0.2cm}
-\noindent {\bf Adjusting for Covariates}\\
+\subsubsection{Adjusting for Covariates}
+
 Covariate information can be incorporated by specifying the \Rfunarg{covars} option.
 
 For example if we want to adjust for whether samples were taken from bone marrow or from peripheral blood (\Robject{BM.PB}), we can do this by
@@ -281,6 +313,8 @@ ga.cc.BMPB
 With the more general function call we would simply adjust the definitions of model formulas, namely 
 \Rfunarg{formula.full =} $\sim$ \Rfunarg{ALL.AML + BM.PB} and \Rfunarg{formula.red =} $\sim$ \Rfunarg{BM.PB}.
 
+%The source of the samples apparently has some explanatory effect on the outcome resulting in a smaller F--ratio than in the model without adjusting. 
+%But the influence of the genes is still highly significant.
 The source of the samples does not seem to have an explanatory effect on the outcome since F--statistics and p--values are very similar to the model without adjustment. 
 
 With the \Rpackage{globaltest} we get a higher p--value. 
@@ -298,6 +332,7 @@ Permutation based p--values can also be obtained with Goeman's test, however onl
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%\subsection{van t'Veer Data and p53--Signalling Pathway}
 \subsection{van't Veer Data and p53--Signalling Pathway} \label{vantVeer}
 
 <<echo=F>>=
@@ -310,7 +345,14 @@ We present another example from a study on breast cancer from van't Veer et al. 
 This example illustrates how more complex tasks than comparing %expression levels between 
 just two clinical groups can be performed with \Rpackage{GlobalAncova}.
 %The authors present a set of 70 genes as a signature to predict cancer recurrence.
-A subset of the data consisting of the expression values for \Sexpr{dim(phenodata)[1]} patients without {\it BRCA1} or {\it BRCA2} mutations is available with the package. The dataset (\Robject{vantVeer}) is restricted to \Sexpr{dim(vantVeer)[1]} genes associated with \Sexpr{length(pathways)} cancer related pathways that are provided as a list named (\Robject{pathways}), too. Information about some of the originally surveyed covariates is stored in \Robject{phenodata}. %Further we provide a list of \Sexpr{length(pathways)} cancer related pathways (\Robject{pathways}).
+A subset of the data consisting of the expression values for \Sexpr{dim(phenodata)[1]} patients without {\it BRCA1} or {\it BRCA2} 
+mutations is available with the package. The dataset (\Robject{vantVeer}) is restricted to \Sexpr{dim(vantVeer)[1]} genes associated 
+with \Sexpr{length(pathways)} cancer related pathways that are provided as a list named (\Robject{pathways}), too. 
+We take one gene from the original data additionally to the expression set, namely
+'AL137718'. This gene is part of the original van't Veer prognosis signature. We will later use it to demonstrate
+how signature genes can be related to pathways.
+Information about 
+some of the originally surveyed covariates is stored in \Robject{phenodata}. %Further we provide a list of \Sexpr{length(pathways)} cancer related pathways (\Robject{pathways}).
 %This example illustrates the role of covariates in the context of global testing in more detail.
 The tumour suppressor protein p53 contributes as a transcription factor to cell cycle arrest and apoptosis induction.
 %Oncogene. 2004 Apr 22;23(19):3376-84. 	
@@ -338,9 +380,10 @@ vV.1
 @
 
 
-\vspace{0.2cm}
-\noindent {\bf Analysis of Arbitrary Clinical Variables}\\
-In the new version of the package also clinical variables with more than two groups can be considered. For demonstration we investigate differential expression for the three ordered levels of tumour grade.
+\subsubsection{Analysis of Various Clinical Groups}
+
+In the new version of the package also clinical variables with more than two groups can be considered. For demonstration we 
+investigate differential expression for the three ordered levels of tumour grade.
 
 <<grade>>=
 set.seed(111)
@@ -348,9 +391,16 @@ vV.3 <- GlobalAncova(xx=vantVeer, formula.full=~grade, formula.red=~1, model.dat
 vV.3
 @ 
 
-\vspace{0.2cm}
-\noindent {\bf Gene--Gene Interaction}\\
-Now we want to go into the matter of other interesting biological questions. For example one might ask if there exists interaction between the expression of genes which the authors in \cite{vV:02} presented as signature for prediction of cancer recurrence and the expression of genes in a certain pathway. This question can be answered by viewing the expression values of the signature genes as linear regressors and to test their effects on the expression pattern of the pathway genes. For demonstration we pick the signature gene "AL137718" and again the p53--signalling pathway. Assume that we also want to adjust for the Estrogen receptor status. The analysis can be carried out in the following way.
+\subsubsection{Gene--Gene Interaction}
+
+Now we want to go into the matter of other interesting biological questions. For example one might ask if there exists interaction 
+between the expression of genes which the authors in \cite{vV:02} presented as signature for prediction of cancer recurrence and the 
+expression of genes in a certain pathway. This question can be answered by viewing the expression values of the signature genes as linear 
+regressors and to test their effects on the expression pattern of the pathway genes. For demonstration we pick the signature gene "AL137718",
+which is not part of any of the pathways,
+and test its effect on the p53--signalling pathway. 
+Assume that we also want to adjust for the Estrogen receptor status. The analysis can be carried out 
+in the following way.
 
 <<interact>>=
 signature.gene <- "AL137718"
@@ -362,8 +412,8 @@ vV.4
 
 Assuming a significance level of 0.05 we get a significant effect of the signature gene on the p53--signalling pathway.
 
-\vspace{0.2cm}
-\noindent {\bf Co--Expression}\\
+\subsubsection{Co--Expression}
+
 Next we want to analyse co--expression regarding the clinical outcome of building distant metastases within five years. This can be done by simply adding the variable \Robject{metastases} to the full and reduced model, respectively. Such layout corresponds to testing the linear effect of the signature gene stratified not only by Estrogen receptor status but also by \Robject{metastases}. 
 
 <<coexpr>>=
@@ -383,6 +433,10 @@ vV.6
 @
 
 We observe a significant differential co-expression between the chosen signature gene and the p53--signalling pathway.
+
+With \Rpackage{globaltest} we can also test gene-gene interaction, also adjusted for phenotype groups. But it is
+not possible to test for differential co-expression or the influence of more than one signature gene on a
+pathway. On the other hand globaltest is able to deal with survival times as clinical outcome.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -405,6 +459,14 @@ metastases <- phenodata$metastases
 ga.pw <- GlobalAncova(xx=vantVeer, group=metastases, test.genes=pathways[1:4], method="both", perm=1000) 
 ga.pw
 @
+
+%Suppose for example that we want to test the first five KEGG pathways with the Golub data. We proceed as follows.
+%
+%<<kegg>>=
+%ga.kegg <- GlobalAncova(exprs(golubX), gr, test.genes=kegg[1:5], 
+%perm=1000) 
+%ga.kegg
+%@
 
 The result is a matrix whose rows correspond to the different pathways. 
 
@@ -437,13 +499,13 @@ To obtain the original order of the pathways we order the result of \Rfunction{m
 <<>>=
 ga.pw.raw <- ga.pw[ ,"p.perm"]
 ga.pw.adj <- mt.rawp2adjp(ga.pw.raw)
-ga.result <- ga.pw.adj$adjp[order(ga.pw.adj$index) ,c("rawp", "Holm")]
+ga.result <- ga.pw.adj$adjp[order(ga.pw.adj$index), c("rawp", "Holm")]
 rownames(ga.result) <- names(pathways)[1:4]
-ga.result
-gt.pw.raw <- gt.pw@res[ ,"P-value"]
+ga.result             
+gt.pw.raw <- p.value(gt.pw)   
 gt.pw.adj <- mt.rawp2adjp(gt.pw.raw)
-gt.result <- gt.pw.adj$adjp[order(gt.pw.adj$index) ,c("rawp", "Holm")]
-rownames(gt.result) <- names(pathways)[1:4]
+gt.result <- gt.pw.adj$adjp[order(gt.pw.adj$index), c("rawp", "Holm")]
+rownames(gt.result) <- names(pathways)[1:4]             
 gt.result
 @
 
@@ -468,6 +530,8 @@ of all four pathways are not differentially expressed.
 Now the interesting hypothesis ``1'' for example can be rejected if also the hypotheses
 ``1-2-3-4'', ``1-2-3'', ``1-2-4'', ``1-3-4'', ``2-3-4'', ``1-2'', $\ldots$, ``1-4'' are rejected.
 These relationships are represented by the edges of the graph.
+%Note that the required package \Rpackage{Rgraphviz} for plotting the graph
+%currently only is available for Unix/Linux.
 
 <<hypoth, echo=F, fig=T>>=
 if(require(Rgraphviz))
@@ -501,6 +565,11 @@ We can compute the closed testing procedure using the function
 ga.closed <- GlobalAncova.closed(xx=vantVeer, group=metastases, 
 test.genes=pathways[1:4], previous.test=ga.pw, level=0.05, method="approx")
 @
+
+%<<closed.test>>=
+%ga.closed <- GlobalAncova.closed(xx=exprs(golubX), group=gr, 
+%test.genes=kegg[1:5], previous.test=ga.kegg, level=0.05, perm=100)
+%@
 
 where \Rfunarg{test.genes} is again a list of pathways. In order to shorten computing time we can provide
 the results of the previous application of \Rfunction{GlobalAncova} for the pathways of interest.
@@ -566,7 +635,10 @@ go30 <- GAGO(exprs(golubX), group=pData(golubX)$ALL.AML, focus = focusBP, GO = b
 str(go30)
 @
 
-All arguments for specifying the linear model used in \Rfunction{GlobalAncova} can be given here. Only the parameter \Rfunarg{method} is not available because the focus level procedure does only work with the asymptotic test. Note however, that still a number of permutations can be specified (\Rfunarg{perm}, default 10,000) since very large GO terms (with more annotated genes than defined by parameter \Rfunarg{mar.group.size}, default 2500) are tested permutation based.
+All arguments for specifying the linear model used in \Rfunction{GlobalAncova} can be given here. Only the parameter 
+\Rfunarg{method} is not available because the focus level procedure does only work with the asymptotic test. Note however, that 
+still a number of permutations can be specified (\Rfunarg{perm}, default 10,000) since very large GO terms (with more annotated genes 
+than defined by parameter \Rfunarg{max.group.size}, default 2500) are tested permutation based. 
 
 See the \Rpackage{globaltest} vignette for examples how to visualize the results of the focus level procedure.  
 
@@ -588,28 +660,34 @@ We use again the van't Veer data constricted to the genes of the p53--signalling
 
 \subsection{Gene Plot}
 
-The influence of each gene on the outcome of the test can be assessed and visualized with a diagnostic plot generated by our function \Rfunction{Plot.genes}.
+The influence of each gene on the outcome of the test can be assessed and visualized with a diagnostic plot generated by our 
+function \Rfunction{Plot.genes}.
 It corresponds to the function \Rfunction{geneplot} in the \Rpackage{globaltest} package.
-The function \Rfunction{Plot.genes} gives a graphical display of single gene-wise analysis for all genes. Bars are always positive as a reduction of sum of squares is always achieved in this case.
-The bar height indicates the influence of the respective gene on the test 
-statistic. 
-The added reference line is the residual mean square error per gene and corresponds to the 
-expected height of the 
-bars under the null hypothesis which says that the gene is not associated 
-with the clinical outcome. 
-The actual and expected bar heights also correspond to the nominator and denominator of gene-wise F-statistics. Hence the ratio of the two values is a measure for the association of the respective gene with the phenotype.
-Bar heights for all genes can be returned by setting the option \Rfunarg{returnValues} to \Robject{TRUE}. This helps to detect genes with most influence on the global statistics.
-Note however that comparisons between different gene groups can not easily be done by means of these values directly since different group sizes have an impact on global significance.  
+The function \Rfunction{Plot.genes} gives a graphical display of single gene-wise analysis for all genes. Bars are always positive as 
+a reduction of sum of squares is always achieved in this case.
+The bar height indicates the influence of the respective gene on the test statistic. 
+The added reference line is the residual mean square error per gene and corresponds to the expected height of the 
+bars under the null hypothesis which says that the gene is not associated with the clinical outcome. 
+The actual and expected bar heights also correspond to the nominator and denominator of gene-wise F-statistics. Hence the ratio of the 
+two values is a measure for the association of the respective gene with the phenotype.
+Bar heights for all genes can be returned by setting the option \Rfunarg{returnValues} to \Robject{TRUE}. This helps to detect genes 
+with most influence on the global statistics.
+Note however that comparisons between different gene groups can not easily be done by means of these values directly since 
+different group sizes have an impact on global significance.  
  
 %Covariate information can be included in the same way as in the \Rfunction{GlobalAncova} function with the \Rfunarg{covars} option.
-The bars can be colored according to a variable of interest with the option \Rfunarg{Colorgroup} in order to show in which of the groups a gene has the highest expression values.
+The bars can be colored according to a variable of interest with the option \Rfunarg{Colorgroup} in order to show in which of the groups 
+a gene has the highest expression values. 
+The automatically chosen bar labels can be manipulated with the parameter \Rfunarg{bar.names}.
 
 The commands for creating gene plots in the \Rpackage{GlobalAncova} and
-the \Rpackage{globaltest} are as follows. Note that for the former one again three alternatives for function calls are provided, see section \ref{onepathway} for details.   
+the \Rpackage{globaltest} are as follows. Note that for the former one again three alternatives for function calls are provided, see 
+section \ref{onepathway} for details.   
 %For facility of inspection it is useful not to plot the bars for all genes at one time
 %but only for a few, for example 40. 
 
-The two approaches show almost the same results (figures \ref{ga.genepl1} and \ref{gt.genepl1}). We prefer plotting horizontal bars rather than vertical because we think it is easier to read off the bar heights this way.
+The two approaches show almost the same results (figures \ref{ga.genepl1} and \ref{gt.genepl1}). We prefer plotting horizontal bars 
+rather than vertical because we think it is easier to read off the bar heights this way.
 %In the group variable \Rfunarg{gr} 0 represents AML and 1 the ALL patients.
 
 <<geneplot>>=
@@ -647,7 +725,45 @@ exceeds the reference line.}}
 \end{center}
 \end{figure}
 
-In this case where only the influence of one variable is of interest (and therefore the easiest version of possible function calls is chosen), the same variable is assumed to be relevant for coloring. However one is free to specify another coloring. For example for the same plot we could ask which genes are higher expressed in samples with either positive or negative Estrogen receptor status, see figure \ref{ga.genepl2}.
+%<<geneplot>>=
+%Plot.genes(exprs(golubX)[cellcycle[1:40], ], gr)
+%gp.cc <- geneplot(gt.cc)
+%plot(gp.cc[1:40])
+%@
+
+%\begin{figure}[htb!]
+%\begin{center}
+%<<genes, fig=TRUE, echo=F>>=
+%Plot.genes(exprs(golubX)[cellcycle[1:40], ], gr)
+%@
+%\vspace{-0.4cm}
+%\caption{{\small Gene Plot for the Golub data with \Rpackage{GlobalAncova}. 
+%Shown are the first 40 genes of the cell cycle pathway. The bar height indicates the influence of the respective gene on the test 
+%statistic. The colour shows in which of the phenotype groups
+%the gene has higher expression values. The reference line is the residual mean square 
+%error per gene.}}
+%\end{center}
+%\end{figure}
+%
+%\begin{figure}[htb!]
+%\begin{center}
+%<<gt_genes, fig=TRUE, echo=F>>=
+%plot(gp.cc[1:40])
+%@
+%\vspace{-0.4cm}
+%\caption{{\small Gene Plot for the Golub data with \Rpackage{globaltest}. 
+%Shown are the first 40 genes of the cell cycle pathway. The bar height indicates the influence of the respective gene on the test 
+%statistic. The colour shows in which of the phenotype groups
+%the gene has higher expression values. The reference line gives the expected height of the 
+%bar under the null hypothesis. Marks indicate with how many standard deviations the bar 
+%exceeds the reference line.}}
+%\end{center}
+%\end{figure}
+
+In this case where only the influence of one variable is of interest (and therefore the easiest version of possible function calls is 
+chosen), the same variable is assumed to be relevant for coloring. However one is free to specify another coloring. For example for 
+the same plot we could ask which genes are higher expressed in samples with either positive or negative Estrogen receptor status, see 
+figure \ref{ga.genepl2}.
 
 <<geneplot>>=
 Plot.genes(xx=vantVeer, formula.full=~metastases, formula.red=~1, model.dat=phenodata, test.genes=p53, Colorgroup="ERstatus")
@@ -682,9 +798,11 @@ removing a sample with a negative bar would result in a lower
 p-value. 
 %Again we can use \Rfunarg{covars} for covariate adjustment.
 The bars are colored to distinguish samples 
-of different clinical entities that can again be specified by the user through the option \Rfunarg{Colorgroup}. With the option \Rfunarg{sort} 
-it is also possible to sort the bars with respect to the phenotype groups.
-Also in the subjects plot bar heights can be returned by setting the option \Rfunarg{returnValues} to \Robject{TRUE}. That may help to detect, not only visually, samples which do not fit into their respective clinical groups.
+of different clinical entities that can again be specified by the user through the option \Rfunarg{Colorgroup}. With the option 
+\Rfunarg{sort} it is also possible to sort the bars with respect to the phenotype groups. 
+Bar labels can be changed with the argument \Rfunarg{bar.names}.
+Also in the subjects plot bar heights can be returned by setting the option \Rfunarg{returnValues} to \Robject{TRUE}. 
+That may help to detect, not only visually, samples which do not fit into their respective clinical groups.
 %Before plotting we add the sample names to the expression matrix. 
 %Otherwise with \Rfunction{Plot.subjects} samples would just
 %be enumerated from 1 to \Sexpr{length(pData(golubX))}.
@@ -725,7 +843,45 @@ of the sample under the null hypothesis.}}
 \end{center}   
 \end{figure}
 
-The function \Rfunction{Plot.subjects} can be invoked by the three alternative function calls (see section \ref{onepathway}) and hence also plots corresponding to more complex testing challenges can be produced as well. To give just one example we consider again the influence of the tumour grade, which can take three possible values, on gene expression (figure \ref{ga.subjects2}).
+%<<subjectsplot>>=
+%colnames(exprs(golubX)) <- pData(golubX)[ ,1]
+%Plot.subjects(exprs(golubX), gr)
+%sampleplot(gt.cc)
+%@
+
+%\begin{figure}[htb!]
+%\begin{center}
+%<<subjects, fig=TRUE, echo=F>>=
+%Plot.subjects(exprs(golubX), gr)
+%@
+%\vspace{-0.4cm}
+%\caption{{\small Subjects Plot for the Golub data with \Rpackage{GlobalAncova}. The bar height 
+%indicates the influence of the respective sample on the test result. If an individual does 
+%not fit into the pattern of its phenotype, negative values can occur. Bars are coloured 
+%corresponding to groups.}}
+%\end{center}
+%\end{figure}
+
+%\clearpage
+
+%\begin{figure}[htb!]
+%\begin{center}
+%<<gt_subjects, fig=TRUE, echo=F>>=
+%sampleplot(gt.cc)
+%@
+%\vspace{-0.4cm}
+%\caption{{\small Subjects Plot for the Golub data with \Rpackage{globaltest}. The bar height 
+%indicates the influence of the respective sample on the test result. If an individual does 
+%not fit into the pattern of its phenotype, negative values can occur. Bars are coloured 
+%corresponding to groups. The reference line shows the expected influence of the samples 
+%under the null hypothesis. Marks on the bars indicate the standard deviation of the influence 
+%of the sample under the null hypothesis.}}
+%\end{center}   
+%\end{figure}
+
+The function \Rfunction{Plot.subjects} can be invoked by the three alternative function calls (see section \ref{onepathway}) and hence 
+also plots corresponding to more complex testing challenges can be produced as well. To give just one example we consider again the 
+influence of the tumour grade, which can take three possible values, on gene expression (figure \ref{ga.subjects2}).
 
 <<subjectsplot2>>=
 Plot.subjects(xx=vantVeer, formula.full=~grade, formula.red=~1, model.dat=phenodata, test.genes=p53, Colorgroup="grade", legendpos="topleft")
@@ -751,6 +907,8 @@ corresponding to phenotype groups.}}
 
 \section{Acknowledgements}
 
+We thank Sven Knüppel who took the initiative and contributed a C-code
+implementation of the permutation test to our package.\\
 This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.
 
 

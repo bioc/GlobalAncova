@@ -34,11 +34,11 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 }}
 
 \usage{
-\S4method{Plot.genes}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, test.genes = NULL, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, ...)
+\S4method{Plot.genes}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 
-\S4method{Plot.genes}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, test.genes = NULL, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, ...)
+\S4method{Plot.genes}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 
-\S4method{Plot.genes}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL, test.genes = NULL, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, ...)
+\S4method{Plot.genes}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL, test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -53,7 +53,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
   \item{group}{Vector with the group membership information.}
   \item{covars}{Vector or matrix which contains the covariate information for each sample.}
   \item{test.terms}{Character vector that contains names of the terms of interest.}
-  \item{test.genes}{Vector of gene names or gene indices specifying a gene set.}
+  \item{test.genes}{Vector of gene names or gene indices specifying the gene set. If missing, the plot refers to all genes in \code{xx}.}
   \item{Colorgroup}{Character variable giving the group that specifies coloring.
         If the function is called using the argument \code{group} then this variable is assumed to
         be relevant for coloring.}
@@ -62,6 +62,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
      '"left"', '"topleft"', '"top"', '"topright"', '"right"' and
      '"center"').}
   \item{returnValues}{Shall bar heights (gene-wise reduction in sum of squares) be returned?}
+  \item{bar.names}{Vector of bar labels. If missing, gene names from \code{test.genes} or row names of \code{xx} are taken.}
   \item{\dots}{Graphical parameters for specifying colors, titles etc.}
 }
 \author{
@@ -70,7 +71,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
   Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de}
   }
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
-\seealso{\code{\link{GlobalAncova}}, \code{\link{Plot.subjects}}, \code{\link{GlobalAncova.closed}}}
+\seealso{\code{\link{GlobalAncova}}, \code{\link{Plot.subjects}}, \code{\link{Plot.sequential}}}
 \examples{
 data(vantVeer)
 data(phenodata)

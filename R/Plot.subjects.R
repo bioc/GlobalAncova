@@ -1,5 +1,5 @@
 setGeneric("Plot.subjects", function(xx,formula.full,formula.red,model.dat,group,covars=NULL,
-                            test.terms,test.genes=NULL,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...)
+                            test.terms,test.genes=NULL,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,bar.names,...)
            standardGeneric("Plot.subjects"))
 # xx: expression matrix (rows=genes, columns=subjects)
 # formula.full: model formula for the full model
@@ -8,10 +8,13 @@ setGeneric("Plot.subjects", function(xx,formula.full,formula.red,model.dat,group
 # group: group variable
 # covars: covariate information
 # test.terms: character vector of terms of interest
+# test.genes: may define the relevant gene set 
 # Colorgroup: character variable giving the group that specifies coloring
 # sort: shall samples be sorted by 'Colorgroup'?
 # legendpos: position of the legend
 # returnValues: shall subject-wise reduction in sum of squares = bar heights be returned?
+# bar.names: user specified bar names; if missing names of 'test.genes' or row names of 'xx' are taken
+# ...: additional graphical parameters
 
 
 ################################# general function #############################
@@ -19,18 +22,28 @@ setGeneric("Plot.subjects", function(xx,formula.full,formula.red,model.dat,group
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.red="formula",
                           group="missing",covars="missing",test.terms="missing"),
           definition = function(xx,formula.full,formula.red,model.dat,test.genes=NULL,Colorgroup=NULL,
-                                sort=FALSE,legendpos="topright",returnValues=FALSE,...){
+                                sort=FALSE,legendpos="topright",returnValues=FALSE,bar.names,...){
   # test for model.dat
   if(!is.data.frame(model.dat))
     stop("'model.dat' has to be a data frame")
 
   # test for test.genes (i.e. only one gene set can be given and not a list of gene sets)
-  if(!is.null(test.genes) & !(data.class(test.genes) %in% c("numeric","character")))
-    stop("'test.genes' has to be a vector of gene names or indices")
+  if(!missing(test.genes)){
+    if(!(data.class(test.genes) %in% c("numeric","character"))) 
+      stop("'test.genes' has to be a vector of gene names or indices")
+  }
     
   # get gene set 
-  if(!is.null(test.genes))
+  if(!missing(test.genes))
     xx <- xx[test.genes,,drop=FALSE] 
+
+  # bar names
+  if(is.null(colnames(xx)))
+    colnames(xx) <- 1:ncol(xx)
+  if(missing(bar.names))
+    bar.names <- colnames(xx) 
+  if(length(bar.names) != ncol(xx))
+    stop("length of 'bar.names' not equal to sample size") 
 
   # basic analysis
   res <- reduSQ(xx=xx,formula.full=formula.full,formula.red=formula.red,model.dat=model.dat)
@@ -38,7 +51,7 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
 
   # plot
   plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,
-                sort=sort,legendpos=legendpos,returnValues=returnValues,...)
+                sort=sort,legendpos=legendpos,returnValues=returnValues,bar.names=bar.names,...)
 }
 )
 
@@ -48,13 +61,16 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
 
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.red="missing",
                           model.dat="missing",group="ANY",test.terms="missing"),
-          definition = function(xx,group,covars=NULL,test.genes=NULL,Colorgroup=NULL,sort=FALSE,legendpos="topright",returnValues=FALSE,...){
+          definition = function(xx,group,covars=NULL,test.genes=NULL,Colorgroup=NULL,sort=FALSE,
+                                legendpos="topright",returnValues=FALSE,bar.names,...){
   # test for test.genes (i.e. only one gene set can be given and not a list of gene sets)
-  if(!is.null(test.genes) & !(data.class(test.genes) %in% c("numeric","character")))
-    stop("'test.genes' has to be a vector of gene names or indices")
+  if(!missing(test.genes)){
+    if(!(data.class(test.genes) %in% c("numeric","character"))) 
+      stop("'test.genes' has to be a vector of gene names or indices")
+  }
     
   # get gene set 
-  if(!is.null(test.genes))
+  if(!missing(test.genes))
     xx <- xx[test.genes,,drop=FALSE] 
 
   # 'group' is assumed to be the variable relevant for coloring
@@ -75,13 +91,21 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.
   formula.red  <- res$formula.red
   model.dat    <- res$model.dat
 
+  # bar names
+  if(is.null(colnames(xx)))
+    colnames(xx) <- 1:ncol(xx)
+  if(missing(bar.names))
+    bar.names <- colnames(xx) 
+  if(length(bar.names) != ncol(xx))
+    stop("length of 'bar.names' not equal to sample size") 
+
   # basic analysis
   res <- reduSQ(xx=xx,formula.full=formula.full,formula.red=formula.red,model.dat=model.dat)
   redu.SSQ.Subjects <- res$redu.subjects
 
   # plot
   plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,
-              sort=sort,legendpos=legendpos,returnValues=returnValues,...)
+              sort=sort,legendpos=legendpos,returnValues=returnValues,bar.names=bar.names,...)
 }
 )
 
@@ -92,17 +116,19 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="missing",formula.
 setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.red="missing",
                           group="missing",covars="missing",test.terms="character"),
           definition = function(xx,formula.full,test.terms,model.dat,test.genes=NULL,Colorgroup=NULL,
-                                sort=FALSE,legendpos="topright",returnValues=FALSE,...){
+                                sort=FALSE,legendpos="topright",returnValues=FALSE,bar.names,...){
   # test for model.dat
   if(!is.data.frame(model.dat))
     stop("'model.dat' has to be a data frame")
 
   # test for test.genes (i.e. only one gene set can be given and not a list of gene sets)
-  if(!is.null(test.genes) & !(data.class(test.genes) %in% c("numeric","character")))
-    stop("'test.genes' has to be a vector of gene names or indices")
+  if(!missing(test.genes)){
+    if(!(data.class(test.genes) %in% c("numeric","character"))) 
+      stop("'test.genes' has to be a vector of gene names or indices")
+  }
     
   # get gene set 
-  if(!is.null(test.genes))
+  if(!missing(test.genes))
     xx <- xx[test.genes,,drop=FALSE] 
 
   # test for 'test.terms'
@@ -116,13 +142,21 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
 
   D.red  <- D.full[,!(colnames(D.full) %in% test.terms), drop=F]
 
+  # bar names
+  if(is.null(colnames(xx)))
+    colnames(xx) <- 1:ncol(xx)
+  if(missing(bar.names))
+    bar.names <- colnames(xx) 
+  if(length(bar.names) != ncol(xx))
+    stop("length of 'bar.names' not equal to sample size") 
+
   # basic analysis
   res <- reduSQ(xx=xx,formula.full=formula.full,D.red=D.red,model.dat=model.dat)
   redu.SSQ.Subjects <- res$redu.subjects
 
   # plot
   plotsubjects(xx=xx,model.dat=model.dat,Colorgroup=Colorgroup,redu.SSQ.Subjects=redu.SSQ.Subjects,
-              sort=sort,legendpos=legendpos,returnValues=returnValues,...)
+              sort=sort,legendpos=legendpos,returnValues=returnValues,bar.names=bar.names,...)
 }
 )
 
@@ -131,12 +165,12 @@ setMethod("Plot.subjects", signature(xx="matrix",formula.full="formula",formula.
 ################################################################################
 
 # main function
-plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos, returnValues=FALSE, col, xlab, ylab, ...){
-  if(!is.character(Colorgroup) & !is.null(Colorgroup))
+plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALSE, legendpos, returnValues=FALSE, bar.names, col, xlab, ylab, ...){
+  # !!
+  if(!is.character(Colorgroup) && !is.null(Colorgroup))   # einfaches & könnte zu logischem Vektor führen -> Warnung
+  # !!
     stop("'Colorgroup' has to be a character")
 
-  if(is.null(colnames(xx)))
-    colnames(xx) <- seq(1:dim(xx)[2])
   N.Genes <- dim(xx)[1]
 
   if(missing(col))
@@ -150,13 +184,15 @@ plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALS
   # if a group variable is given and if it is not continuous
   colorgroup.vector <- as.numeric(model.dat[,Colorgroup])
   N.groups          <- length(unique(colorgroup.vector))
-  if(N.groups > 0 & N.groups <= 10){
+  # !!
+  if(N.groups > 0 && N.groups <= 10){
+  # !!
     color        <- numeric(N.groups)
     label        <- numeric(0)
 
     if(sort == TRUE){
       x          <- redu.SSQ.Subjects[order(colorgroup.vector)]
-      barnames   <- colnames(xx)[order(colorgroup.vector)]
+      bar.names   <- bar.names[order(colorgroup.vector)]
       gr.sort    <- sort(colorgroup.vector)
       for(i in 1:N.groups){
         color[gr.sort == unique(gr.sort)[i]] <- i
@@ -167,7 +203,6 @@ plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALS
     else{
       for(i in 1:N.groups){
         x          <- redu.SSQ.Subjects
-        barnames   <- colnames(xx)
         color[colorgroup.vector == sort(unique(colorgroup.vector))[i]] <- i
         label      <- c(label, paste(Colorgroup, "=", sort(unique(model.dat[,Colorgroup]))[i]))
       }
@@ -177,7 +212,6 @@ plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALS
   # if no group is given or for a continuous group variable
   else{
     x            <- redu.SSQ.Subjects
-    barnames     <- colnames(xx)
     color        <- 1
   }
 
@@ -193,18 +227,20 @@ plotsubjects <- function(xx, model.dat, Colorgroup, redu.SSQ.Subjects, sort=FALS
         xlab      = xlab,
         ylab      = ylab,
         color     = rev(color),
-        bar.names = rev(barnames), ...
+        bar.names = rev(bar.names), ...
   )
 
   # legend
-  if(N.groups > 0 & N.groups <= 10)
+  # !!
+  if(N.groups > 0 && N.groups <= 10)
+  # !!
     legend(legendpos, label, col=1:N.groups, pch=15)
 
   palette("default")
 
  # return bar heights
   if(returnValues){
-    names(x) <- barnames
+    names(x) <- bar.names
     return(x)
   }
 }
