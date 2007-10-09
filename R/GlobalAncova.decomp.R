@@ -242,7 +242,8 @@ decomp.ssq.genewise <- function(xx, formula, model.dat=NULL) {
   f<-ms[,1:nt]/ms[,nt+1]
 
   #p-values
-  p.values<-t(pf(t(f),df[1:nt],df[nt+1],lower.tail=F))
+  p.values<-t(pf(t(f),df["gene",1:nt],df["gene",nt+1],lower.tail=FALSE))
+  p.values["all",] <- pf(f["all",], df["all",1:nt], df["all",nt+1], lower.tail=FALSE)
 
   return(list(terms=colnames(ssq),SSQ=ssq,df=df,MS=ms,F=f,p=p.values))
 }

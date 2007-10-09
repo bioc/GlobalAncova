@@ -109,7 +109,7 @@ GAGO <- function(..., GO, focus, maxalpha = 0.05, stopafter = 100, verbose = FAL
         pPatterns <- matrix(,0,length(atoms[[term]]))   # Get all superset patterns of a propagated GO term
         for (i in 1:length(propagate)) {
           basePattern <- offspring[[term]][propagate[[i]],] # The propagated GO term as unions of atoms
-          ancestorPatterns <- fillPattern(basePattern)      # All superset patterns as unions of atoms
+          ancestorPatterns <- globaltest:::fillPattern(basePattern)      # All superset patterns as unions of atoms
           ancestorPatterns <- ancestorPatterns[!globaltest:::intersectPatterns(ancestorPatterns, pPatterns),,drop=FALSE]    # Remove duplicates
           pPatterns <- rbind(pPatterns, ancestorPatterns)
         }

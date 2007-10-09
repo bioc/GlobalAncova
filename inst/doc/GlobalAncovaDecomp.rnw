@@ -78,9 +78,14 @@ in the model is important as the following examples show.
 Applying an F-test to the sequential SSQ is only meaningful if a logical or hierarchical
 order of factors exists (e.g. main effects first followed by interaction effects).
 Only in this case, it can be tested when the factors start to be insignificant.
-The following examples are based on the van't Veer breast cancer data set \cite{vV:02}, which is included in the \Rpackage{GlobalAncova} package. 
-A subset of the data consisting of the expression values for \Sexpr{dim(phenodata)[1]} patients without {\it BRCA1} or {\it BRCA2} mutations is available. The dataset (\Robject{vantVeer}) is restricted to \Sexpr{dim(vantVeer)[1]} genes associated with \Sexpr{length(pathways)} cancer related pathways that are provided as a list named (\Robject{pathways}).
-The phenotype data of this study (\Robject{phenodata}) include the grade of the tumour (\Robject{grade}), whether or not metastases were developed (\Robject{metastases}) and the estrogen  receptor status (\Robject{ERstatus}). Giving the assumption that all three factors measured have an effect on gene expression, a possible linear model for the gene expressions could be
+The following examples are based on the van't Veer breast cancer data set \cite{vV:02}, which is included in the \Rpackage{GlobalAncova} 
+package. 
+A subset of the data consisting of the expression values for \Sexpr{dim(phenodata)[1]} patients without {\it BRCA1} or {\it BRCA2} 
+mutations is available. The dataset (\Robject{vantVeer}) is restricted to \Sexpr{dim(vantVeer)[1]} genes associated with 
+\Sexpr{length(pathways)} cancer related pathways that are provided as a list named \Robject{pathways}.
+The phenotype data of this study (\Robject{phenodata}) include the grade of the tumour (\Robject{grade}), whether or not metastases 
+were developed (\Robject{metastases}) and the estrogen  receptor status (\Robject{ERstatus}). Giving the assumption that all three 
+factors measured have an effect on gene expression, a possible linear model for the gene expressions could be
 
 <<data, results=hide>>=
 library(GlobalAncova)
@@ -122,7 +127,7 @@ III decomposition.
 \noindent {\bf Type III Decomposition}\\
 In contrast to the sequential decomposition, the type III decomposition is calculated
 by removing only a single term at a time from the full model. That is, every term is
-adjusted for every other term in the model and ist thus treated as if ordered last.
+adjusted for every other term in the model and is thus treated as if ordered last.
 To select the type III sum of squares the option \Rfunarg{method = "type3"} has to be set.
 The terms of the model derived from the van't Veer dataset can now be tested by
 using the following call
@@ -173,7 +178,9 @@ The function \Rfunction{Plot.sequential} yields a bar plot with bars for the sin
 factor relative to the model SSQ of the corresponding gene. In order to enable an
 easier comparison between the genes, the model SSQ of each gene is set to 1.
 The arguments to this function are the expression matrix \Rfunarg{xx}, the \Rfunarg{formula}
-of the model to be decomposed, the phenotype data \Rfunarg{model.dat} and optionally a vector of gene names or indices \Rfunarg{test.genes} specifying the gene set and the name of the gene set \Rfunarg{name.geneset} (for the title of the plot). As an example we will investigate the structure of the cell cycle pathway genes from the van't Veer study, see figure \ref{seq.plot}.
+of the model to be decomposed, the phenotype data \Rfunarg{model.dat} and optionally a vector of gene names or indices 
+\Rfunarg{test.genes} specifying the gene set and the name of the gene set \Rfunarg{name.geneset} (for the title of the plot). 
+As an example we will investigate the structure of the cell cycle pathway genes from the van't Veer study, see figure \ref{seq.plot}.
 
 <<plotseq, eval=F>>=
 Plot.sequential(vantVeer, formula = ~ ERstatus + metastases + grade, model.dat = phenodata, test.genes = pathways[[3]], name.geneset = "cell cycle pathway")
