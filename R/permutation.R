@@ -19,7 +19,7 @@ resampleGA <- function(xx, formula.full, D.full, D.red, model.dat, perm, test.ge
       test.genes <- which( rownames(xx) %in% test.genes ) -1
       num.test.genes <- length(test.genes)
   } else {
-      test.genes <- sapply(test.genes, function(x) which(rownames(xx) %in% x))
+      test.genes <- lapply(test.genes, function(x) which(rownames(xx) %in% x))
       num.test.genes <- sapply(test.genes, length)
       test.genes <- unlist(test.genes)-1
   }
