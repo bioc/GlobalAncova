@@ -358,13 +358,9 @@ setMethod("pGAapprox", signature(xx="matrix",formula.full="formula",formula.red=
      w <- which(N.Genes <= max.group.size)
      test.genes.red <- test.genes[w]
 
-     ew.cov     <- sapply(test.genes.red, function(y) eigen(cov.shrink(t(xx2[y,,drop=FALSE]), verbose=FALSE), only.values = TRUE)$values)
-     if(!is.list(ew.cov))    # if only one gene group is tested
-         ew.cov <- list(ew.cov)
+     ew.cov <- lapply(test.genes.red, function(y) eigen(cov.shrink(t(xx2[y,,drop=FALSE]), verbose=FALSE), only.values = TRUE)$values)
      # all pairwise products of eigen values
-     ew.nom   <- sapply(ew.cov, function(x) as.vector(outer(x, ew.H.nom, "*")))
-     if(!is.list(ew.nom))    # if only one gene group is tested
-         ew.nom <- list(ew.nom)
+     ew.nom   <- lapply(ew.cov, function(x) as.vector(outer(x, ew.H.nom, "*")))
 
      # compute approximate p-values
      p.approx <- rep(NA, N.tests)
