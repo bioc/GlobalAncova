@@ -67,7 +67,7 @@ all possible permutations are considered for the permutation test.
 
 \begin{itemize}
 \item Besides the permutation-based p-values also asymptotic p-values based on an approximation of the distribution of the test statistic are provided. Theoretical F-test p-values are no longer displayed since they are not valid in case of correlations or non-normality. 
-\item The focus level procedure for finding interesting Gene Ontology subgraphs from Goeman and Mansmann (2007) \cite{GoeMan:07} was adapted for the use with \Rfunction{GlobalAncova}.
+\item The focus level procedure for finding interesting Gene Ontology subgraphs from Goeman and Mansmann (2007) \cite{GoeMan:08} was adapted for the use with \Rfunction{GlobalAncova}.
 \item Sequential and type III decompositions of the residual sum of squares, adjustment for global covariates and pair-wise comparisons of different levels of a categorical factor are implemented. These functionalities are described in the additional vignette \emph{GlobalAncovaDecomp.pdf}.
 \item Now the parameter \Rfunarg{test.genes} allows for specifying the gene group which a graph shall be based on in the plotting functions. 
 \end{itemize}
@@ -117,15 +117,15 @@ Applying global tests for differential expression in pathways substantially redu
 testing. The amount of correction for multiple testing decreases.
 Function (KEGG, GO) or location (chromosome, cytoband) could be used as grouping criteria, for example.
 
-We want to compare our method with the global test of Goeman et al., 2004 \cite{Goe:04}.
+We want to compare our method with the global test of Goeman et al. (2004) \cite{Goe:04}.
 Therefore text and examples in this document follow to a certain extent the vignette presented in the R-package 
 \Rpackage{globaltest}.
 Our function \Rfunction{GlobalAncova} tests whether the expectation of expression levels differs between biological entities for a 
 given group of genes.
 This vignette has its focus on the practical use of the test. 
 For more details about the mathematical background and the interpretation of results,
-we refer to the paper by Mansmann and Meister, 2005 \cite{MaMei:05}
-and the technical report of Hummel, Meister and Mansmann \cite{Hummel:07}.
+we refer to the papers by Mansmann and Meister (2005) \cite{MaMei:05}
+and Hummel, Meister and Mansmann (2008) \cite{Hummel:07}.
 
 This document shows the functionality of the R-package \Rpackage{GlobalAncova}. 
 The datasets, all necessary R--packages and our package \Rpackage{GlobalAncova}
@@ -484,7 +484,7 @@ Next we show how to extract p--values for correction for multiple testing.
 Note however that due to the extremely high correlations between
 these tests, many procedures that correct for multiple testing
 here are inappropriate. 
-An appropriate way of adjusting would be for example the method of Holm, 1979 \cite{Holm:79}.
+An appropriate way of adjusting would be for example the method of Holm (1979) \cite{Holm:79}.
 An alternative to such adjustments that is not affected by correlations between tests is a closed
 testing procedure. 
 For this approach you need a family of null hypotheses that is closed
@@ -602,7 +602,7 @@ We get the same significant and non significant pathways as before.
 
 \section{Multiple testing on the Gene Ontology graph}
 
-When testing gene sets defined by the Gene Ontology it is of special interest to incorporate the hierarchical structure of the GO graph. Goeman and Mansmann (2007)\cite{GoeMan:07} developed the \emph{focus level} method, a multiple testing approach on the GO that combines the correction method of Holm (1979) \cite{Holm:79} and the closed testing procedure from Marcus et al. (1976) \cite{Mar:76} (also used in section \ref{closed}). The method is originally implemented in package \Rpackage{globaltest}. We adapted the corresponding functions such that the procedure now is available also with \Rfunction{GlobalAncova}.
+When testing gene sets defined by the Gene Ontology it is of special interest to incorporate the hierarchical structure of the GO graph. Goeman and Mansmann (2008)\cite{GoeMan:08} developed the \emph{focus level} method, a multiple testing approach on the GO that combines the correction method of Holm (1979) \cite{Holm:79} and the closed testing procedure from Marcus et al. (1976) \cite{Mar:76} (also used in section \ref{closed}). The method is originally implemented in package \Rpackage{globaltest}. We adapted the corresponding functions such that the procedure now is available also with \Rfunction{GlobalAncova}.
 For details see the vignette of \Rpackage{globaltest}.  
 
 First, the GO graph must be prepared for the data set at hand. We use again the data of Golub et al.
