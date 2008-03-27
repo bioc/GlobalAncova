@@ -374,7 +374,6 @@ p53 <- pathways$p53_signalling
 We get a significant result with the global ANCOVA. 
  
 <<p53test>>=	
-set.seed(111)
 vV.1 <- GlobalAncova(xx=vantVeer, group=metastases, test.genes=p53, method="both", perm=1000)
 vV.1
 @
@@ -386,7 +385,6 @@ In the new version of the package also clinical variables with more than two gro
 investigate differential expression for the three ordered levels of tumour grade.
 
 <<grade>>=
-set.seed(111)
 vV.3 <- GlobalAncova(xx=vantVeer, formula.full=~grade, formula.red=~1, model.dat=phenodata, test.genes=p53, method="both", perm=1000)
 vV.3
 @ 
@@ -405,7 +403,6 @@ in the following way.
 <<interact>>=
 signature.gene <- "AL137718"
 model <- data.frame(phenodata, signature.gene=vantVeer[signature.gene, ])
-set.seed(111)
 vV.4 <- GlobalAncova(xx=vantVeer, formula.full=~signature.gene + ERstatus, formula.red=~ERstatus, model.dat=model, test.genes=p53, method="both", perm=1000)
 vV.4
 @
@@ -417,7 +414,6 @@ Assuming a significance level of 0.05 we get a significant effect of the signatu
 Next we want to analyse co--expression regarding the clinical outcome of building distant metastases within five years. This can be done by simply adding the variable \Robject{metastases} to the full and reduced model, respectively. Such layout corresponds to testing the linear effect of the signature gene stratified not only by Estrogen receptor status but also by \Robject{metastases}. 
 
 <<coexpr>>=
-set.seed(111)
 vV.5 <- GlobalAncova(xx=vantVeer, formula.full=~metastases + signature.gene + ERstatus, formula.red=~metastases + ERstatus, model.dat=model, test.genes=p53, method="both", perm=1000)
 vV.5
 @
@@ -427,7 +423,6 @@ Again we get a significant result.
 Supposably the most interesting question in this case concerns differential co--expression. Differential co--expression is on hand if the effect of the signature gene behaves different in both \Robject{metastases} groups. In a one dimensional context this would become manifest by different slopes of the regression lines. Hence what we have to test is the interaction between \Robject{metastases} and \Robject{signature.gene}.
 
 <<diffcoexpr>>=
-set.seed(111)
 vV.6 <- GlobalAncova(xx=vantVeer, formula.full=~metastases * signature.gene + ERstatus, formula.red=~metastases + signature.gene + ERstatus, model.dat=model, test.genes=p53, method="both", perm=1000)
 vV.6
 @
