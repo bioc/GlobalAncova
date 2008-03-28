@@ -102,7 +102,7 @@ resampleGA <- function(xx, formula.full, D.full, D.red, model.dat, perm, test.ge
   n <- nrow(D.full)
 
   # get all variables from 'model.dat' involved in the design
-  design.terms <- as.character(terms(formula.full)@variables)[-1]
+  design.terms <- as.character(attr(terms(formula.full), "variables"))[-1]
   design.terms <- intersect(design.terms, names(model.dat))
 
   # is there any continuous variable in the design -> then all n! permutations may be different

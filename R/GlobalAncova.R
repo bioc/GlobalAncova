@@ -96,7 +96,7 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
                      method=c("permutation","approx","both","Fstat"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){ 
                            
     # check if formula variables correspond to columns of 'model.dat'
-    design.terms <- as.character(terms(formula.full)@variables)[-1]
+    design.terms <- as.character(attr(terms(formula.full), "variables"))[-1]
     if(!all(design.terms %in% names(model.dat)))
       stop("terms in 'formula.full' do not match variables in 'model.dat'")  
 

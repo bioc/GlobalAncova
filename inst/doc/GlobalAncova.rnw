@@ -1,5 +1,5 @@
 % \VignetteIndexEntry{GlobalAncova}
-% \VignetteDepends{GlobalAncova, multtest, globaltest, golubEsets, hu6800, vsn}
+% \VignetteDepends{GlobalAncova, multtest, globaltest, golubEsets, hu6800.db, vsn}
 % \VignetteKeywords{Expression Analysis}
 % \VignettePackage{GlobalAncova}
 
@@ -137,7 +137,7 @@ First we load the packages and data we will use.
 library(GlobalAncova)
 library(globaltest)
 library(golubEsets)
-library(hu6800)
+library(hu6800.db)
 library(vsn)
 library(multtest)
 
@@ -607,7 +607,7 @@ bp <- makeGOstructure(golubX, "hu6800")
 @
 
 This creates a \Rclass{GOstructure} object (class from \Rpackage{globaltest}) for the Golub data, using
-the annotation package \Rpackage{hu6800}.
+the annotation package \Rpackage{hu6800.db}.
 
 The focus level procedure requires definition of a
 \emph{focus level}. This is a set of GO terms reflecting the level of specificity that is of most interest. The focus level can be specified as an arbitrary vector of GO identifiers. However, there is also an automatic way for defining the focus level via the function \Rfunction{getFocus}.
