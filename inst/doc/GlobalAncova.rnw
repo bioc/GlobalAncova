@@ -186,8 +186,21 @@ ga.all <- GlobalAncova(xx=exprs(golubX), group=gr, covars=NULL, perm=100)
 @ 
 
 The first input \Rfunarg{xx} is a \Sexpr{dim(exprs(golubX))[[1]]} $\times$ 
-\Sexpr{dim(exprs(golubX))[[2]]} matrix that contains the expression values of all genes and samples. 
-The second input \Rfunarg{group} is a vector that
+\Sexpr{dim(exprs(golubX))[[2]]} matrix that contains the expression values of 
+all genes and samples. 
+Missing values in the expression matrix \Rfunarg{xx} are not allowed because otherwise gene-wise linear
+models could not be summarized adequately to a global group statement. If missing values occur
+we propose either leaving out the genes with missing values (i.e. the corresponding rows in the
+gene expression matrix), or imputing the data before applying \Rpackage{GlobalAncova}. 
+An easy way to do the latter would be for example to calculate linear
+models for each gene using the available model variables (e.g. phenotype 
+group labels). Missing values can then be estimated based on the resulting model parameters 
+and the actual values of phenotype variables of the corresponding samples.
+The use of more sophisticated imputation methods \cite{Rubin:87} would be computationally expensive
+and is not implemented in \Rpackage{GlobalAncova}. Note that we did not yet evaluate how
+data imputation affects \Rpackage{GlobalAncova} results and whether the
+easier imputation methods described above yield similar results as the more complex approaches.  
+The second input \Rfunarg{group} in the \Rfunction{GlobalAncova} function is a vector that
 defines the clinical diagnosis for the \Sexpr{dim(exprs(golubX))[[2]]} patients. 
  
 Note that \Rpackage{GlobalAncova} is not restricted to the analysis of dichotomous phenotype groups. More complex tasks like variables 
