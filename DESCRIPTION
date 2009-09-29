@@ -1,7 +1,7 @@
 Package: GlobalAncova
 Title: Calculates a global test for differential gene expression
         between groups
-Version: 3.11.2
+Version: 3.11.3
 Date: 2007-09-17
 Author: U. Mansmann, R. Meister, M. Hummel, R. Scheufele, with contributions from S. Knueppel
 Description: We give the following arguments in support of the
