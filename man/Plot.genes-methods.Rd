@@ -1,4 +1,4 @@
-\name{Plot.genes}
+\name{Plot.genes-methods}
 \alias{Plot.genes-methods}
 \alias{Plot.genes,matrix,formula,formula,ANY,missing,missing,missing-method}
 \alias{Plot.genes,matrix,formula,missing,ANY,missing,missing,character-method}

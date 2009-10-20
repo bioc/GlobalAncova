@@ -1,4 +1,4 @@
-\name{GlobalAncova.closed}
+\name{GlobalAncova.closed-methods}
 \alias{GlobalAncova.closed-methods}
 \alias{GlobalAncova.closed,matrix,list,formula,formula,ANY,missing,missing,missing-method}
 \alias{GlobalAncova.closed,matrix,list,formula,missing,ANY,missing,missing,character-method}

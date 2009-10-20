@@ -57,7 +57,7 @@ are larger than the chosen value of \code{maxalpha}.}
   \code{\link[globaltest:v4_globaltest]{globaltest}},  
         \code{\link[globaltest:v4_GOstructure]{GOstructure}},
 	\code{\link[globaltest:v4_getFocus]{makeGOstructure}},
-	\code{\link[globaltest:v4_getFouse]{getFocus}}} 
+	\code{\link[globaltest:v4_getFocus]{getFocus}}} 
 
 \examples{
   # see vignettes of packages GlobalAncova and globaltest and help of gtGO

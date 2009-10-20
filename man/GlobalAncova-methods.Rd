@@ -1,4 +1,4 @@
-\name{GlobalAncova}
+\name{GlobalAncova-methods}
 \alias{GlobalAncova-methods}
 \alias{GlobalAncova,matrix,formula,formula,ANY,missing,missing,missing-method}
 \alias{GlobalAncova,matrix,formula,missing,ANY,missing,missing,character-method}

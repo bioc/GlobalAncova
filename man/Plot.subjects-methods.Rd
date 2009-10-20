@@ -1,4 +1,4 @@
-\name{Plot.subjects}
+\name{Plot.subjects-methods}
 \alias{Plot.subjects-methods}
 \alias{Plot.subjects,matrix,formula,formula,ANY,missing,missing,missing-method}
 \alias{Plot.subjects,matrix,formula,missing,ANY,missing,missing,character-method}
