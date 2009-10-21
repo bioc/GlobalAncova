@@ -1,8 +1,5 @@
 \name{GlobalAncova.closed-methods}
 \alias{GlobalAncova.closed-methods}
-\alias{GlobalAncova.closed,matrix,list,formula,formula,ANY,missing,missing,missing-method}
-\alias{GlobalAncova.closed,matrix,list,formula,missing,ANY,missing,missing,character-method}
-\alias{GlobalAncova.closed,matrix,list,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Methods for Function GlobalAncova.closed}
 \description{

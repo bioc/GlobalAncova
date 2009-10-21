@@ -1,5 +1,8 @@
 \name{Plot.subjects}
 \alias{Plot.subjects}
+\alias{Plot.subjects,matrix,formula,formula,ANY,missing,missing,missing-method}
+\alias{Plot.subjects,matrix,formula,missing,ANY,missing,missing,character-method}
+\alias{Plot.subjects,matrix,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Subjects Plot for GlobalAncova}
 \description{
@@ -34,11 +37,11 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 }}
 
 \usage{
-\S4method{Plot.subjects}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, test.genes, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, bar.names, ...)
+\S4method{Plot.subjects}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, group,covars = NULL, test.terms,test.genes, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 
-\S4method{Plot.subjects}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, test.genes, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, bar.names, ...)
+\S4method{Plot.subjects}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full,formula.red, model.dat, group,covars = NULL, test.terms,test.genes, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 
-\S4method{Plot.subjects}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL, test.genes, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, bar.names, ...)
+\S4method{Plot.subjects}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, formula.full, formula.red, model.dat, group,covars = NULL, test.terms,test.genes, Colorgroup = NULL, sort = FALSE, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

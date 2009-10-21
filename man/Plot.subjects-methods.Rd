@@ -1,8 +1,5 @@
 \name{Plot.subjects-methods}
 \alias{Plot.subjects-methods}
-\alias{Plot.subjects,matrix,formula,formula,ANY,missing,missing,missing-method}
-\alias{Plot.subjects,matrix,formula,missing,ANY,missing,missing,character-method}
-\alias{Plot.subjects,matrix,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Methods for Function Plot.subjects}
 \description{

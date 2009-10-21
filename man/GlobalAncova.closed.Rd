@@ -1,5 +1,8 @@
 \name{GlobalAncova.closed}
 \alias{GlobalAncova.closed}
+\alias{GlobalAncova.closed,matrix,list,formula,formula,ANY,missing,missing,missing-method}
+\alias{GlobalAncova.closed,matrix,list,formula,missing,ANY,missing,missing,character-method}
+\alias{GlobalAncova.closed,matrix,list,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Closed testing procedure for testing several groups of genes using GlobalAncova }
 \description{
@@ -45,15 +48,15 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 
 \usage{
 \S4method{GlobalAncova.closed}{matrix,list,formula,formula,ANY,missing,missing,missing}(xx, test.genes, 
-          previous.test, level, formula.full, formula.red, model.dat, method = c("permutation","approx"), perm = 10000, 
+          formula.full, formula.red, model.dat, previous.test, level, method = c("permutation","approx"), perm = 10000, 
           max.group.size = 2500, eps = 1e-16, acc = 50)
 
 \S4method{GlobalAncova.closed}{matrix,list,formula,missing,ANY,missing,missing,character}(xx, test.genes, 
-          previous.test, level, formula.full, test.terms, model.dat, method = c("permutation","approx"), perm = 10000, 
+          formula.full, test.terms, model.dat, previous.test, level, method = c("permutation","approx"), perm = 10000, 
           max.group.size = 2500, eps = 1e-16, acc = 50)
 
 \S4method{GlobalAncova.closed}{matrix,list,missing,missing,missing,ANY,ANY,missing}(xx, test.genes, 
-          previous.test, level, group, covars = NULL, method = c("permutation","approx"), perm = 10000, 
+          group, covars = NULL, previous.test, level, method = c("permutation","approx"), perm = 10000, 
           max.group.size = 2500, eps = 1e-16, acc = 50)
 }
 %- maybe also 'usage' for other objects documented here.

@@ -1,5 +1,8 @@
 \name{Plot.genes}
 \alias{Plot.genes}
+\alias{Plot.genes,matrix,formula,formula,ANY,missing,missing,missing-method}
+\alias{Plot.genes,matrix,formula,missing,ANY,missing,missing,character-method}
+\alias{Plot.genes,matrix,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Genes Plot for Global Ancova}
 \description{
@@ -34,11 +37,11 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 }}
 
 \usage{
-\S4method{Plot.genes}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
+\S4method{Plot.genes}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, group, covars = NULL,test.terms,test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 
-\S4method{Plot.genes}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
+\S4method{Plot.genes}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, formula.red, model.dat, group, covars = NULL,test.terms,test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 
-\S4method{Plot.genes}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL, test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
+\S4method{Plot.genes}{matrix,missing,missing,missing,ANY,ANY,missing}(xx,formula.full, formula.red, model.dat, group, covars = NULL,test.terms,test.genes, Colorgroup = NULL, legendpos = "topright", returnValues = FALSE, bar.names, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

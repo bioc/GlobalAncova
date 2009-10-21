@@ -1,8 +1,5 @@
 \name{GlobalAncova-methods}
 \alias{GlobalAncova-methods}
-\alias{GlobalAncova,matrix,formula,formula,ANY,missing,missing,missing-method}
-\alias{GlobalAncova,matrix,formula,missing,ANY,missing,missing,character-method}
-\alias{GlobalAncova,matrix,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Methods for Function GlobalAncova}
 \description{There are three possible ways of using \code{GlobalAncova}. The general way is to define

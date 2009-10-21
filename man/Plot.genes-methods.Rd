@@ -1,8 +1,5 @@
 \name{Plot.genes-methods}
 \alias{Plot.genes-methods}
-\alias{Plot.genes,matrix,formula,formula,ANY,missing,missing,missing-method}
-\alias{Plot.genes,matrix,formula,missing,ANY,missing,missing,character-method}
-\alias{Plot.genes,matrix,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Methods for Function Plot.genes}
 \description{

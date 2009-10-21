@@ -1,5 +1,8 @@
 \name{GlobalAncova}
 \alias{GlobalAncova}
+\alias{GlobalAncova,matrix,formula,formula,ANY,missing,missing,missing-method}
+\alias{GlobalAncova,matrix,formula,missing,ANY,missing,missing,character-method}
+\alias{GlobalAncova,matrix,missing,missing,missing,ANY,ANY,missing-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Global test for differential gene expression}
 \description{Computation of a F-test for the association between expression values
@@ -59,7 +62,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 \S4method{GlobalAncova}{matrix,formula,formula,ANY,missing,missing,missing}(xx, formula.full, formula.red, model.dat, 
           test.genes, method = c("permutation","approx","both","Fstat"), perm = 10000, max.group.size = 2500, eps = 1e-16, acc = 50)
 
-\S4method{GlobalAncova}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, test.terms, model.dat, 
+\S4method{GlobalAncova}{matrix,formula,missing,ANY,missing,missing,character}(xx, formula.full, model.dat,test.terms, 
           test.genes, method = c("permutation","approx","both","Fstat"), perm = 10000, max.group.size = 2500, eps = 1e-16, acc = 50)
 
 \S4method{GlobalAncova}{matrix,missing,missing,missing,ANY,ANY,missing}(xx, group, covars = NULL,   
