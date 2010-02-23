@@ -6,6 +6,6 @@ importFrom(AnnotationDbi, Term, Secondary)
 
 exportMethods("GlobalAncova", "GlobalAncova.closed", "Plot.genes", "Plot.subjects")
 
-export(GAGO, GlobalAncova.decomp, pair.compare, Plot.sequential, Plot.all)
+export(GAGO, GAKEGG, GABroad, GlobalAncova.decomp, pair.compare, Plot.sequential, Plot.all)
 
 
