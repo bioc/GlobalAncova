@@ -348,7 +348,7 @@ setMethod("pGAapprox", signature(xx="matrix",formula.full="missing",formula.red=
 
 setMethod("pGAapprox", signature(xx="matrix",formula.full="formula",formula.red="missing",
                            model.dat="ANY",group="missing",covars="missing",test.terms="character"),
-          definition = function(xx,formula.full,test.terms,model.dat,test.genes=NULL,
+          definition = function(xx,formula.full,model.dat,test.terms,test.genes=NULL,
                            max.group.size=2500,perm=10000,eps=1e-16,acc=50){
 
   # test for model.dat

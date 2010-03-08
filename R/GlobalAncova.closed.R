@@ -22,7 +22,7 @@ setGeneric("GlobalAncova.closed", function(xx,test.genes,formula.full,formula.re
 ############################## allgemeine Funktion #############################
 
 setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula.full="formula",formula.red="formula",
-                          group="missing",covars="missing",test.terms="missing"),
+                          model.dat="ANY",group="missing",covars="missing",test.terms="missing"),
           definition = function(xx,test.genes,formula.full,formula.red,model.dat,
                        previous.test=NULL,level=0.05,method=c("permutation","approx"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){
   # test for model.dat
@@ -39,7 +39,7 @@ setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula
 
 
 setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula.full="missing",formula.red="missing",
-                          model.dat="missing",group="ANY",test.terms="missing"),
+                          model.dat="missing",group="ANY",covars="ANY",test.terms="missing"),
           definition = function(xx,test.genes,group,covars=NULL,previous.test=NULL,level=0.05,
                           method=c("permutation","approx"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){
   # parameter names
@@ -65,8 +65,8 @@ setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula
 ################### allgemeine Funktion m. Angabe v. 'terms' ###################
 
 setMethod("GlobalAncova.closed", signature(xx="matrix",test.genes="list",formula.full="formula",formula.red="missing",
-                          group="missing",covars="missing",test.terms="character"),
-          definition = function(xx,test.genes,formula.full,test.terms,model.dat,previous.test=NULL,level=0.05,
+                          model.dat="ANY",group="missing",covars="missing",test.terms="character"),
+          definition = function(xx,test.genes,formula.full,model.dat,test.terms,previous.test=NULL,level=0.05,
                         method=c("permutation","approx"),perm=10000,max.group.size=2500,eps=1e-16,acc=50){
   # test for model.dat
   if(!is.data.frame(model.dat))
