@@ -52,7 +52,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
           max.group.size = 2500, eps = 1e-16, acc = 50)
 
 \S4method{GlobalAncova.closed}{matrix,list,formula,missing,ANY,missing,missing,character}(xx, test.genes, 
-          formula.full, test.terms, model.dat, previous.test, level, method = c("permutation","approx"), perm = 10000, 
+          formula.full, model.dat, test.terms, previous.test, level, method = c("permutation","approx"), perm = 10000,
           max.group.size = 2500, eps = 1e-16, acc = 50)
 
 \S4method{GlobalAncova.closed}{matrix,list,missing,missing,missing,ANY,ANY,missing}(xx, test.genes, 
@@ -99,4 +99,3 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
 \seealso{\code{\link{GlobalAncova}}, \code{\link{Plot.genes}}, \code{\link{Plot.subjects}}}
 \keyword{ models }% at least one, from doc/KEYWORDS
-
