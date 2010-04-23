@@ -26,4 +26,3 @@ Depends: methods, corpcor, globaltest
 Imports: annotate, AnnotationDbi
 Suggests: Biobase, annotate, GO.db, KEGG.db, golubEsets, hu6800.db, vsn, GSEABase
 License: GPL (>= 2)
-Packaged: 2010-02-17 16:26:28 UTC; mhummel
