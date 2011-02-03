@@ -21,7 +21,7 @@ Description: We give the following arguments in support of the
 	  Alternatively, an approximation yields asymptotic p-values.
 	  This work was supported by the NGFN grant 01 GR 0459, BMBF, Germany.
 biocViews: Microarray, OneChannel, Bioinformatics, DifferentialExpression, Pathways
-Maintainer: R. Meister <meister@tfh-berlin.de>
+Maintainer: Manuela Hummel <manuela.hummel@crg.es>
 Depends: methods, corpcor, globaltest
 Imports: annotate, AnnotationDbi
 Suggests: Biobase, annotate, GO.db, KEGG.db, golubEsets, hu6800.db, vsn, GSEABase
