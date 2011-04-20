@@ -40,7 +40,7 @@ my.colors<-function(nlevels=50,mat=NA, range=NA, reverse=F)
 	{
 		lcol<-length(col)
 		middle<-ceiling(lcol/2)
-		col<-rainbow(ncolors-2*nred+1,start=.95,end=4/6,gamma=.45)
+		col<-rainbow(ncolors-2*nred+1,start=.95,end=4/6)
 		col<-col[-middle]
 	}
 	red<-rgb(seq(150,255,length=nred+1),rep(0,nred+1),rep(0,nred+1),maxColorValue=255)

@@ -1,5 +1,5 @@
 % \VignetteIndexEntry{GlobalAncova}
-% \VignetteDepends{GlobalAncova, globaltest, golubEsets, hu6800.db, vsn}
+% \VignetteDepends{GlobalAncova, globaltest, golubEsets, hu6800.db, vsn, Rgraphviz}
 % \VignetteKeywords{Expression Analysis}
 % \VignettePackage{GlobalAncova}
 
