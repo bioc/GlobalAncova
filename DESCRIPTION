@@ -24,5 +24,6 @@ biocViews: Microarray, OneChannel, Bioinformatics, DifferentialExpression, Pathw
 Maintainer: Manuela Hummel <manuela.hummel@crg.eu>
 Depends: methods, corpcor, globaltest
 Imports: annotate, AnnotationDbi
-Suggests: Biobase, annotate, GO.db, KEGG.db, golubEsets, hu6800.db, vsn, GSEABase
+Suggests: Biobase, annotate, GO.db, KEGG.db, golubEsets, hu6800.db, vsn,
+GSEABase, Rgraphviz
 License: GPL (>= 2)
