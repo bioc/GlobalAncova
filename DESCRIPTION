@@ -1,13 +1,14 @@
 Package: GlobalAncova
 Title: Calculates a global test for differential gene expression
         between groups
-Version: 3.31.2
+Version: 3.31.3
 Date: 2010-02-16
-Author: U. Mansmann, R. Meister, M. Hummel, R. Scheufele, with contributions from S. Knueppel
+Author: U. Mansmann, R. Meister, M. Hummel, R. Scheufele, with
+        contributions from S. Knueppel
 Description: We give the following arguments in support of the
         GlobalAncova approach: After appropriate normalisation,
-        gene-expression-data appear rather symmetrical and outliers
-        are no real problem, so least squares should be rather robust.
+        gene-expression-data appear rather symmetrical and outliers are
+        no real problem, so least squares should be rather robust.
         ANCOVA with interaction yields saturated data modelling e.g.
         different means per group and gene. Covariate adjustment can
         help to correct for possible selection bias. Variance
@@ -15,14 +16,16 @@ Description: We give the following arguments in support of the
         Application of ordinary least squares gives unbiased, but no
         longer optimal estimates (Gauss-Markov-Aitken). Therefore,
         using the classical F-test is inappropriate, due to
-        correlation. The test statistic however mirrors deviations
-        from the null hypothesis. In combination with a permutation
+        correlation. The test statistic however mirrors deviations from
+        the null hypothesis. In combination with a permutation
         approach, empirical significance levels can be approximated.
-	  Alternatively, an approximation yields asymptotic p-values.
-	  This work was supported by the NGFN grant 01 GR 0459, BMBF, Germany.
-biocViews: Microarray, OneChannel, Bioinformatics, DifferentialExpression, Pathways
+        Alternatively, an approximation yields asymptotic p-values.
+        This work was supported by the NGFN grant 01 GR 0459, BMBF,
+        Germany.
 Maintainer: Manuela Hummel <m.hummel@dkfz.de>
 Depends: methods, corpcor, globaltest
 Imports: annotate, AnnotationDbi
-Suggests: Biobase, annotate, GO.db, KEGG.db, golubEsets, hu6800.db, vsn, GSEABase, Rgraphviz
+Suggests: Biobase, annotate, GO.db, KEGG.db, golubEsets, hu6800.db,
+        vsn, GSEABase, Rgraphviz
 License: GPL (>= 2)
+biocViews: Microarray, OneChannel, DifferentialExpression, Pathways
