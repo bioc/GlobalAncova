@@ -1,0 +1,41 @@
+citHeader("To cite the GlobalAncova package in publications use:")
+
+citEntry(entry="Manual",
+    title = "Global test for groups of variables via model comparisons",
+    author = personList(as.person("U. Mansmann"), as.person("R. Meister"), as.person("M. Hummel"), as.person("R. Scheufele"), as.person("S. Knueppel")),
+    year = substring(packageDescription("GlobalAncova")$Date,1,4),
+    note = paste("R package version", packageDescription("GlobalAncova")$Version),
+    textVersion =
+      paste("U. Mansmann, R. Meister, M. Hummel, R. Scheufele, with contributions from S. Knueppel(",
+        substring(packageDescription("GlobalAncova")$Date,1,4),
+        ") GlobalAncova",
+        "R package, version ", packageDescription("GlobalAncova")$Version,
+        ".", sep = "")
+)
+
+citEntry(entry="Article",
+    title = "Testing differential gene expression in functional groups. Goeman's global test versus an ANCOVA approach",
+    author = personList(as.person("U. Mansmann"), as.person("R. Meister")),
+    journal = "Methods Inf Med",
+    number = "44(3)",
+    pages = "449-453",
+    year = 2005,
+    textVersion =
+      paste("U. Mansmann, R. Meister (2005)",
+		"Testing differential gene expression in functional groups. Goeman's global test versus an ANCOVA approach,",
+        	"Methods Inf Med, 44(3):449-453")
+)
+
+citEntry(entry="Article",
+    title = "GlobalANCOVA: exploration and assessment of gene group effects",
+    author = personList(as.person("M. Hummel"), as.person("R. Meister"), as.person("U. Mansmann")),
+    journal = "Bioinformatics",
+    number = "24(1)",
+    pages = "78-85",
+    year = 2008,
+    textVersion =
+      paste("M. Hummel, R. Meister, U. Mansmann (2008)",
+		"GlobalANCOVA: exploration and assessment of gene group effects,",
+        	"Bioinformatics, 24(1):78-85")
+)
+

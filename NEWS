@@ -1,0 +1,17 @@
+CHANGES IN VERSION 4.0.0
+----------------------
+
+o new function 'gGlobalAncova' for generalized linear models: groups of tested variables can be quantitative, categorical, ordinal and even of mixed types 
+
+o new function 'Plot.features' for showing contributions of individual variables to global test statistic; equivalent to 'Plot.genes', but for 'gGlobalAncova'
+
+o new function 'gGlobalAncova.hierarchical' for hierarchical testing. 
+
+o new S4-class 'GAhier' for storing results of gGlobalAncova.hierarchical     
+
+o new methods 'show', 'results', 'sigEndnodes', and 'Plot.hierarchy' to access and visualize results from 'GAhier' objects
+
+o added CITATION and NEWS files
+
+o Vignettes are now created with knitr
+
