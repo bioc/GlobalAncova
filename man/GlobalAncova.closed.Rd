@@ -92,9 +92,9 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 }
 \references{Marcus, R., Peritz, E. and Gabriel, K.R., 1976, On closed testing procedures
   with special reference to ordered analysis of variance, \emph{Biometrika} 63 (3): 655--660.}
-\author{  Reinhard Meister \email{meister@tfh-berlin.de}\cr
+\author{  Reinhard Meister \email{meister@beuth-hochschule.de}\cr
   Ulrich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}\cr
-  Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de}
+  Manuela Hummel \email{m.hummel@dkfz.de}
 }
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
 \seealso{\code{\link{GlobalAncova}}, \code{\link{Plot.genes}}, \code{\link{Plot.subjects}}}

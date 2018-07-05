@@ -72,7 +72,7 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 \author{
   Reinhard Meister \email{meister@tfh-berlin.de}\cr
   Ulrich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}\cr
-  Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de}
+  Manuela Hummel \email{m.hummel@dkfz.de}
   }
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
 \seealso{\code{\link{GlobalAncova}}, \code{\link{Plot.genes}}, \code{\link{Plot.sequential}}}

@@ -34,8 +34,8 @@ GAGO <- function(xx, ..., id, annotation, probe2entrez, ontology = c("BP", "CC",
 
   # reduce the terms
   if (missing(id))
-    id <- mappedkeys(GOOBJECT)
-  myGOTERM <- lookUp(id, "GO", "TERM")
+    id <- AnnotationDbi::mappedkeys(GOOBJECT)
+  myGOTERM <- annotate::lookUp(id, "GO", "TERM")
 
   # get the right ontology/ies
   if (!missing(ontology)) {
@@ -45,7 +45,7 @@ GAGO <- function(xx, ..., id, annotation, probe2entrez, ontology = c("BP", "CC",
   }
 
   # retrieve sets
-  sets <- lookUp(id, annotation, extension)
+  sets <- annotate::lookUp(id, annotation, extension)
   sets <- lapply(sets, function(st) if (all(is.na(st))) character(0) else st)
 
   # map back
@@ -75,27 +75,27 @@ GAGO <- function(xx, ..., id, annotation, probe2entrez, ontology = c("BP", "CC",
       ancestors <- lapply(as.list(ontology), function(ont) {
         ext <- paste(ont, "ANCESTOR", sep="")
         GOOBJ <- eval(as.name(paste("GO", ont, "ANCESTOR", sep="")))
-        ontid <- intersect(keys(GOOBJ), id)
-        if (length(ontid) > 0) lookUp(ontid, "GO", ext) else list()
+        ontid <- intersect(AnnotationDbi::keys(GOOBJ), id)
+        if (length(ontid) > 0) annotate::lookUp(ontid, "GO", ext) else list()
       })
       ancestors <- do.call(c, ancestors)
       offspring <- lapply(as.list(ontology), function(ont) {
         ext <- paste(ont, "OFFSPRING", sep="")
         GOOBJ <- eval(as.name(paste("GO", ont, "OFFSPRING", sep="")))
-        ontid <- intersect(keys(GOOBJ), id)
-        if (length(ontid) > 0) lookUp(ontid, "GO", ext) else list()
+        ontid <- intersect(AnnotationDbi::keys(GOOBJ), id)
+        if (length(ontid) > 0) annotate::lookUp(ontid, "GO", ext) else list()
       })
       offspring <- do.call(c, offspring)
       offspring <- sapply(offspring, function(os) if (all(is.na(os))) character(0) else os)
       if (is.numeric(focuslevel))
-        focuslevel <- findFocus(sets, ancestors = ancestors, offspring = offspring, maxsize = focuslevel)
+        focuslevel <- globaltest::findFocus(sets, ancestors = ancestors, offspring = offspring, maxsize = focuslevel)
 
       # function that only takes gene names of a set and only returns p-value
       helpGA <- function(set){
         pGAapprox(xx=xx, ..., test.genes=set)
       }
 
-      res <- focusLevel(helpGA, sets=sets, focus=focuslevel, ancestors = ancestors, offspring = offspring)
+      res <- globaltest::focusLevel(helpGA, sets=sets, focus=focuslevel, ancestors = ancestors, offspring = offspring)
     } else {
       raw.p <- pGAapprox(xx=xx, ..., test.genes=sets)
       adj.p <- p.adjust(raw.p, method=multtest)
@@ -154,10 +154,10 @@ GAKEGG <- function(xx, ..., id, annotation, probe2entrez,
 
   # default terms
   if (missing(id))
-    id <- mappedkeys(KEGGOBJECT)
+    id <- AnnotationDbi::mappedkeys(KEGGOBJECT)
 
   # retrieve sets
-  sets <- lookUp(id, annotation, extension)
+  sets <- annotate::lookUp(id, annotation, extension)
 
   # map back
   if (!missing(probe2entrez)) {
@@ -185,7 +185,7 @@ GAKEGG <- function(xx, ..., id, annotation, probe2entrez,
     dimnames(res) <- list(names(sets), c("raw.p", multtest))
 
     # add pathway names
-    res$pathway <- unlist(lookUp(rownames(res), "KEGG", "PATHID2NAME"))
+    res$pathway <- unlist(annotate::lookUp(rownames(res), "KEGG", "PATHID2NAME"))
     res$pathway[is.na(res$pathway)] <- ""
 
   } else {
@@ -231,7 +231,7 @@ GABroad <- function(xx, ..., id, annotation, probe2entrez, collection,
 
   # Get the right categories
   if (!missing(category)) {
-    pw.cat <- sapply(sapply(collection, collectionType), bcCategory)
+    pw.cat <- sapply(sapply(collection, collectionType), GSEABase::bcCategory)
     collection <- collection[pw.cat %in% category]
   }
 
@@ -241,7 +241,7 @@ GABroad <- function(xx, ..., id, annotation, probe2entrez, collection,
   }
 
   # Map symbol identifiers to anotation-specific identifiers
-  collection <- mapIdentifiers(collection, AnnotationIdentifier(annotation))
+  collection <- GSEABase::mapIdentifiers(collection, GSEABase::AnnotationIdentifier(annotation))
   sets <- lapply(collection, geneIds)
   names(sets) <- names(collection)
 

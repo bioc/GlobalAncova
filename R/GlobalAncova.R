@@ -177,7 +177,7 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
     # asymptotic p-values
     if(method == "approx" || method == "both"){
         # compute eigen values of (H.full-H.red) and XX'
-        require(corpcor)
+        #require(corpcor)
         ew.H.nom <- eigen(hat.matrix(D.full) - hat.matrix(D.red))$values
 
         # remove gene sets that are bigger than 'max.group.size' -> treat those with permutation test
@@ -188,7 +188,7 @@ expr.test <- function(xx,formula.full,formula.red=NULL,D.red=NULL,model.dat,test
         w <- which(N.Genes <= max.group.size)
         test.genes.red <- test.genes[w]    
         
-        ew.cov <- lapply(test.genes.red, function(y) eigen(cov.shrink(t(xx2[y,,drop=FALSE]), verbose=FALSE), only.values = TRUE)$values)
+        ew.cov <- lapply(test.genes.red, function(y) eigen(corpcor::cov.shrink(t(xx2[y,,drop=FALSE]), verbose=FALSE), only.values = TRUE)$values)
         # all pairwise products of eigen values
         ew.nom   <- lapply(ew.cov, function(x) as.vector(outer(x, ew.H.nom, "*")))
 

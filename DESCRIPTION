@@ -1,31 +1,13 @@
 Package: GlobalAncova
-Title: Calculates a global test for differential gene expression
-        between groups
-Version: 3.49.0
-Date: 2010-02-16
+Title: Global test for groups of variables via model comparisons
+Version: 4.0.0
+Date: 2018-06-29
 Author: U. Mansmann, R. Meister, M. Hummel, R. Scheufele, with
         contributions from S. Knueppel
-Description: We give the following arguments in support of the
-        GlobalAncova approach: After appropriate normalisation,
-        gene-expression-data appear rather symmetrical and outliers are
-        no real problem, so least squares should be rather robust.
-        ANCOVA with interaction yields saturated data modelling e.g.
-        different means per group and gene. Covariate adjustment can
-        help to correct for possible selection bias. Variance
-        homogeneity and uncorrelated residuals cannot be expected.
-        Application of ordinary least squares gives unbiased, but no
-        longer optimal estimates (Gauss-Markov-Aitken). Therefore,
-        using the classical F-test is inappropriate, due to
-        correlation. The test statistic however mirrors deviations from
-        the null hypothesis. In combination with a permutation
-        approach, empirical significance levels can be approximated.
-        Alternatively, an approximation yields asymptotic p-values.
-        This work was supported by the NGFN grant 01 GR 0459, BMBF,
-        Germany.
+Description: The association between a variable of interest (e.g. two groups) and the global pattern of a group of variables (e.g. a gene set) is tested via a global F-test. We give the following arguments in support of the GlobalAncova approach: After appropriate normalisation, gene-expression-data appear rather symmetrical and outliers are no real problem, so least squares should be rather robust. ANCOVA with interaction yields saturated data modelling e.g. different means per group and gene. Covariate adjustment can help to correct for possible selection bias. Variance homogeneity and uncorrelated residuals cannot be expected. Application of ordinary least squares gives unbiased, but no longer optimal estimates (Gauss-Markov-Aitken). Therefore, using the classical F-test is inappropriate, due to correlation. The test statistic however mirrors deviations from the null hypothesis. In combination with a permutation approach, empirical significance levels can be approximated. Alternatively, an approximation yields asymptotic p-values. The framework is generalized to groups of categorical variables or even mixed data by a likelihood ratio approach. Closed and hierarchical testing procedures are supported. This work was supported by the NGFN grant 01 GR 0459, BMBF, Germany and BMBF grant 01ZX1309B, Germany.
 Maintainer: Manuela Hummel <m.hummel@dkfz.de>
 Depends: methods, corpcor, globaltest
-Imports: annotate, AnnotationDbi
-Suggests: Biobase, annotate, GO.db, KEGG.db, golubEsets, hu6800.db,
-        vsn, GSEABase, Rgraphviz
+Imports: annotate, AnnotationDbi, Biobase, dendextend
+Suggests: annotate, GO.db, KEGG.db, golubEsets, hu6800.db, vsn, GSEABase, Rgraphviz
 License: GPL (>= 2)
-biocViews: Microarray, OneChannel, DifferentialExpression, Pathways
+biocViews: Microarray, OneChannel, DifferentialExpression, Pathways, Regression

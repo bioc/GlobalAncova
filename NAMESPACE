@@ -1,11 +1,17 @@
 useDynLib(GlobalAncova)
 
 importFrom(annotate, lookUp)
+importFrom(AnnotationDbi, Term, Secondary, mappedkeys, keys)
+importFrom(Biobase, listLen)
+importFrom(dendextend, cutree, get_nodes_attr, set, "%>%")
+importFrom(corpcor, cov.shrink)
+importFrom(globaltest, findFocus, focusLevel)
 
-importFrom(AnnotationDbi, Term, Secondary)
+exportClasses(GAhier)
 
 exportMethods("GlobalAncova", "GlobalAncova.closed", "Plot.genes", "Plot.subjects")
+exportMethods("sigEndnodes", "results", "Plot.hierarchy")
 
-export(GAGO, GAKEGG, GABroad, GlobalAncova.decomp, pair.compare, Plot.sequential, Plot.all)
+export(gGlobalAncova, GAGO, GAKEGG, GABroad, GlobalAncova.decomp, gGlobalAncova.hierarchical, pair.compare, Plot.features, Plot.sequential, Plot.all)
 
 

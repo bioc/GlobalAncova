@@ -104,9 +104,9 @@ The arguments \code{formula.full}, \code{formula.red}, \code{model.dat} and
 }
 \references{Mansmann, U. and Meister, R., 2005, Testing differential gene expression
 in functional groups, \emph{Methods Inf Med} 44 (3).}
-\author{Reinhard Meister \email{meister@tfh-berlin.de}\cr
+\author{Reinhard Meister \email{meister@beuth-hochschule.de}\cr
   Ulrich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}\cr
-  Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de} \cr
+  Manuela Hummel \email{m.hummel@dkfz-heidelberg.de} \cr
   with contributions from Sven Knueppel}
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
 \seealso{\code{\link{Plot.genes}}, \code{\link{Plot.subjects}}, \code{\link{GlobalAncova.closed}}, \code{\link{GAGO}}, \code{\link{GlobalAncova.decomp}}}

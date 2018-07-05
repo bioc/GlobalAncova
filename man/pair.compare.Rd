@@ -29,7 +29,7 @@ pair.compare(xx, formula, group, model.dat = NULL, test.genes = NULL, perm = 100
 %\references{!!!}
 \author{Ramona Scheufele \email{ramona.scheufele@charite.de} \cr
   Reinhard Meister \email{meister@tfh-berlin.de}\cr
-  Manuela Hummel \email{hummel@ibe.med.uni-muenchen.de} \cr
+  Manuela Hummel \email{m.hummel@dkfz.de} \cr
   Urlich Mansmann \email{mansmann@ibe.med.uni-muenchen.de}}
 \note{This work was supported by the NGFN project 01 GR 0459, BMBF, Germany.}
 \seealso{\code{\link{GlobalAncova}}, \code{\link{GlobalAncova.decomp}}}
