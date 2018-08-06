@@ -5,136 +5,18 @@
 
 ### categorical response 
 
-## calculate deviances; taken from glm.fit
+## calculate deviances
 
 getdev <- function(x, y, weights=rep(1, nobs)){
-  
-  nobs <- NROW(y)
-  #  if(missing(weights))
-  #    weights <- rep(1, nobs)
-  
-  offset = rep(0, nobs)
-  
-  # settings for binomial family
-  family <- binomial()
-  dev.resids <- family$dev.resids
-  variance <- family$variance
-  linkinv <- family$linkinv
-  #mustart
-  eval(family$initialize)
-  eta <- family$linkfun(mustart)
-  mu.eta <- family$mu.eta
-  
-  # further settings
-  start <- NULL
-  coefold <- start
-  
-  # deviance
-  mu <- linkinv(eta)
-  devold <- sum(dev.resids(y, mu, weights))
-  
-  unless.null <- function(x, if.null) if (is.null(x)) 
-    if.null else x
-  valideta <- unless.null(family$valideta, function(eta) TRUE)
-  validmu <- unless.null(family$validmu, function(mu) TRUE)
-  
-  # iterations
-  control <- do.call("glm.control", list())
-  for (iter in 1L:control$maxit) {
-    good <- weights > 0
-    varmu <- variance(mu)[good]
-    if (anyNA(varmu)) 
-      stop("NAs in V(mu)")
-    if (any(varmu == 0)) 
-      stop("0s in V(mu)")
-    mu.eta.val <- mu.eta(eta)
-    if (any(is.na(mu.eta.val[good]))) 
-      stop("NAs in d(mu)/d(eta)")
-    good <- (weights > 0) & (mu.eta.val != 0)
-    if (all(!good)) {
-      conv <- FALSE
-      warning(gettextf("no observations informative at iteration %d", iter), domain = NA)
-      break
-    }
-    z <- (eta - offset)[good] + (y - mu)[good]/mu.eta.val[good]
-    w <- sqrt((weights[good] * mu.eta.val[good]^2)/variance(mu)[good])
-    fit <- .Call(stats:::C_Cdqrls, x[good, , drop = FALSE] * w, z * w, min(1e-07, control$epsilon/1000), check = FALSE)
-    if (any(!is.finite(fit$coefficients))) {
-      conv <- FALSE
-      warning(gettextf("non-finite coefficients at iteration %d", iter), domain = NA)
-      break
-    }
-    if (nobs < fit$rank) 
-      stop(sprintf(ngettext(nobs, "X matrix has rank %d, but only %d observation", 
-                            "X matrix has rank %d, but only %d observations"), fit$rank, nobs), domain = NA)
-    start[fit$pivot] <- fit$coefficients
-    eta <- drop(x %*% start)
-    mu <- linkinv(eta <- eta + offset)
-    dev <- sum(dev.resids(y, mu, weights))
-    if (control$trace) 
-      cat("Deviance = ", dev, " Iterations - ", iter, "\n", sep = "")
-    boundary <- FALSE
-    if (!is.finite(dev)) {
-      if (is.null(coefold)) 
-        stop("no valid set of coefficients has been found: please supply starting values", call. = FALSE)
-      warning("step size truncated due to divergence", call. = FALSE)
-      ii <- 1
-      while (!is.finite(dev)) {
-        if (ii > control$maxit) 
-          stop("inner loop 1; cannot correct step size", call. = FALSE)
-        ii <- ii + 1
-        start <- (start + coefold)/2
-        eta <- drop(x %*% start)
-        mu <- linkinv(eta <- eta + offset)
-        dev <- sum(dev.resids(y, mu, weights))
-      }
-      boundary <- TRUE
-      if (control$trace) 
-        cat("Step halved: new deviance = ", dev, "\n", sep = "")
-    }
-    if (!(valideta(eta) && validmu(mu))) {
-      if (is.null(coefold)) 
-        stop("no valid set of coefficients has been found: please supply starting values", call. = FALSE)
-      warning("step size truncated: out of bounds", call. = FALSE)
-      ii <- 1
-      while (!(valideta(eta) && validmu(mu))) {
-        if (ii > control$maxit) 
-          stop("inner loop 2; cannot correct step size", call. = FALSE)
-        ii <- ii + 1
-        start <- (start + coefold)/2
-        eta <- drop(x %*% start)
-        mu <- linkinv(eta <- eta + offset)
-      }
-      boundary <- TRUE
-      dev <- sum(dev.resids(y, mu, weights))
-      if (control$trace) 
-        cat("Step halved: new deviance = ", dev, "\n", sep = "")
-    }
-    if (abs(dev - devold)/(0.1 + abs(dev)) < control$epsilon) {
-      conv <- TRUE
-      coef <- start
-      break
-    }
-    else {
-      devold <- dev
-      coef <- coefold <- start
-    }
-  }
-  
-  # null deviance
-  #wtdmu <- sum(weights * y) / sum(weights)
-  #nulldev <- sum(dev.resids(y, wtdmu, weights))
-  
-  #return(list(dev=dev, nulldev=nulldev))
-  return(dev)
+  fit <- glm.fit(x, y, family=binomial())
+  return(deviance(fit))
 }
-
 
 
 ### categorical/ordinal response - general deviance test
 
 devtest <- function(y, D.full, D.red, family=c("binomial", "multinomial", "propodds")){
-  require(VGAM)
+  requireNamespace("VGAM")
   OK <- !is.na(y)
   y <- y[OK]
   D.full <- D.full[OK,,drop=FALSE]
@@ -169,9 +51,9 @@ devtest <- function(y, D.full, D.red, family=c("binomial", "multinomial", "propo
     data <- data.frame(y=y, D.full)
     form.full  <- formula(paste("y ~", covars.full))
     form.red   <- formula(paste("y ~", covars.red))
-    model.full <- vglm(form.full, family=family, data=data)
-    model.red  <- vglm(form.red, family=family, data=data)
-    statistic  <- deviance(model.red) - deviance(model.full)
+    model.full <- VGAM::vglm(form.full, family=family, data=data)
+    model.red  <- VGAM::vglm(form.red, family=family, data=data)
+    statistic  <- VGAM::deviance(model.red) - deviance(model.full)
     
     # multinomial: get corresponding statistic for chi^2 distribution w. G-1 df (with G = number of categories of tested variable)
     # (relevant for globaltest w. mixed data, but also in case not all y's have observations in all categories...)
@@ -218,10 +100,10 @@ Gsquared <- function(y, D.full, D.red){
     
     # in case x is multinomial
     else if(K > 2){
-      require(VGAM)
-      model.full <- vglm(y ~ x, family=multinomial)
-      model.red <- vglm(y ~ 1, family=multinomial)
-      G2 <- deviance(model.red) - deviance(model.full)
+      requireNamespace("VGAM")
+      model.full <- VGAM::vglm(y ~ x, family=multinomial)
+      model.red <- VGAM::vglm(y ~ 1, family=multinomial)
+      G2 <- VGAM::deviance(model.red) - deviance(model.full)
     }
   }
   

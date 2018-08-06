@@ -21,9 +21,10 @@ GAGO <- function(xx, ..., id, annotation, probe2entrez, ontology = c("BP", "CC",
   if (substr(annotation, nchar(annotation)-2, nchar(annotation)) == ".db")
     annotation <- substr(annotation, 1, nchar(annotation)-3)
   package <- paste(annotation, ".db", sep="")
-  require(package, character.only=TRUE) || stop("package ", package, " is not available")
-  require(GO.db) || stop("package GO.db is not available")
-  require(annotate) || stop("package annotate is not available")
+  #require(package, character.only=TRUE) || stop("package ", package, " is not available")
+  requireNamespace(package) || stop("package ", package, " is not available")
+  requireNamespace("GO.db") || stop("package GO.db is not available")
+  requireNamespace("annotate") || stop("package annotate is not available")
 
   # check whether "org" package is given
   if (substr(annotation,1,4) == "org.")
@@ -141,9 +142,10 @@ GAKEGG <- function(xx, ..., id, annotation, probe2entrez,
   if (substr(annotation, nchar(annotation)-2, nchar(annotation)) == ".db")
     annotation <- substr(annotation, 1, nchar(annotation)-3)
   package <- paste(annotation, ".db", sep="")
-  require(package, character.only=TRUE) || stop("package ", package, " is not available")
-  require(KEGG.db) || stop("package KEGG.db is not available")
-  require(annotate) || stop("package annotate is not available")
+  #require(package, character.only=TRUE) || stop("package ", package, " is not available")
+  requireNamespace(package) || stop("package ", package, " is not available")
+  requireNamespace("KEGG.db") || stop("package KEGG.db is not available")
+  requireNamespace("annotate") || stop("package annotate is not available")
 
   # check whether "org" package is given
   if (substr(annotation,1,4) == "org.")
@@ -222,8 +224,9 @@ GABroad <- function(xx, ..., id, annotation, probe2entrez, collection,
   if (substr(annotation, nchar(annotation)-2, nchar(annotation)) == ".db")
     annotation <- substr(annotation, 1, nchar(annotation)-3)
   package <- paste(annotation, ".db", sep="")
-  require(package, character.only=TRUE) || stop("package ", package, " is not available")
-  require(GSEABase) || stop("package GSEABase is not available")
+  #require(package, character.only=TRUE) || stop("package ", package, " is not available")
+  requireNamespace(package) || stop("package ", package, " is not available")
+  requireNamespace("GSEABase") || stop("package GSEABase is not available")
 
   # read the file
   if (missing(collection) || ! is(collection, "GeneSetCollection"))

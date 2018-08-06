@@ -6,6 +6,8 @@ importFrom(Biobase, listLen)
 importFrom(dendextend, cutree, get_nodes_attr, set, "%>%")
 importFrom(corpcor, cov.shrink)
 importFrom(globaltest, findFocus, focusLevel)
+importFrom(GSEABase, bcCategory, AnnotationIdentifier)
+importFrom(VGAM, vglm, deviance)
 
 exportClasses(GAhier)
 
