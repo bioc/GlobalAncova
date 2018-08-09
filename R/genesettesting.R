@@ -187,7 +187,7 @@ GAKEGG <- function(xx, ..., id, annotation, probe2entrez,
     dimnames(res) <- list(names(sets), c("raw.p", multtest))
 
     # add pathway names
-    res$pathway <- unlist(annotate::lookUp(rownames(res), "KEGG", "PATHID2NAME"))
+    res$pathway <- unlist(annotate::lookUp(rownames(res), "KEGG", "PATHID2NAME", load=TRUE))
     res$pathway[is.na(res$pathway)] <- ""
 
   } else {
