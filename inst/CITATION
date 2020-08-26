@@ -3,13 +3,13 @@ citHeader("To cite the GlobalAncova package in publications use:")
 citEntry(entry="Manual",
     title = "Global test for groups of variables via model comparisons",
     author = personList(as.person("U. Mansmann"), as.person("R. Meister"), as.person("M. Hummel"), as.person("R. Scheufele"), as.person("S. Knueppel")),
-    year = substring(packageDescription("GlobalAncova")$Date,1,4),
-    note = paste("R package version", packageDescription("GlobalAncova")$Version),
+    year = substring(meta$Date,1,4),
+    note = paste("R package version", meta$Version),
     textVersion =
       paste("U. Mansmann, R. Meister, M. Hummel, R. Scheufele, with contributions from S. Knueppel(",
-        substring(packageDescription("GlobalAncova")$Date,1,4),
+        substring(meta$Date,1,4),
         ") GlobalAncova",
-        "R package, version ", packageDescription("GlobalAncova")$Version,
+        "R package, version ", meta$Version,
         ".", sep = "")
 )
 
