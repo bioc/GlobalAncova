@@ -1,3 +1,8 @@
+CHANGES IN VERSION 4.9.1
+----------------------
+o removed function 'GAKEGG' for testing collection of pathways, due to deprecation of KEGG package
+
+
 CHANGES IN VERSION 4.0.0
 ----------------------
 

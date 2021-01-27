@@ -14,6 +14,6 @@ exportClasses(GAhier)
 exportMethods("GlobalAncova", "GlobalAncova.closed", "Plot.genes", "Plot.subjects")
 exportMethods("sigEndnodes", "results", "Plot.hierarchy")
 
-export(gGlobalAncova, GAGO, GAKEGG, GABroad, GlobalAncova.decomp, gGlobalAncova.hierarchical, pair.compare, Plot.features, Plot.sequential, Plot.all)
+export(gGlobalAncova, GAGO, GABroad, GlobalAncova.decomp, gGlobalAncova.hierarchical, pair.compare, Plot.features, Plot.sequential, Plot.all)
 
 

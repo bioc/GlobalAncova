@@ -67,9 +67,9 @@ and \Sexpr{sI$otherPkgs$globaltest$Version} of the packages \Rpackage{GlobalAnco
 
 %\begin{itemize}
 %\item 
-The testing of collections of functional gene sets (Gene Ontology, KEGG, Broad Institute's gene sets) was
+The testing of collections of functional gene sets (Gene Ontology, Broad Institute's gene sets) was
 adapted to new functions in package \Rpackage{globaltest} (version $> 5.0.0$) and can now be performed using the
-functions \Rfunction{GAGO}, \Rfunction{GAKEGG} and \Rfunction{GABroad}.
+functions \Rfunction{GAGO} and \Rfunction{GABroad}.
 %\item Note change in use of function \Rfunction{GAGO} as compared to previous versions.
 %\end{itemize}
 
@@ -656,21 +656,6 @@ Alternative to the focus level procedure, one can choose between the methods of 
 Benjamini $\&$ Hochberg \cite{BeHo:95} and Benjamini $\&$ Yekutieli \cite{BeYe:01} for multiple testing
 correction, using the argument \Rfunarg{multtest}.
 
-
-\subsection{KEGG Pathways}
-
-The function \Rfunction{GAKEGG} (adapted from \Rpackage{globaltest} function \Rfunction{gtKEGG}) can
-be used to score the pathways from the KEGG database. Let's say we are interested in testing
-the 'cell cycle' and the 'apoptosis' pathways and want to correct the resulting p-values by the
-FDR method of Benjamini $\&$ Hochberg \cite{BeHo:95}.
-
-<<gakegg, message=F>>=
-GAKEGG(xx=exprs(golubX), formula.full=~ALL.AML, formula.red=~1, 
-       model.dat=pData(golubX), id=c("04110", "04210"), 
-       annotation="hu6800", multtest="BH")
-@
-
-If the \Rfunarg{id} argument is not specified, all KEGG gene sets will be tested.
 
 
 \subsection{The Broad Gene Sets}
