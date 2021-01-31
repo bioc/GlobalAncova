@@ -1,7 +1,6 @@
 \name{GlobalAncova gene set testing methods}
 
 \alias{GAGO}
-\alias{GAKEGG}
 \alias{GABroad}
 
 
@@ -9,13 +8,10 @@
 
 \description{Three functions adapted from package \pkg{globaltest} to test gene sets from databases for
 association of the gene expression profile with a
-response variable. Three function are provided for KEGG, for Gene Ontology and for the Broad Institute's gene sets.}
+response variable. Three function are provided for Gene Ontology and for the Broad Institute's gene sets.}
 
 
   \usage{
-GAKEGG (xx, ..., id, annotation, probe2entrez,
-           multtest = c("holm", "BH", "BY"), sort = TRUE)
-
 GAGO (xx, ..., id, annotation, probe2entrez,
            ontology = c("BP", "CC", "MF"), minsize=1, maxsize=Inf,
            multtest = c("holm", "focuslevel", "BH", "BY"),
@@ -65,7 +61,7 @@ GABroad (xx, ..., id, annotation, probe2entrez, collection,
         select them, perform global test, do multiple testing correction, and sort the results on
         the basis of their p-values.
         All functions require that \code{annotate} and the appropriate annotation packages are installed.
-        \code{GAKEGG} additionally requires the \code{KEGG.db} package; \code{GAGO} requires the
+        \code{GAGO} requires the
         \code{GO.db} package; \code{GABroad} requires the user to download the XML file "msigdb_v2.5.xml"
         from \\ \code{http://www.broad.mit.edu/gsea/downloads.jsp}, and to preprocess that file using
         the \code{\link[GSEABase:getObjects]{getBroadSets}} function.
@@ -75,8 +71,8 @@ GABroad (xx, ..., id, annotation, probe2entrez, collection,
 \value{The function returns a data frame with raw and multiplicity-adjusted
 p-values for each gene set.}
 
-\note{Functions \code{GAGO}, \code{GAKEGG} and \code{GABroad} correspond to functions \code{gtGO},
-      \code{gtKEGG} and \code{gtBroad} in package \pkg{globaltest}. The
+\note{Functions \code{GAGO}and \code{GABroad} correspond to functions \code{gtGO},
+      and \code{gtBroad} in package \pkg{globaltest}. The
     difference is in the use of the \code{GlobalAncova} test instead of \code{gt} within the procedures.}
 
 \references{Goeman, J.J. and Mansmann, U., Multiple testing on the directed acyclic graph of Gene Ontology.
